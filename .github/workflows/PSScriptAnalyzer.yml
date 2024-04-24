@@ -33,5 +33,5 @@ jobs:
       - name: Run PSScriptAnalyzer
         uses: microsoft/psscriptanalyzer-action@v1.0
         with:
-           path: .\PiholeShell
+           path: .\
            recurse: true 
