@@ -9,3 +9,5 @@ It is recommended to pull this down as a git and pull down updates from main as 
 To import this module, you can do ```Import-Module .\PiHoleShell.psm1```
 
 To remove the module, you can do ```Remove-Module PiHoleShell```
+
+tesst
