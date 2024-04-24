@@ -29,7 +29,6 @@ jobs:
       - name: Run a multi-line script
         run: |
           Get-ChildItem -Recurse
-          shell: pwsh
 
       - name: Run PSScriptAnalyzer
         uses: microsoft/psscriptanalyzer-action@v1.0
