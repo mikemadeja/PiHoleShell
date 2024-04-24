@@ -30,12 +30,4 @@ jobs:
         run: |
           (Get-ChildItem -Recurse).FullName
           Install-Module -Name PSScriptAnalyzer
-          Invoke-ScriptAnalyzer -Path D:\a\PiHoleShell\PiHoleShell\ -Recurse
-
-
-      - name: Run PSScriptAnalyzer
-        uses: microsoft/psscriptanalyzer-action@v1.0
-        with:
-           path: D:\a\PiHoleShell\PiHoleShell\
-           recurse: true 
-           enableExit: true
+          Invoke-ScriptAnalyzer -Path D:\a\PiHoleShell\PiHoleShell\ -Recurse -EnableExit
