@@ -35,3 +35,4 @@ jobs:
         with:
            path: D:\a\PiHoleShell\PiHoleShell\
            recurse: true 
+           enableExit: true
