@@ -1,5 +1,6 @@
 function Request-PiHoleAuth {
     #INTERNAL FUNCTION
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [CmdletBinding()]
         [System.URI]$PiHoleServer,
@@ -36,6 +37,7 @@ The API Password you generated from your PiHole server
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
     [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         $PiHoleServer,
         $Password,
@@ -119,7 +121,21 @@ function Remove-PiHoleCurrentAuthSession {
 }
 
 function Remove-PiHoleAuthSession {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
+    <#
+.SYNOPSIS
+https://ftl.pi-hole.net/development-v6/docs/#get-/auth
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.EXAMPLE
+Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+    #>
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         $PiHoleServer,
         $Password,
