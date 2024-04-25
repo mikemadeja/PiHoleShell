@@ -19,6 +19,7 @@ function Request-PiHoleAuth {
 
     catch {
         Write-Error -Message $_.Exception.Message
+        break
     }
 }
 
@@ -92,7 +93,9 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 
     finally {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        }
     }
 }
 
@@ -152,14 +155,20 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         }
 
         Invoke-RestMethod @Params
+
     }
+
 
     catch {
         Write-Error -Message $_.Exception.Message
+
     }
 
     finally {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        }
+
     }
 }
 

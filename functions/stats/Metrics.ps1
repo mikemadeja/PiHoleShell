@@ -57,10 +57,13 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     catch {
         Write-Error -Message $_.Exception.Message
+        break
     }
 
     finally {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        }
     }
 }
 
