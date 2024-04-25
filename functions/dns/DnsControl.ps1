@@ -17,7 +17,6 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     #>
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
         $PiHoleServer,
         $Password,
         [bool]$RawOutput = $false
