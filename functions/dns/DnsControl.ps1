@@ -51,10 +51,13 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
 
     catch {
         Write-Error -Message $_.Exception.Message
+        break
     }
 
     finally {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        }
     }
 }
 
@@ -135,7 +138,9 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
     }
 
     finally {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        }
     }
 }
 
