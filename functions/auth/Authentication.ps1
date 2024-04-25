@@ -167,7 +167,12 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        if ($_.Exception.Message -like "The remote server returned an error: (400) Bad Request.") {
+            Write-Error -Message "Id $Id appears to not exist, please use Get-PiHoleCurrentAuthSession to list valid Ids to remove..."
+        }
+        else {
+            Write-Error -Message $_.Exception.Message
+        }
     }
 
     finally {
