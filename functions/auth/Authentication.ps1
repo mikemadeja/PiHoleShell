@@ -153,9 +153,17 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
             Method      = "Delete"
             ContentType = "application/json"
         }
-
         Invoke-RestMethod @Params
 
+        $ObjectFinal = @()
+        $Object = [PSCustomObject]@{
+            Id     = $Item.id
+            Status = "Removed"
+        }
+
+        $ObjectFinal += $Object
+        $Object = $null
+        Write-Output $ObjectFinal
     }
 
     catch {
