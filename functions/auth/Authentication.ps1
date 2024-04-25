@@ -32,7 +32,7 @@ https://ftl.pi-hole.net/development-v6/docs/#get-/auth
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
 
 .PARAMETER Password
-The API Password you generated from your PiHole server
+The API Password you generated from your PiHole v6 server
 
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
