@@ -158,10 +158,8 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     }
 
-
     catch {
         Write-Error -Message $_.Exception.Message
-
     }
 
     finally {
