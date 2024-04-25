@@ -29,5 +29,5 @@ jobs:
       - name: Run a multi-line script
         run: |
           (Get-ChildItem -Recurse).FullName
-          Install-Module -Name PSScriptAnalyzer
+          #Install-Module -Name PSScriptAnalyzer 
           Invoke-ScriptAnalyzer -Path D:\a\PiHoleShell\PiHoleShell\ -Recurse -EnableExit
