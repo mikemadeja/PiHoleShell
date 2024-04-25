@@ -166,7 +166,6 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         if ($Sid) {
             Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
         }
-
     }
 }
 
