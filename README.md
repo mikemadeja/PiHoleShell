@@ -34,7 +34,6 @@ PS Import-Module .\PiHoleShell.psm1
 
 PS D:\PiHoleShell> Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD"
 
-
 Blocking Timer
 -------- -----
 enabled      0
