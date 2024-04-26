@@ -26,3 +26,16 @@ Click Configure app password
 Copy your password, then click Enable new app password.
 
 <img src="docs\images\configure_app_password.png" alt="drawing" width="450"/>
+
+```
+PS CD D:\PiHoleShell
+
+PS Import-Module .\PiHoleShell.psm1
+
+PS D:\PiHoleShell> Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD"
+
+
+Blocking Timer
+-------- -----
+enabled      0
+```
