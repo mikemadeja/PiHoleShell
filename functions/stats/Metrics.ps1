@@ -24,16 +24,18 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
         $PiHoleServer,
         $Password,
         [int]$MaxResult = 1,
+        [bool]$IgnoreSsl = $false,
         [bool]$RawOutput
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         Write-Verbose -Message "MaxResults - $MaxResult"
         $Params = @{
-            Headers     = @{sid = $($Sid) }
-            Uri         = "$PiHoleServer/api/stats/recent_blocked?count=$MaxResult"
-            Method      = "Get"
-            ContentType = "application/json"
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$PiHoleServer/api/stats/recent_blocked?count=$MaxResult"
+            Method               = "Get"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
         }
 
         $Response = Invoke-RestMethod @Params
@@ -51,7 +53,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
                 Write-Verbose -Message "Blocked - $Item"
                 $ObjectFinal += $Object
             }
-            Write-Output $ObjectFinal
+            Write-Output $ObjectFinal | Select-Object -Unique
         }
     }
 
@@ -67,4 +69,88 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 }
 
-Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked
+function Get-PiHoleStatsQueryType {
+    <#
+.SYNOPSIS
+https://TODOFINDNEWAPILINK
+    #>
+    [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    param (
+        $PiHoleServer,
+        $Password,
+        [int]$MaxResult = 1,
+        [bool]$IgnoreSsl = $false,
+        [bool]$RawOutput
+    )
+
+    $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+    Write-Verbose -Message "MaxResults - $MaxResult"
+    $Params = @{
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$PiHoleServer/api/stats/query_types"
+        Method               = "Get"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
+    }
+
+    $Response = Invoke-RestMethod @Params
+
+    if ($RawOutput) {
+        Write-Output $Response
+    }
+}
+
+function Get-PiHoleStatsTopDomain {
+    <#
+.SYNOPSIS
+https://TODOFINDNEWAPILINK
+    #>
+    [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    param (
+        $PiHoleServer,
+        $Password,
+        [int]$MaxResult = 10,
+        [bool]$Blocked = $false,
+        [bool]$IgnoreSsl = $false,
+        [bool]$RawOutput
+    )
+
+    $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+    switch ($Blocked) {
+        $false {
+            $Blocked = "false"
+        }
+        $true {
+            $Blocked = "true"
+        }
+        Default {
+            throw "ERROR"
+        }
+    }
+    Write-Verbose "Blocked: $Blocked"
+
+    $Params = @{
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$PiHoleServer/api/stats/top_domains?blocked=$Blocked&count=$MaxResult"
+        Method               = "Get"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
+    }
+
+    $Response = Invoke-RestMethod @Params
+
+    if ($RawOutput) {
+        Write-Output $Response
+    }
+
+    if ($Sid) {
+        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+    }
+}
+
+
+
+Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked, Get-PiHoleStatsQueryType, Get-PiHoleStatsTopDomain

@@ -19,16 +19,18 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     param (
         $PiHoleServer,
         $Password,
+        [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Params = @{
-            Headers     = @{sid = $($Sid) }
-            Uri         = "$PiHoleServer/api/dns/blocking"
-            Method      = "Get"
-            ContentType = "application/json"
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$PiHoleServer/api/dns/blocking"
+            Method               = "Get"
+            ContentType          = "application/json"
+            SkipCertificateCheck = $IgnoreSsl
         }
 
         $Data = Invoke-RestMethod @Params
@@ -94,11 +96,12 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
         [ValidateSet("True", "False")]
         $Blocking,
         [int]$TimeInSeconds = $null,
+        [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Blocking = $Blocking.ToLower()
 

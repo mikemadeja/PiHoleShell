@@ -4,14 +4,16 @@ function Request-PiHoleAuth {
     param (
         [CmdletBinding()]
         [System.URI]$PiHoleServer,
-        [string]$Password
+        [string]$Password,
+        [bool]$IgnoreSsl = $false
     )
     try {
         $Params = @{
-            Uri         = "$($PiHoleServer.OriginalString)/api/auth"
-            Method      = "Post"
-            ContentType = "application/json"
-            Body        = @{password = $Password } | ConvertTo-Json
+            Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
+            Method               = "Post"
+            ContentType          = "application/json"
+            SkipCertificateCheck = $IgnoreSsl
+            Body                 = @{password = $Password } | ConvertTo-Json
         }
         $Response = Invoke-RestMethod @Params
         Write-Output $Response.session.sid
@@ -42,16 +44,18 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     param (
         $PiHoleServer,
         $Password,
+        [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
 
-    $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password
+    $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
     $Params = @{
-        Headers     = @{sid = $($Sid) }
-        Uri         = "$PiHoleServer/api/auth/sessions"
-        Method      = "Get"
-        ContentType = "application/json"
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$PiHoleServer/api/auth/sessions"
+        Method               = "Get"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
     }
 
     try {
@@ -108,10 +112,11 @@ function Remove-PiHoleCurrentAuthSession {
         $Sid
     )
     $Params = @{
-        Headers     = @{sid = $($Sid) }
-        Uri         = "$PiHoleServer/api/auth"
-        Method      = "Delete"
-        ContentType = "application/json"
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$PiHoleServer/api/auth"
+        Method               = "Delete"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
     }
 
     try {
@@ -142,20 +147,29 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     param (
         $PiHoleServer,
         $Password,
+        $IgnoreSsl,
         [int]$Id
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
-            Headers     = @{sid = $($Sid) }
-            Uri         = "$PiHoleServer/api/auth/session/$Id"
-            Method      = "Delete"
-            ContentType = "application/json"
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$PiHoleServer/api/auth/session/$Id"
+            Method               = "Delete"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
         }
 
         Invoke-RestMethod @Params
 
+        $ObjectFinal = @()
+        $Object = [PSCustomObject]@{
+            Id     = $Id
+            Status = "Removed"
+        }
+        $ObjectFinal = $Object
+        Write-Output $ObjectFinal
     }
 
     catch {
