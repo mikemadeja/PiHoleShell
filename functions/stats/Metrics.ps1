@@ -69,7 +69,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 }
 
-function Get-PiHoleStatsQueryTypes {
+function Get-PiHoleStatsQueryType {
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -97,7 +97,7 @@ function Get-PiHoleStatsQueryTypes {
     }
 }
 
-function Get-PiHoleStatsTopDomains {
+function Get-PiHoleStatsTopDomain {
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -145,4 +145,4 @@ function Get-PiHoleStatsTopDomains {
 
 
 
-Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked, Get-PiHoleStatsQueryTypes, Get-PiHoleStatsTopDomains
+Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked, Get-PiHoleStatsQueryType, Get-PiHoleStatsTopDomain
