@@ -70,6 +70,10 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
 }
 
 function Get-PiHoleStatsQueryType {
+    <#
+.SYNOPSIS
+https://TODOFINDNEWAPILINK
+    #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -98,6 +102,10 @@ function Get-PiHoleStatsQueryType {
 }
 
 function Get-PiHoleStatsTopDomain {
+    <#
+.SYNOPSIS
+https://TODOFINDNEWAPILINK
+    #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
