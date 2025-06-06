@@ -113,7 +113,7 @@ function Get-PiHoleStatsTopDomains {
 
     switch ($Blocked) {
         $false {
-            $Blocked = "false"  
+            $Blocked = "false"
         }
         $true {
             $Blocked = "true"
