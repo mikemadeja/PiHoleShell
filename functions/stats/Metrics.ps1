@@ -64,7 +64,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     finally {
         if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
         }
     }
 }
@@ -147,7 +147,7 @@ https://TODOFINDNEWAPILINK
     }
 
     if ($Sid) {
-        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+        Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
     }
 }
 

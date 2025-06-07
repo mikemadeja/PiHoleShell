@@ -1,0 +1,159 @@
+function Get-PiHoleGroup {
+    <#
+.SYNOPSIS
+https://TODO
+
+    #>
+    #Work In Progress
+    [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    param (
+        [Parameter(Mandatory = $true)]
+        $PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        $Password,
+        $GroupName = $null,
+        [bool]$IgnoreSsl = $false,
+        [bool]$RawOutput = $false
+    )
+    try {
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+        $Params = @{
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$PiHoleServer/api/groups"
+            Method               = "Get"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
+        }
+
+        $Response = Invoke-RestMethod @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+
+        else {
+            $ObjectFinal = @()
+            foreach ($Item in $Response.Groups) {
+                $Object = $null
+                $Object = [PSCustomObject]@{
+                    Name         = $Item.name
+                    Comment      = $Item.comment
+                    Enabled      = $Item.enabled
+                    Id           = $Item.id
+                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    
+                }
+                Write-Verbose -Message "Name - $($Item.groups.name)"
+                Write-Verbose -Message "Comment - $($Item.groups.comment)"
+                Write-Verbose -Message "Enabled - $($Item.groups.enabled)"
+                Write-Verbose -Message "Id - $($Item.id)"
+                Write-Verbose -Message "Date Added - $($Item.date_added)"
+                Write-Verbose -Message "Date Date Modified - $(($Item.date_modified))"
+                $ObjectFinal += $Object
+            }
+
+            if ($GroupName) {
+                $GroupNameObject = $ObjectFinal | Where-Object { $_.Name -eq $GroupName }
+                if ($GroupNameObject) {
+                    Write-Output $GroupNameObject
+                }
+                else {
+                    Write-Warning "Did not find $GroupName on $PiHoleServer"
+                }
+            }
+            
+            else {
+                Write-Output $ObjectFinal
+            }
+
+        }
+    }
+
+    catch {
+        Write-Error -Message $_.Exception.Message
+        break
+    }
+
+    finally {
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
+        }
+    }
+}
+
+function New-PiHoleGroup {
+    <#
+.SYNOPSIS
+https://TODO
+
+    #>
+    #Work In Progress
+    [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
+        [Parameter(Mandatory = $true)]
+        [string]$GroupName,
+        [string]$Comment = $null,
+        [bool]$Enabled = $true,
+        [bool]$IgnoreSsl = $false,
+        [bool]$RawOutput = $false
+  
+    )
+    try {
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+        $Body = @{
+            comment = $Comment
+            enabled = $false
+            name    = $GroupName
+        }
+
+        $Params = @{
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$PiHoleServer/api/groups"
+            Method               = "Post"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
+            Body                 = $Body | ConvertTo-Json -Depth 10
+        }
+
+        $Response = Invoke-RestMethod @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $ObjectFinal = @()
+            $Object = [PSCustomObject]@{
+                Name    = $GroupName
+                Comment = $Comment
+                Enabled = $Enabled
+            }
+            Write-Verbose -Message "Name - $($Object.GroupName)"
+            Write-Verbose -Message "Comment - $($Object.Comment)"
+            Write-Verbose -Message "Enabled - $($Object.Enabled)"
+            $ObjectFinal = $Object
+        }
+        Write-Output $ObjectFinal
+    }
+
+    catch {
+        Write-Error -Message $_.Exception.Message
+        break
+    }
+
+    finally {
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
+        }
+    }
+}
+
+Export-ModuleMember -Function Get-PiHoleGroup, New-PiHoleGroup

@@ -41,9 +41,50 @@ function Convert-LocalTimeToPiHoleUnixTime {
     $Object = [PSCustomObject]@{
         LocalTime = $Date
         UnixTime  = $ConvertedTime
-
     }
 
     $ObjectFinal = $Object
     Write-Output $ObjectFinal
 }
+
+function Test-HttpPrefixForPiHole {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Url
+    )
+
+    Write-Output $Url -match '^https?://'
+}
+
+function Test-PiHoleServerAccess {
+    param (
+        [Parameter(Mandatory)]
+        [string]$Url
+    )
+
+    if (Test-HttpPrefixForPiHole -Url $Url) {
+        $RawOutput = Invoke-WebRequest -Uri https://172.21.169.237/admin/login -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
+    }
+}
+
+# function Convert-EnabledBoolToString {
+#     param (
+#         [bool]$Bool
+#     )
+
+#     switch ($Bool) {
+#         $false {
+#             $Enabled = "false"
+#         }
+#         $true {
+#             $Enabled = "true"
+#         }
+#     }
+
+#     $Object = [PSCustomObject]@{
+#         Bool = $Enabled
+#     }
+
+#     Write-Output $Object
+
+# }
