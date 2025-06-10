@@ -59,11 +59,12 @@ function Test-HttpPrefixForPiHole {
 function Test-PiHoleServerAccess {
     param (
         [Parameter(Mandatory)]
-        [string]$Url
+        [string]$Url,
+        [bool]$IgnoreSsl = $false
     )
 
     if (Test-HttpPrefixForPiHole -Url $Url) {
-        $RawOutput = Invoke-WebRequest -Uri https://172.21.169.237/admin/login -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
+        $RawOutput = Invoke-WebRequest -Uri "$Url/admin/login" -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
     }
 }
 
