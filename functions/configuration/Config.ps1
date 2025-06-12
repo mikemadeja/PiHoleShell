@@ -30,16 +30,8 @@ https://TODO
             Write-Output $Response
         }
         else {
-            $ObjectFinal = @()
-            # foreach ($Item in $Response.blocked) {
-            #     $Object = $null
-            #     $Object = [PSCustomObject]@{
-            #         Blocked = $Item
-            #     }
-            #     Write-Verbose -Message "Blocked - $Item"
-            #     $ObjectFinal += $Object
-            # }
-            Write-Output $ObjectFinal | Select-Object -Unique
+            # $ObjectFinal = @()
+            # Write-Output $ObjectFinal | Select-Object -Unique
         }
     }
 

@@ -7,6 +7,7 @@ function Request-PiHoleAuth {
         [string]$Password,
         [bool]$IgnoreSsl = $false
     )
+
     try {
         $Params = @{
             Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
@@ -15,7 +16,9 @@ function Request-PiHoleAuth {
             SkipCertificateCheck = $IgnoreSsl
             Body                 = @{password = $Password } | ConvertTo-Json
         }
-        $Response = Invoke-RestMethod @Params
+
+        $Response = Invoke-RestMethod @Params -Verbose: $false
+        
         Write-Output $Response.session.sid
     }
 

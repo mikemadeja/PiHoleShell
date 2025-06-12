@@ -46,9 +46,9 @@ https://TODO
                     DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
                     
                 }
-                Write-Verbose -Message "Name - $($Item.groups.name)"
-                Write-Verbose -Message "Comment - $($Item.groups.comment)"
-                Write-Verbose -Message "Enabled - $($Item.groups.enabled)"
+                Write-Verbose -Message "Name - $($Item.name)"
+                Write-Verbose -Message "Comment - $($Item.comment)"
+                Write-Verbose -Message "Enabled - $($Item.enabled)"
                 Write-Verbose -Message "Id - $($Item.id)"
                 Write-Verbose -Message "Date Added - $($Item.date_added)"
                 Write-Verbose -Message "Date Date Modified - $(($Item.date_modified))"

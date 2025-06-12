@@ -47,26 +47,26 @@ function Convert-LocalTimeToPiHoleUnixTime {
     Write-Output $ObjectFinal
 }
 
-function Test-HttpPrefixForPiHole {
-    param (
-        [Parameter(Mandatory)]
-        [string]$Url
-    )
+# function Test-HttpPrefixForPiHole {
+#     param (
+#         [Parameter(Mandatory)]
+#         [string]$Url
+#     )
 
-    Write-Output $Url -match '^https?://'
-}
+#     Write-Output ($Url -match '^https?://')
+# }
 
-function Test-PiHoleServerAccess {
-    param (
-        [Parameter(Mandatory)]
-        [string]$Url,
-        [bool]$IgnoreSsl = $false
-    )
+# function Test-PiHoleServerAccess {
+#     param (
+#         [Parameter(Mandatory)]
+#         [string]$Url,
+#         [bool]$IgnoreSsl = $false
+#     )
 
-    if (Test-HttpPrefixForPiHole -Url $Url) {
-        $RawOutput = Invoke-WebRequest -Uri "$Url/admin/login" -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
-    }
-}
+#     if (Test-HttpPrefixForPiHole -Url $Url) {
+#         $RawOutput = Invoke-WebRequest -Uri "$Url/admin/login" -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
+#     }
+# }
 
 # function Convert-EnabledBoolToString {
 #     param (
