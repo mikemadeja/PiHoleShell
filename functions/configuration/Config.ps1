@@ -11,11 +11,10 @@ https://TODO
         $PiHoleServer,
         $Password,
         [bool]$IgnoreSsl = $false,
-        [bool]$RawOutput
+        [bool]$RawOutput = $false
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        Write-Verbose -Message "MaxResults - $MaxResult"
         $Params = @{
             Headers              = @{sid = $($Sid) }
             Uri                  = "$PiHoleServer/api/config"

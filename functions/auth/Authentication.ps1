@@ -18,7 +18,7 @@ function Request-PiHoleAuth {
         }
 
         $Response = Invoke-RestMethod @Params -Verbose: $false
-        
+
         Write-Output $Response.session.sid
     }
 
