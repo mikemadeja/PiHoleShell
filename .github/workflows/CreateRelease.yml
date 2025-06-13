@@ -1,0 +1,60 @@
+name: Auto Release on Merge from Develop to Main (Windows)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    if: startsWith(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Get Latest Tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          $latestTag = git describe --tags --abbrev=0 2>$null
+          if (-not $latestTag) { $latestTag = "v0.0.0" }
+          echo "Latest tag: $latestTag"
+          echo "latest_tag=$latestTag" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+      - name: Calculate Next Tag (patch bump)
+        id: bump
+        run: |
+          $version = "${{ steps.get_tag.outputs.latest_tag }}".TrimStart("v")
+          $parts = $version.Split(".")
+          $major = [int]$parts[0]
+          $minor = [int]$parts[1]
+          $patch = [int]$parts[2] + 1
+          $newTag = "v$major.$minor.$patch"
+          echo "New tag: $newTag"
+          echo "new_tag=$newTag" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+
+      - name: Create and Push Tag
+        run: |
+          git tag ${{ steps.bump.outputs.new_tag }}
+          git push origin ${{ steps.bump.outputs.new_tag }}
+
+      - name: Zip Release Files
+        run: |
+          mkdir output
+          Compress-Archive -Path C:\a\PiHoleShell\PiHoleShell\module\* -DestinationPath .\output\release.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.bump.outputs.new_tag }}
+          name: "Release ${{ steps.bump.outputs.new_tag }}"
+          files: output/release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
