@@ -1,4 +1,4 @@
-name: Auto Release on Merge from Develop to Main (Windows)
+name: Auto Release on Merge from Develop to Main (Ubuntu)
 
 on:
   push:
@@ -7,58 +7,50 @@ on:
 
 jobs:
   release:
+    # Only run if merge PR message includes 'develop'
     if: startsWith(github.event.head_commit.message, 'Merge pull request') && contains(github.event.head_commit.message, 'develop')
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout code (full history & tags)
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Set up Git
+      - name: Set up Git config
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Get Latest Tag
+      - name: Get latest tag
         id: get_tag
-        shell: pwsh
         run: |
-            git fetch --tags
-  
-            $latestTag = try {
-                git describe --tags --abbrev=0 2>$null
-            } catch {
-                ''
-            }
-  
-            if ([string]::IsNullOrEmpty($latestTag)) {
-                $latestTag = "v0.0.0"
-            }
-  
-            Write-Host "Latest tag: $latestTag"
-            "latest_tag=$latestTag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          git fetch --tags
+          latestTag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag: $latestTag"
+          echo "latest_tag=$latestTag" >> $GITHUB_OUTPUT
 
-      - name: Calculate Next Tag (patch bump)
+      - name: Calculate next tag (patch bump)
         id: bump
         run: |
-          $version = "${{ steps.get_tag.outputs.latest_tag }}".TrimStart("v")
-          $parts = $version.Split(".")
-          $major = [int]$parts[0]
-          $minor = [int]$parts[1]
-          $patch = [int]$parts[2] + 1
-          $newTag = "v$major.$minor.$patch"
+          version="${{ steps.get_tag.outputs.latest_tag }}"
+          version=${version#v}
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          newTag="v$major.$minor.$patch"
           echo "New tag: $newTag"
-          echo "new_tag=$newTag" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+          echo "new_tag=$newTag" >> $GITHUB_OUTPUT
 
-      - name: Create and Push Tag
+      - name: Create and push tag
         run: |
           git tag ${{ steps.bump.outputs.new_tag }}
           git push origin ${{ steps.bump.outputs.new_tag }}
 
-      - name: Zip Release Files
+      - name: Zip folder
         run: |
-          mkdir output
-          Compress-Archive -Path C:\a\PiHoleShell\PiHoleShell\module\* -DestinationPath .\output\release.zip
+          mkdir -p output
+          ls
+          zip -r output/release.zip path/to/your/folder
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
