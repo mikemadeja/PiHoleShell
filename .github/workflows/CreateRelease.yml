@@ -1,5 +1,7 @@
 name: Auto Release on Merge from Develop to Main (Ubuntu)
-
+permissions:
+  contents: write
+  
 on:
   push:
     branches:
