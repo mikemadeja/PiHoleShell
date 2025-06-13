@@ -44,7 +44,7 @@ https://TODO
                     Id           = $Item.id
                     DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
                     DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    
+
                 }
                 Write-Verbose -Message "Name - $($Item.name)"
                 Write-Verbose -Message "Comment - $($Item.comment)"
@@ -64,7 +64,7 @@ https://TODO
                     Write-Warning "Did not find $GroupName on $PiHoleServer"
                 }
             }
-            
+
             else {
                 Write-Output $ObjectFinal
             }
@@ -104,7 +104,7 @@ https://TODO
         [bool]$Enabled = $true,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
@@ -121,7 +121,7 @@ https://TODO
                 enabled = $Enabled
                 name    = $GroupName
             }
-    
+
             $Params = @{
                 Headers              = @{sid = $($Sid) }
                 Uri                  = "$PiHoleServer/api/groups"
@@ -130,9 +130,9 @@ https://TODO
                 ContentType          = "application/json"
                 Body                 = $Body | ConvertTo-Json -Depth 10
             }
-    
+
             $Response = Invoke-RestMethod @Params
-    
+
             if ($RawOutput) {
                 Write-Output $Response
             }
@@ -184,7 +184,7 @@ https://TODO
         [bool]$Enabled,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     #Enabled is weird here.. look into it
     try {
@@ -193,7 +193,7 @@ https://TODO
         $Body = @{
             name = $GroupName
         }
- 
+
         $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
 
         if ($Comment -eq $null -and $Enabled -eq $null) {
@@ -213,13 +213,13 @@ https://TODO
         }
         else {
             switch ($GetGroupStatus) {
-                "True" { 
-                    $true 
+                "True" {
+                    $true
                 }
                 "False" {
                     $false
                 }
-            } 
+            }
 
             $Body += @{
                 enabled = $GetGroupStatus
@@ -287,7 +287,7 @@ https://TODO
         [string]$GroupName,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
