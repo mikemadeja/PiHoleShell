@@ -231,6 +231,24 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
                 Total          = $Response.queries.total
                 Blocked        = $Response.queries.blocked
                 PercentBlocked = $Response.queries.percent_blocked
+                Types          = [PSCustomObject]@{
+                    A      = $Response.queries.types.A
+                    AAAA   = $Response.queries.types.AAAA
+                    ANY    = $Response.queries.types.ANY
+                    SRV    = $Response.queries.types.SRV
+                    SOA    = $Response.queries.types.SOA
+                    PTR    = $Response.queries.types.PTR
+                    TXT    = $Response.queries.types.TXT
+                    NAPTR  = $Response.queries.types.NAPTR
+                    MX     = $Response.queries.types.MX
+                    DS     = $Response.queries.types.DS
+                    RRSIG  = $Response.queries.types.RRSIG
+                    DNSKEY = $Response.queries.types.DNSKEY
+                    NS     = $Response.queries.types.NS
+                    SVCB   = $Response.queries.types.SVCB
+                    HTTPS  = $Response.queries.types.HTTPS
+                    OTHER  = $Response.queries.types.OTHER
+                }
                 Status         = [PSCustomObject]@{
                     Unknown              = $Response.queries.status.UNKNOWN
                     Gravity              = $Response.queries.status.GRAVITY
@@ -251,6 +269,22 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
                     SpecialDomain        = $Response.queries.status.SPECIAL_DOMAIN
                     CacheStale           = $Response.queries.status.CACHE_STALE
                     ExternalBlockedEde15 = $Response.queries.status.EXTERNAL_BLOCKED_EDE15
+                }
+                Replies        = [PSCustomObject]@{
+                    Unknown  = $Response.queries.replies.UNKNOWN
+                    Nodata   = $Response.queries.replies.NODATA
+                    Nxdomain = $Response.queries.replies.NXDOMAIN
+                    Cname    = $Response.queries.replies.CNAME
+                    Ip       = $Response.queries.replies.IP
+                    Domain   = $Response.queries.replies.DOMAIN
+                    Rrname   = $Response.queries.replies.RRNAME
+                    ServFail = $Response.queries.replies.SERVFAIL
+                    Refused  = $Response.queries.replies.REFUSED
+                    Notimp   = $Response.queries.replies.NOTIMP
+                    Other    = $Response.queries.replies.OTHER
+                    Dnssec   = $Response.queries.replies.DNSSEC
+                    None     = $Response.queries.replies.NONE
+                    Blob     = $Response.queries.replies.BLOB
                 }
             }
             $ObjectFinal += $Object
