@@ -1,7 +1,7 @@
 name: Auto Release on Merge from Develop to Main (Ubuntu)
 permissions:
   contents: write
-  
+
 on:
   push:
     branches:
@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p output
           ls
-          zip -r output/release.zip path/to/your/folder
+          zip -r output/release.zip module
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
