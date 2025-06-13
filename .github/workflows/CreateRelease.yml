@@ -22,8 +22,9 @@ jobs:
       - name: Get Latest Tag
         id: get_tag
         shell: pwsh
-        run: | 
+        run: |
             git fetch --tags
+  
             $latestTag = try {
                 git describe --tags --abbrev=0 2>$null
             } catch {
@@ -35,7 +36,7 @@ jobs:
             }
   
             Write-Host "Latest tag: $latestTag"
-            "`latest_tag=$latestTag`" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+            "latest_tag=$latestTag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Calculate Next Tag (patch bump)
         id: bump
