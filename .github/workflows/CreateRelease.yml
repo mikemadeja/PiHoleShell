@@ -21,12 +21,21 @@ jobs:
 
       - name: Get Latest Tag
         id: get_tag
-        run: |
-          git fetch --tags
-          $latestTag = git describe --tags --abbrev=0 2>$null
-          if (-not $latestTag) { $latestTag = "v0.0.0" }
-          echo "Latest tag: $latestTag"
-          echo "latest_tag=$latestTag" | Out-File -Append -FilePath $env:GITHUB_OUTPUT
+        shell: pwsh
+        run: | 
+            git fetch --tags
+            $latestTag = try {
+                git describe --tags --abbrev=0 2>$null
+            } catch {
+                ''
+            }
+  
+            if ([string]::IsNullOrEmpty($latestTag)) {
+                $latestTag = "v0.0.0"
+            }
+  
+            Write-Host "Latest tag: $latestTag"
+            "`latest_tag=$latestTag`" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Calculate Next Tag (patch bump)
         id: bump
