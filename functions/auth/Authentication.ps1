@@ -7,6 +7,7 @@ function Request-PiHoleAuth {
         [string]$Password,
         [bool]$IgnoreSsl = $false
     )
+
     try {
         $Params = @{
             Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
@@ -15,7 +16,9 @@ function Request-PiHoleAuth {
             SkipCertificateCheck = $IgnoreSsl
             Body                 = @{password = $Password } | ConvertTo-Json
         }
-        $Response = Invoke-RestMethod @Params
+
+        $Response = Invoke-RestMethod @Params -Verbose: $false
+        
         Write-Output $Response.session.sid
     }
 
@@ -42,7 +45,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
+        [string]$PiHoleServer,
         $Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
@@ -109,7 +112,8 @@ function Remove-PiHoleCurrentAuthSession {
     [CmdletBinding()]
     param (
         $PiHoleServer,
-        $Sid
+        $Sid,
+        $IgnoreSsl = $false
     )
     $Params = @{
         Headers              = @{sid = $($Sid) }
@@ -178,7 +182,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     finally {
         if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
         }
     }
 }
