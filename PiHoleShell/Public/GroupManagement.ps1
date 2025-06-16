@@ -96,7 +96,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -125,7 +125,7 @@ https://TODO
 
             $Params = @{
                 Headers              = @{sid = $($Sid) }
-                Uri                  = "$PiHoleServer/api/groups"
+                Uri                  = "$($PiHoleServer.OriginalString)/api/groups"
                 Method               = "Post"
                 SkipCertificateCheck = $IgnoreSsl
                 ContentType          = "application/json"
@@ -176,7 +176,7 @@ https://TODO
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -229,7 +229,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups/$GroupName"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
             Method               = "Put"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -282,7 +282,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -300,7 +300,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups/$GroupName"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
             Method               = "Delete"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"

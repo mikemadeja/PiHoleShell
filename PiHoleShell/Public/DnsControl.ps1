@@ -1,13 +1,16 @@
 function Get-PiHoleDnsBlockingStatus {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/development-v6/docs/#get-/dns/blocking
+Get current blocking status
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
 
 .PARAMETER Password
 The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
@@ -18,7 +21,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -29,7 +32,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/dns/blocking"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
             Method               = "Get"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl
@@ -94,7 +97,7 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [ValidateSet("True", "False")]
@@ -111,13 +114,14 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
 
         $Body = "{`"blocking`":$Blocking,`"timer`":$TimeInSeconds}"
         $Params = @{
-            Headers     = @{sid = $($Sid)
+            Headers              = @{sid = $($Sid)
                 Accept      = "application/json"
             }
-            Uri         = "$PiHoleServer/api/dns/blocking"
-            Method      = "Post"
-            ContentType = "application/json"
-            Body        = $Body
+            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
+            Method               = "Post"
+            ContentType          = "application/json"
+            Body                 = $Body
+            SkipCertificateCheck = $IgnoreSsl
         }
 
         $Response = Invoke-RestMethod @Params
