@@ -49,15 +49,23 @@ jobs:
           git push origin ${{ steps.bump.outputs.new_tag }}
 
       - name: Zip folder
+        shell: pwsh
         run: |
-          $modulePath = "PiHoleShell"  # Change to your actual module folder
-          $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
-          (Get-Content $($manifest.fullname)) -replace '0.0.0', ($ENV:TAG -replace "v", "") | Out-File $manifest.fullname
-          Write-Host "Replacing 0.0.0 with $ENV:NEW_TAG"
-          
-          mkdir -p output
-          ls
-          zip -r output/release.zip PiHoleShell
+            $modulePath = "PiHoleShell"
+            $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+        
+            if (-not $manifest) {
+              throw "No module manifest (*.psd1) found in $modulePath"
+            }
+        
+            $version = $env:NEW_TAG -replace '^v', ''
+            (Get-Content $manifest.FullName) -replace '0.0.0', $version | Set-Content $manifest.FullName
+            Write-Host "Replacing 0.0.0 with $version in $($manifest.FullName)"
+            
+            mkdir -p output
+            zip -r output/release.zip PiHoleShell
+        env:
+            NEW_TAG: ${{ steps.bump.outputs.new_tag }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
