@@ -74,6 +74,9 @@ jobs:
             $apiKey = '${{ secrets.POWERSHELLGALLERY }}'
             $modulePath = "PiHoleShell"  # Change to your actual module folder
             $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+
+            (Get-Content $($manifest.fullname)) -replace '0.0.0', ($ENV:TAG -replace "v", "") | Out-File $manifest.fullname
+            Write-Host "Replacing 0.0.0 with $ENV:NEW_TAG"
     
             if (-not $manifest) {
               throw "No module manifest (*.psd1) found in $modulePath"
