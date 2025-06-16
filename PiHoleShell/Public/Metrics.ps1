@@ -303,5 +303,3 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked, Get-PiHoleStatsQueryType, Get-PiHoleStatsTopDomain, Get-PiHoleStatsSummary
