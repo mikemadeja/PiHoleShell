@@ -114,13 +114,14 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
 
         $Body = "{`"blocking`":$Blocking,`"timer`":$TimeInSeconds}"
         $Params = @{
-            Headers     = @{sid = $($Sid)
+            Headers              = @{sid = $($Sid)
                 Accept      = "application/json"
             }
-            Uri         = "$($PiHoleServer.OriginalString)/api/dns/blocking"
-            Method      = "Post"
-            ContentType = "application/json"
-            Body        = $Body
+            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
+            Method               = "Post"
+            ContentType          = "application/json"
+            Body                 = $Body
+            SkipCertificateCheck = $IgnoreSsl
         }
 
         $Response = Invoke-RestMethod @Params
