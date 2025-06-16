@@ -8,8 +8,10 @@ https://TODO
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )

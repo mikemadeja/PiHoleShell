@@ -96,7 +96,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -176,7 +176,7 @@ https://TODO
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -282,7 +282,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]

@@ -23,7 +23,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 1,
@@ -81,7 +81,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -136,7 +136,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 10,
@@ -204,7 +204,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
