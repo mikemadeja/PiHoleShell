@@ -62,3 +62,18 @@ jobs:
           files: output/release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Module to PowerShell Gallery
+        shell: pwsh
+        run: |
+            $apiKey = '${{ secrets.POWERSHELLGALLERY }}'
+            $modulePath = "C:\a\PiHoleShell\PiHoleShell\PiHoleShell"  # Change to your actual module folder
+            $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+            Get-Content $($manifest.fullname) -replace '0.0.0', ${{ steps.bump.outputs.new_tag }} | Out-File $manifest.fullname
+    
+            if (-not $manifest) {
+              throw "No module manifest (*.psd1) found in $modulePath"
+            }
+    
+            Write-Host "Publishing module: $($manifest.FullName)"
+            Publish-Module -Path $manifest.DirectoryName -NuGetApiKey $apiKey -Verbose
