@@ -186,5 +186,3 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleCurrentAuthSession, Remove-PiHoleAuthSession

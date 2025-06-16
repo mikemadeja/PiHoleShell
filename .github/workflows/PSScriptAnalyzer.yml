@@ -30,11 +30,11 @@ jobs:
         run: |
           (Get-ChildItem -Recurse).FullName
           Install-Module -Name PSScriptAnalyzer -Confirm:$true -Force
-          if (Test-Path -Path "C:\a\PiHoleShell\PiHoleShell\module") {
-          Invoke-ScriptAnalyzer -Path C:\a\PiHoleShell\PiHoleShell\module -Recurse -EnableExit
+          if (Test-Path -Path "C:\a\PiHoleShell\PiHoleShell\PiHoleShell") {
+          Invoke-ScriptAnalyzer -Path C:\a\PiHoleShell\PiHoleShell\PiHoleShell -Recurse -EnableExit
           }
           else {
-          Invoke-ScriptAnalyzer -Path D:\a\PiHoleShell\PiHoleShell\module -Recurse -EnableExit
+          Invoke-ScriptAnalyzer -Path D:\a\PiHoleShell\PiHoleShell\PiHoleShell -Recurse -EnableExit
           }
           
         

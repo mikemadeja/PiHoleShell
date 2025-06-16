@@ -150,5 +150,3 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleDnsBlockingStatus, Set-PiHoleDnsBlocking

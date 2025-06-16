@@ -45,5 +45,3 @@ https://TODO
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleConfig

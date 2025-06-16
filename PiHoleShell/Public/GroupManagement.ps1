@@ -338,5 +338,3 @@ https://TODO
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleGroup, New-PiHoleGroup, Update-PiHoleGroup, Remove-PiHoleGroup
