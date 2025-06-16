@@ -4,7 +4,12 @@ if ($PSVersionTable.PSEdition -ne 'Core') {
 
 # Get all .ps1 files in the 'Public' directory and dot-source them
 $PublicFunctions = Get-ChildItem -Path (Join-Path $PSScriptRoot 'Public') -Filter '*.ps1' -File
+$PrivateFunctions = Get-ChildItem -Path (Join-Path $PSScriptRoot 'Private') -Filter '*.ps1' -File
 
 foreach ($File in $PublicFunctions) {
+    . $File.FullName
+}
+
+foreach ($File in $PrivateFunctions) {
     . $File.FullName
 }
