@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p output
           ls
-          zip -r output/release.zip module
+          zip -r output/release.zip PiHoleShell
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
