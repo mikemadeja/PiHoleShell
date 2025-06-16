@@ -1,7 +1,6 @@
-if (-not $PSVersionTable -or $PSVersionTable.PSVersion.Major -lt 7) {
-    Write-Error "This script requires PowerShell 7 or higher. Current version: $($PSVersionTable.PSVersion)"
-    exit 1
+if ($PSVersionTable.PSEdition -ne 'Core') {
+    throw "PiHoleShell module only supports PowerShell Core 7+. You are using $($PSVersionTable.PSEdition) $($PSVersionTable.PSVersion)."
 }
 
-# Import all the commands
-Get-ChildItem $PSScriptRoot\functions\*.ps1 -Recurse | ForEach-Object { . $_.FullName }
+Get-ChildItem $PSScriptRoot\Private\*.ps1 -Recurse | ForEach-Object { . $_.FullName }
+Get-ChildItem $PSScriptRoot\Public\*.ps1 -Recurse | ForEach-Object { . $_.FullName }

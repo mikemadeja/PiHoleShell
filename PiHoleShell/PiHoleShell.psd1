@@ -8,16 +8,16 @@
 
     PowerShellVersion    = '7.0'
 
-    FunctionsToExport    = @('Hello-World')
+    FunctionsToExport    = @('Get-PiHoleGroup', 'New-PiHoleGroup', 'Update-PiHoleGroup', 'Remove-PiHoleGroup', 'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', 'Get-PiHoleConfig', 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession')
     CmdletsToExport      = @()
     VariablesToExport    = @()
     AliasesToExport      = @()
 
     PrivateData          = @{
         PSData = @{
-            Tags         = @('Sample', 'HelloWorld', 'PowerShell7')
-            LicenseUri   = 'https://opensource.org/licenses/MIT'
-            ProjectUri   = 'https://github.com/yourname/MyModule'
+            Tags         = @('PiHole', 'PowerShell7')
+            LicenseUri   = 'https://github.com/mikemadeja/PiHoleShell/blob/main/LICENSE'
+            ProjectUri   = 'https://github.com/mikemadeja/PiHoleShell'
             ReleaseNotes = 'Initial release targeting PowerShell 7+'
         }
     }
