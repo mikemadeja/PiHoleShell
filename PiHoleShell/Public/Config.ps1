@@ -19,7 +19,7 @@ https://TODO
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/config"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/config"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"

@@ -18,6 +18,7 @@ function Request-PiHoleAuth {
         }
 
         $Response = Invoke-RestMethod @Params -Verbose: $false
+        Write-Verbose -Message "Request-PiHoleAuth Successful!"
 
         Write-Output $Response.session.sid
     }
@@ -63,7 +64,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/auth/sessions"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/auth/sessions"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -115,7 +116,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 }
 
 function Remove-PiHoleCurrentAuthSession {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
+    #[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
     #INTERNAL FUNCTION
     [CmdletBinding()]
     param (
@@ -125,7 +126,7 @@ function Remove-PiHoleCurrentAuthSession {
     )
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/auth"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
         Method               = "Delete"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -172,7 +173,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/auth/session/$Id"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/auth/session/$Id"
             Method               = "Delete"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"

@@ -23,7 +23,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [System.URI]$PiHoleServer
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 1,
@@ -35,7 +35,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
         Write-Verbose -Message "MaxResults - $MaxResult"
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/stats/recent_blocked?count=$MaxResult"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/recent_blocked?count=$MaxResult"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -81,7 +81,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [System.URI]$PiHoleServer
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -92,7 +92,7 @@ https://TODOFINDNEWAPILINK
     Write-Verbose -Message "MaxResults - $MaxResult"
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/stats/query_types"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/stats/query_types"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -136,7 +136,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [System.URI]$PiHoleServer
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 10,
@@ -162,7 +162,7 @@ https://TODOFINDNEWAPILINK
 
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/stats/top_domains?blocked=$Blocked&count=$MaxResult"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/stats/top_domains?blocked=$Blocked&count=$MaxResult"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -204,7 +204,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [System.URI]$PiHoleServer
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -215,7 +215,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/stats/summary"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/summary"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
