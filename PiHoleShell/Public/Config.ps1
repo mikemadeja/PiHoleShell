@@ -8,8 +8,10 @@ https://TODO
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -17,7 +19,7 @@ https://TODO
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/config"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/config"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
