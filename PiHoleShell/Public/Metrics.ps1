@@ -191,7 +191,7 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
-.PARAMETER IgnoreSsl
+
 This will dump the response instead of the formatted object
 
 .PARAMETER RawOutput

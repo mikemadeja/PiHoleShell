@@ -39,6 +39,12 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole v6 server
 
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
@@ -46,7 +52,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [string]$PiHoleServer,
-        $Password,
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -143,6 +149,9 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
+
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
@@ -150,8 +159,8 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         $PiHoleServer,
-        $Password,
-        $IgnoreSsl,
+        [string]$Password,
+        [bool]$IgnoreSsl = $false,
         [int]$Id
     )
 
