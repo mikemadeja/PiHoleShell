@@ -18,7 +18,6 @@ https://TODO
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Groups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Params = @{
@@ -37,7 +36,7 @@ https://TODO
 
         else {
             $ObjectFinal = @()
-            foreach ($Item in $Response.Lists) {
+            foreach ($Item in $Response.lists) {
                 $GroupNames = [System.Collections.ArrayList]@()
                 foreach ($Group in $Item.Groups) {
                     $GroupNames += ($Groups | Where-Object { $_.Id -eq $Group }).Name
