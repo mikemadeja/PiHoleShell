@@ -51,9 +51,9 @@ function Remove-PiHoleCurrentAuthSession {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
     [CmdletBinding()]
     param (
-        $PiHoleServer,
-        $Sid,
-        $IgnoreSsl = $false
+        [System.URI]$PiHoleServer,
+        [string]$Sid,
+        [bool]$IgnoreSsl = $false
     )
     $Params = @{
         Headers              = @{sid = $($Sid) }

@@ -9,7 +9,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [System.Uri]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         $Password,
         $GroupName = $null,
