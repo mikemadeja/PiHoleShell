@@ -18,6 +18,7 @@ https://TODO
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
         $Groups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Params = @{
@@ -38,7 +39,7 @@ https://TODO
             $ObjectFinal = @()
             foreach ($Item in $Response.lists) {
                 $GroupNames = [System.Collections.ArrayList]@()
-                foreach ($Group in $Item.Groups) {
+                foreach ($Group in $Item.groups) {
                     $GroupNames += ($Groups | Where-Object { $_.Id -eq $Group }).Name
                 }
   
@@ -64,7 +65,7 @@ https://TODO
                     AbpEntries     = $Item.abp_entries
                     Status         = $Item.status
                 }
-                
+
                 $ObjectFinal += $Object
             }
 
