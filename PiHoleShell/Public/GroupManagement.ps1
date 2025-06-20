@@ -9,7 +9,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        $PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         $Password,
         $GroupName = $null,
@@ -21,7 +21,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -137,6 +137,7 @@ https://TODO
             if ($RawOutput) {
                 Write-Output $Response
             }
+
             else {
                 $ObjectFinal = @()
                 $Object = [PSCustomObject]@{

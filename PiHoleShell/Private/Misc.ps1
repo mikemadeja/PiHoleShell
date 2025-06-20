@@ -46,3 +46,28 @@ function Convert-LocalTimeToPiHoleUnixTime {
     $ObjectFinal = $Object
     Write-Output $ObjectFinal
 }
+
+function Remove-PiHoleCurrentAuthSession {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
+    [CmdletBinding()]
+    param (
+        [System.URI]$PiHoleServer,
+        [string]$Sid,
+        [bool]$IgnoreSsl = $false
+    )
+    $Params = @{
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
+        Method               = "Delete"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
+    }
+
+    try {
+        Invoke-RestMethod @Params
+    }
+
+    catch {
+        Write-Error -Message $_.Exception.Message
+    }
+}

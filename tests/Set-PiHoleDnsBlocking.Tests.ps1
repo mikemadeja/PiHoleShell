@@ -1,13 +1,27 @@
+
 # Requires -Module Pester
 Describe 'Set-PiHoleDnsBlocking' {
     BeforeAll {
+        Import-Module .\PiHoleShell\PiHoleShell.psm1
+
+        Mock -CommandName Request-PiHoleAuth -MockWith { return 'mock-sid' }
+        Mock -CommandName Invoke-RestMethod -MockWith {
+            return @{
+                blocking = 'false'
+                timer    = 60
+            }
+        }
+        Mock -CommandName Remove-PiHoleCurrentAuthSession
+        Mock -CommandName Format-PiHoleSecond -MockWith {
+            return @{ TimeInSeconds = 60 }
+        }
         # Sample input values
         $server = [uri]'http://pihole.local'
         $password = 'mock-password'
         $sid = 'mock-session-id'
 
         # Mock external functions
-        Mock -CommandName Request-PiHoleAuth -MockWith { return $sid }
+        Mock -CommandName Request-PiHoleAuth -MockWith { 'mock-sid' }
         Mock -CommandName Remove-PiHoleCurrentAuthSession
         Mock -CommandName Format-PiHoleSecond -MockWith {
             return @{ TimeInSeconds = 60 }

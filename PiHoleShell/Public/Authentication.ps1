@@ -115,32 +115,6 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 }
 
-function Remove-PiHoleCurrentAuthSession {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
-    #INTERNAL FUNCTION
-    [CmdletBinding()]
-    param (
-        $PiHoleServer,
-        $Sid,
-        $IgnoreSsl = $false
-    )
-    $Params = @{
-        Headers              = @{sid = $($Sid) }
-        Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
-        Method               = "Delete"
-        SkipCertificateCheck = $IgnoreSsl
-        ContentType          = "application/json"
-    }
-
-    try {
-        Invoke-RestMethod @Params
-    }
-
-    catch {
-        Write-Error -Message $_.Exception.Message
-    }
-}
-
 function Remove-PiHoleAuthSession {
     <#
 .SYNOPSIS
