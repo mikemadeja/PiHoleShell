@@ -42,14 +42,14 @@ https://TODO
                 foreach ($Group in $Item.groups) {
                     $GroupNames += ($Groups | Where-Object { $_.Id -eq $Group }).Name
                 }
-  
+
                 $Object = $null
                 if ($Item.date_updated -eq 0) {
                     $DateUpdated = $null
                 }
                 else {
                     $DateUpdated = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                } 
+                }
                 $Object = [PSCustomObject]@{
                     Address        = $Item.address
                     Comment        = $Item.comment
@@ -70,7 +70,7 @@ https://TODO
             }
 
             Write-Output $ObjectFinal
-            
+
         }
     }
 
