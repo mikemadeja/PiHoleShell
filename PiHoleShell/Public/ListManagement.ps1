@@ -43,28 +43,33 @@ https://TODO
                 }
   
                 $Object = $null
-                $Object = [PSCustomObject]@{
-                    Address         = $Item.address
-                    comment         = $Item.comment
-                    Groups          = $GroupNames
-                    Enabled         = $Item.enabled
-                    Id              = $Item.id
-                    date_added      = $Item.date_added
-                    date_modified   = $Item.date_modified
-                    type            = $Item.type
-                    date_updated    = $Item.date_updated
-                    number          = $Item.number
-                    invalid_domains = $Item.invalid_domains
-                    abp_entries     = $Item.abp_entries
-                    status          = $Item.status
-
+                if ($Item.date_updated -eq 0) {
+                    $DateUpdated = $null
                 }
+                else {
+                    $DateUpdated = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                } 
+                $Object = [PSCustomObject]@{
+                    Address        = $Item.address
+                    Comment        = $Item.comment
+                    Groups         = $GroupNames
+                    Enabled        = $Item.enabled
+                    Id             = $Item.id
+                    DateAdded      = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified   = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    Type           = $Item.type
+                    DateUpdated    = $DateUpdated
+                    Number         = $Item.number
+                    InvalidDomains = $Item.invalid_domains
+                    AbpEntries     = $Item.abp_entries
+                    Status         = $Item.status
+                }
+                
                 $ObjectFinal += $Object
             }
 
-            else {
-                Write-Output $ObjectFinal
-            }
+            Write-Output $ObjectFinal
+            
         }
     }
 
