@@ -1,4 +1,4 @@
-function Get-PiHoleTeleporter {
+function Get-PiHoleTeleporterDownload {
     <#
 .SYNOPSIS
 Get info about logs for webserver
