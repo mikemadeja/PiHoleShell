@@ -25,7 +25,8 @@ Get info about logs for webserver
         if (!(Test-Path -Path $FolderPath)) {
             throw "$FolderPath does not exist!"
         }
-        $OutFile = "$FolderPath\$FileName.tar.gz"
+        $FileName = "$FileName.tar.gz"
+        $OutFile = "$FolderPath\$FileName"
         if (Test-Path -Path $OutFile) {
             throw "$OutFile already exists!"
         }
@@ -47,8 +48,10 @@ Get info about logs for webserver
         else {
             $ObjectFinal = @()
             $Object = [PSCustomObject]@{
-                Backup   = "Completed"
-                FilePath = $OutFile
+                FileName   = $FileName
+                FilePath   = $OutFile
+                RootFolder = $FolderPath
+                FileSizeKB = [math]::Ceiling((Get-Item $OutFile).Length / 1KB)
             }
             $ObjectFinal += $Object
             Write-Output $ObjectFinal

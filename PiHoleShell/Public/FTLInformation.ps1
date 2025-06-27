@@ -178,7 +178,7 @@ Get info about logs for webserver
         }
 
         else {
-            $ObjectFinal = @()
+            #$ObjectFinal = @()
         }
     }
 
