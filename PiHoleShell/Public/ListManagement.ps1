@@ -177,7 +177,7 @@ https://TODO
     )
     try {
         $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
-        
+
         if ($FindMatchingList) {
             throw "List $Address already exists on $PiHoleServer! Please use Update-PiHoleList to update the list"
         }
@@ -197,7 +197,7 @@ https://TODO
                 throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
             }
         }
-        
+
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Body = @{
@@ -225,6 +225,92 @@ https://TODO
         else {
             $DateUpdated = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
         }
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+
+        else {
+            $ObjectFinal = @()
+            $Object = $null
+            foreach ($Item in $Response.lists) {
+
+                $Object = [PSCustomObject]@{
+                    Address        = $Item.address
+                    Comment        = $Item.comment
+                    Groups         = $AllGroupsNames
+                    Enabled        = $Item.enabled
+                    Id             = $Item.id
+                    DateAdded      = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified   = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    Type           = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
+                    DateUpdated    = $DateUpdated
+                    Number         = $Item.number
+                    InvalidDomains = $Item.invalid_domains
+                    AbpEntries     = $Item.abp_entries
+                    Status         = $Item.status
+                }
+                if ($Object) {
+                    $ObjectFinal += $Object
+                }
+
+            }
+            Write-Output $ObjectFinal
+        }
+    }
+
+    catch {
+        Write-Error -Message $_.Exception.Message
+        break
+    }
+
+    finally {
+        if ($Sid) {
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
+        }
+    }
+}
+
+function Remove-PiHoleList {
+    <#
+.SYNOPSIS
+https://TODO
+
+    #>
+    #Work In Progress (DOES NOT WORK)
+    [CmdletBinding()]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    param (
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
+        [bool]$IgnoreSsl = $false,
+        [System.Uri]$Address,
+        [bool]$RawOutput = $false
+    )
+    try {
+        $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
+        
+        if ($FindMatchingList) {
+            
+        }
+        
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+        Add-Type -AssemblyName System.Web
+        $List = [System.Uri]::EscapeDataString($Address)
+        Write-Verbose -Message "List: $List"
+
+        $Params = @{
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$($PiHoleServer.OriginalString)/api/lists/$List?type=block"
+            Method               = "Delete"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
+        }
+
+        $Response = Invoke-RestMethod @Params
 
         if ($RawOutput) {
             Write-Output $Response
