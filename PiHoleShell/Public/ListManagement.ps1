@@ -291,11 +291,11 @@ https://TODO
     )
     try {
         $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
-        
+
         if ($FindMatchingList) {
-            
+
         }
-        
+
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         Add-Type -AssemblyName System.Web
