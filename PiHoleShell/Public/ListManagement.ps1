@@ -299,28 +299,22 @@ https://TODO
 
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-  
-        $List = $Address
-
-
-        
         $Body = @(
             @{
-                item = $List
-                type = $Type.ToLower()  # ensure lowercase "block" or "allow"
+                item = $Address
+                type = $Type.ToLower()
             }
         )
 
+        #For some reason this needs to be here to make it an array
         $Body = , $Body
-        $JsonBody = $Body | ConvertTo-Json -Depth 3 -Compress
-        Write-Host $JsonBody
-        
+      
         $Params = @{
             Headers              = @{sid = $($Sid) }
             Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"
             Method               = "Post"
             SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 3 -Compress
+            Body                 = $Body | ConvertTo-Json -Depth 10 -Compress
             ContentType          = "application/json"
         }
 
