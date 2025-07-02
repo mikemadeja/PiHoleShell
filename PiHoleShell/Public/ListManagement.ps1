@@ -277,7 +277,7 @@ function Remove-PiHoleList {
 https://TODO
 
     #>
-    #Work In Progress (DOES NOT WORK)
+    #Work In Progress (NEED TO FINISH)
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -287,6 +287,7 @@ https://TODO
         [string]$Password,
         [bool]$IgnoreSsl = $false,
         [System.Uri]$Address,
+        [string]$Type,
         [bool]$RawOutput = $false
     )
     try {
@@ -298,15 +299,28 @@ https://TODO
 
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        Add-Type -AssemblyName System.Web
-        $List = [System.Uri]::EscapeDataString($Address)
-        Write-Verbose -Message "List: $List"
+  
+        $List = $Address
 
+
+        
+        $Body = @(
+            @{
+                item = $List
+                type = $Type.ToLower()  # ensure lowercase "block" or "allow"
+            }
+        )
+
+        $Body = , $Body
+        $JsonBody = $Body | ConvertTo-Json -Depth 3 -Compress
+        Write-Host $JsonBody
+        
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/lists/$List?type=block"
-            Method               = "Delete"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"
+            Method               = "Post"
             SkipCertificateCheck = $IgnoreSsl
+            Body                 = $Body | ConvertTo-Json -Depth 3 -Compress
             ContentType          = "application/json"
         }
 
