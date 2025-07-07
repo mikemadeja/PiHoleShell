@@ -23,6 +23,8 @@ Export-ModuleMember -Function @(
         'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', `
         #Config.ps1
         'Get-PiHoleConfig', 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', `
+        #Padd.ps1
+        'Get-PiHolePadd', `
         #Metrics.ps1
         'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsSummary', `
         #ListManagement.ps1
