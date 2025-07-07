@@ -31,8 +31,36 @@ https://TODO
             Write-Output $Response
         }
         else {
-            # $ObjectFinal = @()
-            # Write-Output $ObjectFinal | Select-Object -Unique
+            $ObjectFinal = @()
+            $Dns = [PSCustomObject]@{  
+                Upstreams = $Response.config.dns.upstreams
+            }
+
+            $Dhcp = [PSCustomObject]@{ 
+                Active               = $Response.config.dhcp.active
+                Start                = $Response.config.dhcp.start
+                End                  = $Response.config.dhcp.end
+                Hosts                = $Response.config.dhcp.hosts
+                IgnoreUnknownClients = $Response.config.dhcp.ignoreUnknownClients
+                Ipv6                 = $Response.config.dhcp.ipv6
+                LeaseTime            = $Response.config.dhcp.leaseTime
+                Logging              = $Response.config.dhcp.logging
+                MultiDNS             = $Response.config.dhcp.multiDNS
+                Netmask              = $Response.config.dhcp.netmask
+                RapidCommit          = $Response.config.dhcp.rapidCommit
+                Router               = $Response.config.dhcp.router
+            }
+
+            $Object = [PSCustomObject]@{
+                Dns  = $Dns
+                Dhcp = $Dhcp
+    
+            }
+
+            if ($Object) {
+                $ObjectFinal += $Object
+            }
+            Write-Output $ObjectFinal
         }
     }
 

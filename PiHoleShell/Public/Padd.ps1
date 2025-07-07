@@ -12,7 +12,6 @@ https://TODO
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [System.URI]$List = $null,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -72,29 +71,29 @@ https://TODO
                 HotLimit = $Response.sensors.hot_limit
                 Unit     = $Response.sensors.unit
             }
+            $Cache = [PSCustomObject]@{ 
+                Size     = $Response.cache.size
+                Inserted = $Response.cache.inserted
+                Evicted  = $Reponse.cache.evicted 
+            }
 
             $Object = [PSCustomObject]@{
                 CpuPercent    = $Response."%cpu"
                 MemoryPercent = $Response."%mem"
                 ActiveClients = $Response.active_clients
                 Blocking      = $Response.blocking
-                Cache         = [PSCustomObject]@{ 
-                    Size     = $Response.cache.size
-                    Inserted = $Response.cache.inserted
-                    Evicted  = $Reponse.cache.evicted 
-                }
+                Cache         = $Cache
                 Config        = [PSCustomObject]@{  
                     DhcpActive          = $Response.config.dhcp_active
+                    DhcpStart           = $Response.config.dhcp_start
                     DhcpEnd             = $Response.config.dhcp_end
                     DhcpIpv6            = $Response.config.dhcp_ipv6
-                    DhcpStart           = $Response.config.dhcp_start
                     DnsDnssec           = $Response.config.dns_dnssec
                     DnsDomain           = $Response.config.dns_domain
                     DnsNumUpstreams     = $Response.config.dns_num_upstreams
                     DnsPort             = $Response.config.dns_port
                     DnsrevServerAactive = $Response.config.dns_revServer_active
                     PrivacyLevel        = $Response.config.privacy_level
-
                 }
                 GravitySize   = $Response.gravity_size
                 HostModel     = $Response.host_model
