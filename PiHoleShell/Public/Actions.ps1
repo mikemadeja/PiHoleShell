@@ -5,7 +5,7 @@ https://TODO
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -26,7 +26,9 @@ https://TODO
             ContentType          = "application/json"
         }
 
-        $Response = Invoke-RestMethod @Params
+        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Update gravity actions")) {
+            $Response = Invoke-RestMethod @Params
+        }
 
         if ($RawOutput) {
             Write-Output $Response
