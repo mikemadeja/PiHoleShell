@@ -278,7 +278,7 @@ https://TODO
 
     #>
     #Work In Progress (NEED TO FINISH)
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -291,64 +291,68 @@ https://TODO
         [bool]$RawOutput = $false
     )
     try {
-        $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
+        $Target = "Pi-Hole list $Address of type $Type"
+        if ($PSCmdlet.ShouldProcess($Target, "Remove list")) {
+            $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
 
-        if ($FindMatchingList) {
-
-        }
-
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Body = @(
-            @{
-                item = $Address
-                type = $Type.ToLower()
-            }
-        )
-
-        #For some reason this needs to be here to make it an array
-        $Body = , $Body
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"
-            Method               = "Post"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10 -Compress
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-
-        else {
-            $ObjectFinal = @()
-            $Object = $null
-            foreach ($Item in $Response.lists) {
-
-                $Object = [PSCustomObject]@{
-                    Address        = $Item.address
-                    Comment        = $Item.comment
-                    Groups         = $AllGroupsNames
-                    Enabled        = $Item.enabled
-                    Id             = $Item.id
-                    DateAdded      = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified   = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    Type           = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
-                    DateUpdated    = $DateUpdated
-                    Number         = $Item.number
-                    InvalidDomains = $Item.invalid_domains
-                    AbpEntries     = $Item.abp_entries
-                    Status         = $Item.status
-                }
-                if ($Object) {
-                    $ObjectFinal += $Object
-                }
+            if ($FindMatchingList) {
 
             }
-            Write-Output $ObjectFinal
+
+            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+            $Body = @(
+                @{
+                    item = $Address
+                    type = $Type.ToLower()
+                }
+            )
+
+            #For some reason this needs to be here to make it an array
+            $Body = , $Body
+            $Params = @{
+                Headers              = @{sid = $($Sid) }
+                Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"
+                Method               = "Post"
+                SkipCertificateCheck = $IgnoreSsl
+                Body                 = $Body | ConvertTo-Json -Depth 10 -Compress
+                ContentType          = "application/json"
+            }
+
+            $Response = Invoke-RestMethod @Params
+
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+
+            else {
+                $ObjectFinal = @()
+                $Object = $null
+                foreach ($Item in $Response.lists) {
+
+                    $Object = [PSCustomObject]@{
+                        Address        = $Item.address
+                        Comment        = $Item.comment
+                        Groups         = $AllGroupsNames
+                        Enabled        = $Item.enabled
+                        Id             = $Item.id
+                        DateAdded      = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                        DateModified   = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                        Type           = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
+                        DateUpdated    = $DateUpdated
+                        Number         = $Item.number
+                        InvalidDomains = $Item.invalid_domains
+                        AbpEntries     = $Item.abp_entries
+                        Status         = $Item.status
+                    }
+                    if ($Object) {
+                        $ObjectFinal += $Object
+                    }
+
+                }
+                Write-Output $ObjectFinal
+            }
+
         }
     }
 
