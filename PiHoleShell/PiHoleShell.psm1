@@ -16,7 +16,7 @@ foreach ($File in $PrivateFunctions) {
 
 Export-ModuleMember -Function @(
     #Actions.ps1
-    'Update-PiHoleActionsGravity' `
+    'Update-PiHoleActionsGravity', 'Restart-PiHoleDns' `
         #Authentication.ps1
         'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', `
         #GroupManagement.ps1

@@ -17,7 +17,7 @@ How many results should be returned
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 20
+Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Password "APIPASSWORD" -MaxResult 20
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -198,7 +198,7 @@ This will dump the response instead of the formatted object
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "APIPASSWORD"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

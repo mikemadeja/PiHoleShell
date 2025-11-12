@@ -1,10 +1,21 @@
 function Get-PiHolePadd {
     <#
 .SYNOPSIS
-https://TODO
+Methods used to query Pi-hole from PADD
 
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
+
+.EXAMPLE
+Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "APIPASSWORD"
     #>
-    #Work In Progress
+
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (

@@ -16,7 +16,7 @@ Ignore SSL when interacting with the PiHole API
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Password "APIPASSWORD"
     #>
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -89,7 +89,7 @@ How long should the opposite setting last, if you do not set a time, it will be 
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -Blocking $false -TimeInSeconds 60
+Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "APIPASSWORD" -Blocking $false -TimeInSeconds 60
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
