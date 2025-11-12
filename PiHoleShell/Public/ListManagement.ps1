@@ -308,7 +308,6 @@ https://TODO
 
         #For some reason this needs to be here to make it an array
         $Body = , $Body
-      
         $Params = @{
             Headers              = @{sid = $($Sid) }
             Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"

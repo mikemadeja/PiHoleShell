@@ -43,38 +43,38 @@ https://TODO
                 Value = $Response.iface.v4.tx_bytes.value
                 Unit  = $Response.iface.v4.tx_bytes.unit
             }
-            $IFaceV4 = [PSCustomObject]@{  
+            $IFaceV4 = [PSCustomObject]@{
                 Addr     = $Response.iface.v4.addr
                 RxBytes  = $IFaceV4RxBytes
                 TxBytes  = $IFaceV4TxBytes
-                NumAddrs = $Response.iface.v4.num_addrs 
+                NumAddrs = $Response.iface.v4.num_addrs
                 Name     = $Response.iface.v4.name
                 GwAddr   = $Response.iface.v4.gw_addr
             }
-            $IFaceV6 = [PSCustomObject]@{  
+            $IFaceV6 = [PSCustomObject]@{
                 Addr     = $Response.iface.v6.addr
                 NumAddrs = $Response.iface.v6.num_addrs
                 Name     = $Response.iface.v6.name
                 GwAddr   = $Response.iface.b6.gw_addr
             }
-            $IFace = [PSCustomObject]@{ 
-                v4 = $IfaceV4 
+            $IFace = [PSCustomObject]@{
+                v4 = $IfaceV4
                 v6 = $IfaceV6
             }
-            $Queries = [PSCustomObject]@{ 
+            $Queries = [PSCustomObject]@{
                 Total          = $Response.queries.total
                 Blocked        = $Response.queries.blocked
                 PercentBlocked = $Response.queries.percent_blocked
             }
-            $Sensors = [PSCustomObject]@{ 
+            $Sensors = [PSCustomObject]@{
                 CpuTemp  = $Response.sensors.cpu_temp
                 HotLimit = $Response.sensors.hot_limit
                 Unit     = $Response.sensors.unit
             }
-            $Cache = [PSCustomObject]@{ 
+            $Cache = [PSCustomObject]@{
                 Size     = $Response.cache.size
                 Inserted = $Response.cache.inserted
-                Evicted  = $Reponse.cache.evicted 
+                Evicted  = $Reponse.cache.evicted
             }
 
             $Object = [PSCustomObject]@{
@@ -83,7 +83,7 @@ https://TODO
                 ActiveClients = $Response.active_clients
                 Blocking      = $Response.blocking
                 Cache         = $Cache
-                Config        = [PSCustomObject]@{  
+                Config        = [PSCustomObject]@{
                     DhcpActive          = $Response.config.dhcp_active
                     DhcpStart           = $Response.config.dhcp_start
                     DhcpEnd             = $Response.config.dhcp_end

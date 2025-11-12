@@ -32,11 +32,11 @@ https://TODO
         }
         else {
             $ObjectFinal = @()
-            $Dns = [PSCustomObject]@{  
+            $Dns = [PSCustomObject]@{
                 Upstreams = $Response.config.dns.upstreams
             }
 
-            $Dhcp = [PSCustomObject]@{ 
+            $Dhcp = [PSCustomObject]@{
                 Active               = $Response.config.dhcp.active
                 Start                = $Response.config.dhcp.start
                 End                  = $Response.config.dhcp.end
@@ -54,7 +54,6 @@ https://TODO
             $Object = [PSCustomObject]@{
                 Dns  = $Dns
                 Dhcp = $Dhcp
-    
             }
 
             if ($Object) {
