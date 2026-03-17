@@ -47,45 +47,27 @@ function Convert-LocalTimeToPiHoleUnixTime {
     Write-Output $ObjectFinal
 }
 
-# function Test-HttpPrefixForPiHole {
-#     param (
-#         [Parameter(Mandatory)]
-#         [string]$Url
-#     )
+function Remove-PiHoleCurrentAuthSession {
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
+    [CmdletBinding()]
+    param (
+        [System.URI]$PiHoleServer,
+        [string]$Sid,
+        [bool]$IgnoreSsl = $false
+    )
+    $Params = @{
+        Headers              = @{sid = $($Sid) }
+        Uri                  = "$($PiHoleServer.OriginalString)/api/auth"
+        Method               = "Delete"
+        SkipCertificateCheck = $IgnoreSsl
+        ContentType          = "application/json"
+    }
 
-#     Write-Output ($Url -match '^https?://')
-# }
+    try {
+        Invoke-RestMethod @Params
+    }
 
-# function Test-PiHoleServerAccess {
-#     param (
-#         [Parameter(Mandatory)]
-#         [string]$Url,
-#         [bool]$IgnoreSsl = $false
-#     )
-
-#     if (Test-HttpPrefixForPiHole -Url $Url) {
-#         $RawOutput = Invoke-WebRequest -Uri "$Url/admin/login" -Method Head -TimeoutSec 5 -ErrorAction Stop -SkipCertificateCheck
-#     }
-# }
-
-# function Convert-EnabledBoolToString {
-#     param (
-#         [bool]$Bool
-#     )
-
-#     switch ($Bool) {
-#         $false {
-#             $Enabled = "false"
-#         }
-#         $true {
-#             $Enabled = "true"
-#         }
-#     }
-
-#     $Object = [PSCustomObject]@{
-#         Bool = $Enabled
-#     }
-
-#     Write-Output $Object
-
-# }
+    catch {
+        Write-Error -Message $_.Exception.Message
+    }
+}

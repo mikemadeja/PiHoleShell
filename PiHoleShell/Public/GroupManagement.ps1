@@ -9,7 +9,7 @@ https://TODO
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        $PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         $Password,
         $GroupName = $null,
@@ -21,7 +21,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -44,7 +44,7 @@ https://TODO
                     Id           = $Item.id
                     DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
                     DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    
+
                 }
                 Write-Verbose -Message "Name - $($Item.name)"
                 Write-Verbose -Message "Comment - $($Item.comment)"
@@ -64,7 +64,7 @@ https://TODO
                     Write-Warning "Did not find $GroupName on $PiHoleServer"
                 }
             }
-            
+
             else {
                 Write-Output $ObjectFinal
             }
@@ -92,10 +92,11 @@ https://TODO
     #>
     #Work In Progress
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -104,7 +105,7 @@ https://TODO
         [bool]$Enabled = $true,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
@@ -121,21 +122,22 @@ https://TODO
                 enabled = $Enabled
                 name    = $GroupName
             }
-    
+
             $Params = @{
                 Headers              = @{sid = $($Sid) }
-                Uri                  = "$PiHoleServer/api/groups"
+                Uri                  = "$($PiHoleServer.OriginalString)/api/groups"
                 Method               = "Post"
                 SkipCertificateCheck = $IgnoreSsl
                 ContentType          = "application/json"
                 Body                 = $Body | ConvertTo-Json -Depth 10
             }
-    
+
             $Response = Invoke-RestMethod @Params
-    
+
             if ($RawOutput) {
                 Write-Output $Response
             }
+
             else {
                 $ObjectFinal = @()
                 $Object = [PSCustomObject]@{
@@ -171,11 +173,11 @@ https://TODO
 
     #>
     #Work In Progress
-    [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
@@ -184,7 +186,7 @@ https://TODO
         [bool]$Enabled,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     #Enabled is weird here.. look into it
     try {
@@ -193,7 +195,7 @@ https://TODO
         $Body = @{
             name = $GroupName
         }
- 
+
         $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
 
         if ($Comment -eq $null -and $Enabled -eq $null) {
@@ -213,13 +215,13 @@ https://TODO
         }
         else {
             switch ($GetGroupStatus) {
-                "True" { 
-                    $true 
+                "True" {
+                    $true
                 }
                 "False" {
                     $false
                 }
-            } 
+            }
 
             $Body += @{
                 enabled = $GetGroupStatus
@@ -228,7 +230,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups/$GroupName"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
             Method               = "Put"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -277,17 +279,18 @@ https://TODO
     #>
     #Work In Progress
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [Parameter(Mandatory = $true)]
         [string]$GroupName,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-  
+
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
@@ -298,7 +301,7 @@ https://TODO
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/groups/$GroupName"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
             Method               = "Delete"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -336,5 +339,3 @@ https://TODO
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleGroup, New-PiHoleGroup, Update-PiHoleGroup, Remove-PiHoleGroup

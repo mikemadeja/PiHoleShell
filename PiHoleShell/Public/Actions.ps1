@@ -1,37 +1,46 @@
-function Get-PiHoleConfig {
+function Update-PiHoleActionsGravity {
     <#
 .SYNOPSIS
 https://TODO
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
-        [bool]$RawOutput
+        [bool]$RawOutput = $false
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        Write-Verbose -Message "MaxResults - $MaxResult"
+
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/config"
-            Method               = "Get"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/action/gravity"
+            Method               = "Post"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
         }
 
-        $Response = Invoke-RestMethod @Params
+        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Update gravity actions")) {
+            $Response = Invoke-RestMethod @Params
+        }
 
         if ($RawOutput) {
             Write-Output $Response
         }
+
         else {
-            # $ObjectFinal = @()
-            # Write-Output $ObjectFinal | Select-Object -Unique
+            $ObjectFinal = @()
+            $Object = $null
+            if ($Object) {
+                $ObjectFinal += $Object
+            }
+            Write-Output $ObjectFinal
         }
     }
 
@@ -46,5 +55,3 @@ https://TODO
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleConfig

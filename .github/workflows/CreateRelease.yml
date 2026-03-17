@@ -1,0 +1,96 @@
+name: Auto Release on Merge from Develop to Main (Ubuntu)
+permissions:
+  contents: write
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && github.event.pull_request.head.ref == 'develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code (full history & tags)
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git config
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          git fetch --tags
+          latestTag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag: $latestTag"
+          echo "latest_tag=$latestTag" >> $GITHUB_OUTPUT
+
+      - name: Calculate next tag (patch bump)
+        id: bump
+        run: |
+          version="${{ steps.get_tag.outputs.latest_tag }}"
+          version=${version#v}
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          newTag="v$major.$minor.$patch"
+          echo "New tag: $newTag"
+          echo "new_tag=$newTag" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        run: |
+          git tag ${{ steps.bump.outputs.new_tag }}
+          git push origin ${{ steps.bump.outputs.new_tag }}
+
+      - name: Zip folder
+        shell: pwsh
+        run: |
+            $modulePath = "PiHoleShell"
+            $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+        
+            if (-not $manifest) {
+              throw "No module manifest (*.psd1) found in $modulePath"
+            }
+        
+            $version = $env:NEW_TAG -replace '^v', ''
+            (Get-Content $manifest.FullName) -replace '0.0.0', $version | Set-Content $manifest.FullName
+            Write-Host "Replacing 0.0.0 with $version in $($manifest.FullName)"
+            
+            mkdir -p output
+            zip -r output/release.zip PiHoleShell
+        env:
+            NEW_TAG: ${{ steps.bump.outputs.new_tag }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.bump.outputs.new_tag }}
+          name: "Release ${{ steps.bump.outputs.new_tag }}"
+          files: output/release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish Module to PowerShell Gallery
+        shell: pwsh
+        run: |
+            $apiKey = '${{ secrets.POWERSHELLGALLERY }}'
+            $modulePath = "PiHoleShell"  # Change to your actual module folder
+            $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+
+            (Get-Content $($manifest.fullname)) -replace '0.0.0', ($ENV:TAG -replace "v", "") | Out-File $manifest.fullname
+            Write-Host "Replacing 0.0.0 with $ENV:NEW_TAG"
+    
+            if (-not $manifest) {
+              throw "No module manifest (*.psd1) found in $modulePath"
+            }
+    
+            Write-Host "Publishing module: $($manifest.FullName)"
+            Publish-Module -Path $manifest.DirectoryName -NuGetApiKey $apiKey -Verbose
+        env:
+          NEW_TAG: ${{ steps.bump.outputs.new_tag }}

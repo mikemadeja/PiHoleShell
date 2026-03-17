@@ -23,7 +23,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 1,
@@ -35,7 +35,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
         Write-Verbose -Message "MaxResults - $MaxResult"
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/stats/recent_blocked?count=$MaxResult"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/recent_blocked?count=$MaxResult"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -81,7 +81,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -92,7 +92,7 @@ https://TODOFINDNEWAPILINK
     Write-Verbose -Message "MaxResults - $MaxResult"
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/stats/query_types"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/stats/query_types"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -136,7 +136,7 @@ https://TODOFINDNEWAPILINK
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [int]$MaxResult = 10,
@@ -162,7 +162,7 @@ https://TODOFINDNEWAPILINK
 
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/stats/top_domains?blocked=$Blocked&count=$MaxResult"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/stats/top_domains?blocked=$Blocked&count=$MaxResult"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -191,7 +191,7 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
-.PARAMETER IgnoreSsl
+
 This will dump the response instead of the formatted object
 
 .PARAMETER RawOutput
@@ -204,7 +204,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
-        [string]$PiHoleServer,
+        [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
@@ -215,7 +215,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/stats/summary"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/summary"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -254,18 +254,18 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
                     Gravity              = $Response.queries.status.GRAVITY
                     Forwarded            = $Response.queries.status.FORWARDED
                     Cache                = $Response.queries.status.CACHE
-                    Regex                = $Response.queries.status.REGEX 
+                    Regex                = $Response.queries.status.REGEX
                     DenyList             = $Response.queries.status.DENYLIST
                     ExternalBlockedIp    = $Response.queries.status.EXTERNAL_BLOCKED_IP
                     ExternalBlockedNull  = $Response.queries.status.EXTERNAL_BLOCKED_NULL
                     ExternalBlockedNxra  = $Response.queries.status.EXTERNAL_BLOCKED_NXRA
                     GravityCname         = $Response.queries.status.GRAVITY_CNAME
-                    RegexCname           = $Response.queries.status.REGEX_CNAME 
-                    DenyListCname        = $Response.queries.status.DENYLIST_CNAME   
-                    Retired              = $Response.queries.status.RETRIED   
-                    RetiredDnssec        = $Response.queries.status.RETRIED_DNSSEC 
-                    InProgress           = $Response.queries.status.IN_PROGRESS 
-                    Dbbusy               = $Response.queries.status.DBBUSY    
+                    RegexCname           = $Response.queries.status.REGEX_CNAME
+                    DenyListCname        = $Response.queries.status.DENYLIST_CNAME
+                    Retired              = $Response.queries.status.RETRIED
+                    RetiredDnssec        = $Response.queries.status.RETRIED_DNSSEC
+                    InProgress           = $Response.queries.status.IN_PROGRESS
+                    Dbbusy               = $Response.queries.status.DBBUSY
                     SpecialDomain        = $Response.queries.status.SPECIAL_DOMAIN
                     CacheStale           = $Response.queries.status.CACHE_STALE
                     ExternalBlockedEde15 = $Response.queries.status.EXTERNAL_BLOCKED_EDE15
@@ -303,5 +303,3 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleStatsRecentBlocked, Get-PiHoleStatsQueryType, Get-PiHoleStatsTopDomain, Get-PiHoleStatsSummary

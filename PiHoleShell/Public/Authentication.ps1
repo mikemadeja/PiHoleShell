@@ -18,7 +18,8 @@ function Request-PiHoleAuth {
         }
 
         $Response = Invoke-RestMethod @Params -Verbose: $false
-        
+        Write-Verbose -Message "Request-PiHoleAuth Successful!"
+
         Write-Output $Response.session.sid
     }
 
@@ -39,14 +40,22 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole v6 server
 
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        [string]$PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -55,7 +64,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     $Params = @{
         Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/auth/sessions"
+        Uri                  = "$($PiHoleServer.OriginalString)/api/auth/sessions"
         Method               = "Get"
         SkipCertificateCheck = $IgnoreSsl
         ContentType          = "application/json"
@@ -106,32 +115,6 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 }
 
-function Remove-PiHoleCurrentAuthSession {
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
-    #INTERNAL FUNCTION
-    [CmdletBinding()]
-    param (
-        $PiHoleServer,
-        $Sid,
-        $IgnoreSsl = $false
-    )
-    $Params = @{
-        Headers              = @{sid = $($Sid) }
-        Uri                  = "$PiHoleServer/api/auth"
-        Method               = "Delete"
-        SkipCertificateCheck = $IgnoreSsl
-        ContentType          = "application/json"
-    }
-
-    try {
-        Invoke-RestMethod @Params
-    }
-
-    catch {
-        Write-Error -Message $_.Exception.Message
-    }
-}
-
 function Remove-PiHoleAuthSession {
     <#
 .SYNOPSIS
@@ -143,15 +126,20 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
+
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
-        $IgnoreSsl,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
+        [bool]$IgnoreSsl = $false,
         [int]$Id
     )
 
@@ -159,7 +147,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/auth/session/$Id"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/auth/session/$Id"
             Method               = "Delete"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -186,5 +174,3 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleCurrentAuthSession, Remove-PiHoleAuthSession

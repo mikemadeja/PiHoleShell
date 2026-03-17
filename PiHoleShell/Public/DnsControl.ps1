@@ -1,13 +1,16 @@
 function Get-PiHoleDnsBlockingStatus {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/development-v6/docs/#get-/dns/blocking
+Get current blocking status
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
 
 .PARAMETER Password
 The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Ignore SSL when interacting with the PiHole API
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
@@ -17,8 +20,10 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     #>
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -27,7 +32,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/dns/blocking"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
             Method               = "Get"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl
@@ -63,7 +68,6 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     }
 }
 
-
 function Set-PiHoleDnsBlocking {
     <#
 .SYNOPSIS
@@ -91,8 +95,10 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [ValidateSet("True", "False")]
         $Blocking,
         [int]$TimeInSeconds = $null,
@@ -103,17 +109,18 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $Blocking = $Blocking.ToLower()
+        $Body = @{
+            blocking = $Blocking
+            timer    = $TimeInSeconds
+        }
 
-        $Body = "{`"blocking`":$Blocking,`"timer`":$TimeInSeconds}"
         $Params = @{
-            Headers     = @{sid = $($Sid)
-                Accept      = "application/json"
-            }
-            Uri         = "$PiHoleServer/api/dns/blocking"
-            Method      = "Post"
-            ContentType = "application/json"
-            Body        = $Body
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
+            Method               = "Post"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
+            Body                 = $Body | ConvertTo-Json -Depth 10
         }
 
         $Response = Invoke-RestMethod @Params
@@ -133,7 +140,6 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
             }
             Write-Output $ObjectFinal
         }
-
     }
 
     catch {
@@ -146,5 +152,3 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
         }
     }
 }
-
-Export-ModuleMember -Function Get-PiHoleDnsBlockingStatus, Set-PiHoleDnsBlocking
