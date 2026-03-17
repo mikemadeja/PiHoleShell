@@ -56,7 +56,7 @@ https://TODO
     }
 }
 
-function Invoke-PiHoleFlushLogs {
+function Invoke-PiHoleFlushLog {
     <#
 .SYNOPSIS
 https://dns1.local:8489/api/docs/#post-/action/flush/logs
