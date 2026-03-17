@@ -3,11 +3,7 @@ A PowerShell module for PiHole v6 API.
 
 ## Installation
 
-It is recommended to pull this down as a git and pull down updates from main as this is activly developed before it becomes released
-
-To import this module, you can do ```Import-Module .\PiHoleShell.psm1``` in the directory of PiHoleShell
-
-To remove the module, you can do ```Remove-Module PiHoleShell```
+It is recommended to install this from https://www.powershellgallery.com/packages/PiHoleShell
 
 ## Contributions
 
@@ -28,11 +24,9 @@ Copy your password, then click Enable new app password.
 <img src="docs\images\configure_app_password.png" alt="drawing" width="450"/>
 
 ```
-PS CD D:\PiHoleShell
+PS Install-Module -Name PiHoleShell
 
-PS Import-Module .\PiHoleShell.psm1
-
-PS D:\PiHoleShell> Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD"
+PS Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD"
 
 Blocking Timer
 -------- -----
