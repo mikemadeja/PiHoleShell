@@ -124,7 +124,7 @@ Invoke-PiHoleFlushLogs -PiHoleServer "http://pihole.domain.com:8080" -Password "
     }
 }
 
-function Invoke-PiHoleRestartDns {
+function Restart-PiHoleDnsService {
     <#
 .SYNOPSIS
 https://dns3.local:8489/api/docs/#post-/action/restartdns
