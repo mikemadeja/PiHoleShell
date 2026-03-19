@@ -28,7 +28,7 @@ Export-ModuleMember -Function @(
         #Padd.ps1
         'Get-PiHolePadd', `
         #Metrics.ps1
-        'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsSummary', `
+        'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsSummary', 'Get-PiHoleStatsTopClient' `
         #ListManagement.ps1
         'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', `
         #FTLInformation.ps1
