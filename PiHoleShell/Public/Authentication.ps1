@@ -32,7 +32,7 @@ function Request-PiHoleAuth {
 function Get-PiHoleCurrentAuthSession {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/development-v6/docs/#get-/auth
+https://ftl.pi-hole.net/master/docs/#get-/auth
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -118,7 +118,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 function Remove-PiHoleAuthSession {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/development-v6/docs/#get-/auth
+https://ftl.pi-hole.net/master/docs/#get-/auth
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
