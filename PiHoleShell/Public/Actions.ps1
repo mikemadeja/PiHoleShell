@@ -1,7 +1,7 @@
 function Update-PiHoleActionsGravity {
     <#
 .SYNOPSIS
-https://TODO
+https://ftl.pi-hole.net/master/docs/#post-/action/gravity
 
     #>
     #Work In Progress
@@ -56,10 +56,10 @@ https://TODO
     }
 }
 
-function Invoke-PiHoleFlushLog {
+function Invoke-PiHoleFlushNetwork {
     <#
 .SYNOPSIS
-https://dns1.local:8489/api/docs/#post-/action/flush/logs
+https://ftl.pi-hole.net/master/docs/#post-/action/flush/network
 
 .DESCRIPTION
 Flushes the Pi-hole log file (/var/log/pihole/pihole.log).
@@ -77,7 +77,7 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Invoke-PiHoleFlushLogs -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Flushes PiHole logs')]
