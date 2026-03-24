@@ -76,7 +76,7 @@ This API hook returns a collection of host infos.
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/info/host')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -141,7 +141,7 @@ Get info about logs for webserver
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/logs/webserver')] 
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]

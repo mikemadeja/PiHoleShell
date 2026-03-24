@@ -1,7 +1,7 @@
 function Get-PiHoleDnsBlockingStatus {
     <#
 .SYNOPSIS
-Get current blocking status
+https://ftl.pi-hole.net/master/docs/#get-/config
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -53,7 +53,6 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
             $ObjectFinal += $Object
             Write-Output $ObjectFinal
         }
-
     }
 
     catch {
@@ -71,7 +70,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
 function Set-PiHoleDnsBlocking {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/development-v6/docs/#post-/dns/blocking
+https://ftl.pi-hole.net/master/docs/#get-/dns/blocking
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"

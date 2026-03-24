@@ -1,7 +1,6 @@
 function Get-PiHoleStatsRecentBlocked {
     <#
 .SYNOPSIS
-Get most recently blocked domain
 Request most recently blocked domain
 
 .PARAMETER PiHoleServer
@@ -19,7 +18,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 20
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/recent_blocked')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]

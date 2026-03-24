@@ -1,11 +1,23 @@
 function Get-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Get lists
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/lists/-list-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -89,11 +101,23 @@ https://TODO
 function Search-PiHoleListDomain {
     <#
 .SYNOPSIS
-https://TODO
+Search domains in Pi-hole's lists
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/search/-domain-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -154,11 +178,23 @@ https://TODO
 function Add-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Add new list
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -274,11 +310,23 @@ https://TODO
 function Remove-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Deletes multiple lists in the lists object.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted objec
 
     #>
     #Work In Progress (NEED TO FINISH)
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists-batchDelete')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -328,8 +376,8 @@ https://TODO
             else {
                 $ObjectFinal = @()
                 $Object = $null
+                
                 foreach ($Item in $Response.lists) {
-
                     $Object = [PSCustomObject]@{
                         Address        = $Item.address
                         Comment        = $Item.comment
@@ -348,11 +396,10 @@ https://TODO
                     if ($Object) {
                         $ObjectFinal += $Object
                     }
-
                 }
+
                 Write-Output $ObjectFinal
             }
-
         }
     }
 

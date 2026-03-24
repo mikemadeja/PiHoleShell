@@ -1,11 +1,10 @@
 function Get-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Get groups
 
     #>
-    #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/groups/-name-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -87,11 +86,10 @@ https://TODO
 function New-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Creates a new group in the groups object.
 
     #>
-    #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/groups')]
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -169,12 +167,24 @@ https://TODO
 function Update-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Items may be updated by replacing them.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
 
     #>
-    #Work In Progress
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/groups/-name-')]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
@@ -274,11 +284,23 @@ https://TODO
 function Remove-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Delete group
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
 
     #>
     #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/groups/-name-')]
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (

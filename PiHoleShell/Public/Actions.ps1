@@ -1,11 +1,11 @@
 function Update-PiHoleActionsGravity {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#post-/action/gravity
+Update Pi-hole's adlists by running pihole -g. The output of the process is streamed with chunked encoding. Use the optional color query parameter to include ANSI color escape codes in the output.
 
     #>
     #Work In Progress
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/gravity')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -59,7 +59,7 @@ https://ftl.pi-hole.net/master/docs/#post-/action/gravity
 function Invoke-PiHoleFlushNetwork {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#post-/action/flush/network
+Flushes the network table. This includes removing both all known devices and their associated addresses.
 
 .DESCRIPTION
 Flushes the Pi-hole log file (/var/log/pihole/pihole.log).
@@ -79,7 +79,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/flush/network')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Flushes PiHole logs')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -127,7 +127,7 @@ Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Passwor
 function Restart-PiHoleDnsService {
     <#
 .SYNOPSIS
-https://dns3.local:8489/api/docs/#post-/action/restartdns
+Restarts the pihole-FTL service
 
 .DESCRIPTION
 Restarts the Pi-hole DNS resolver (FTL).
@@ -147,7 +147,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/restartdns')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Restarts PiHole DNS')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (

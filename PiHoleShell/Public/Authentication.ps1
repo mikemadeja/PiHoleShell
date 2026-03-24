@@ -32,7 +32,7 @@ function Request-PiHoleAuth {
 function Get-PiHoleCurrentAuthSession {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/auth
+List of all current sessions including their validity and further information about the client such as the IP address and user agent.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -49,7 +49,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
     #>
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/auth/sessions')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -118,7 +118,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 function Remove-PiHoleAuthSession {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/auth
+Using this endpoint, a session can be deleted by its ID.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -134,6 +134,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/auth/session/-id-')]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
