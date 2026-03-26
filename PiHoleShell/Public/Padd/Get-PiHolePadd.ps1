@@ -78,8 +78,8 @@ https://TODO
             }
 
             $Object = [PSCustomObject]@{
-                CpuPercent    = [math]::Round([double]$Response."%cpu", 2)
-                MemoryPercent = [math]::Round([double]$Response."%mem", 2)
+                CpuPercent    = [math]::Round([double]$Response."cpu", 2)
+                MemoryPercent = [math]::Round([double]$Response."mem", 2)
                 ActiveClients = $Response.active_clients
                 Blocking      = $Response.blocking
                 Cache         = $Cache
