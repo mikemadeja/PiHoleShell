@@ -25,8 +25,8 @@ Copy your password, then click Enable new app password.
 
 ```
 PS Install-Module -Name PiHoleShell
-
-PS Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD"
+PS Import-Module -Name PiHoleShell
+PS Get-PiHoleDnsBlockingStatus -PiHoleServer http://PIHOLESERVER.DOMAIN.COM -Password "APPPASSWORD" -IgnoreSsl:$true
 
 Blocking Timer
 -------- -----
