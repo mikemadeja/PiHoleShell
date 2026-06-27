@@ -67,7 +67,7 @@ This will dump the response instead of the formatted objec
             else {
                 $ObjectFinal = @()
                 $Object = $null
-                
+
                 foreach ($Item in $Response.lists) {
                     $Object = [PSCustomObject]@{
                         Address        = $Item.address

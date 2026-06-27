@@ -58,17 +58,8 @@ This will dump the response instead of the formatted object
             }
         }
         else {
-            switch ($GetGroupStatus) {
-                "True" {
-                    $true
-                }
-                "False" {
-                    $false
-                }
-            }
-
             $Body += @{
-                enabled = $GetGroupStatus
+                enabled = $GetGroupName.Enabled
             }
         }
 
