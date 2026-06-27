@@ -1,7 +1,7 @@
 function Get-PiHoleConfig {
     <#
 .SYNOPSIS
-https://TODO
+https://ftl.pi-hole.net/master/docs/#get-/config
 
     #>
     #Work In Progress
