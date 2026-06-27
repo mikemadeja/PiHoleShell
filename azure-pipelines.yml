@@ -1,0 +1,45 @@
+trigger: none
+
+pool: YOUR_AGENT_POOL
+
+variables:
+  - group: pihole-secrets
+
+steps:
+  - checkout: self
+    fetchDepth: 1
+
+  - task: PowerShell@2
+    displayName: Install Pester
+    inputs:
+      targetType: inline
+      script: |
+        if (-not (Get-Module -ListAvailable -Name Pester | Where-Object { $_.Version -ge [version]'5.0' })) {
+          Install-Module -Name Pester -Force -SkipPublisherCheck -MinimumVersion 5.0
+        }
+
+  - task: PowerShell@2
+    displayName: Run PiHole Integration Tests
+    env:
+      PIHOLE_SERVER: $(PIHOLE_SERVER)
+      PIHOLE_PASSWORD: $(PIHOLE_PASSWORD)
+    inputs:
+      targetType: inline
+      workingDirectory: $(Build.SourcesDirectory)
+      script: |
+        $config = New-PesterConfiguration
+        $config.Run.Path = '.\tests\Integration'
+        $config.Run.Exit = $true
+        $config.TestResult.Enabled = $true
+        $config.TestResult.OutputPath = '$(Build.ArtifactStagingDirectory)\TestResults.xml'
+        $config.TestResult.OutputFormat = 'NUnitXml'
+        $config.Output.Verbosity = 'Detailed'
+        Invoke-Pester -Configuration $config
+
+  - task: PublishTestResults@2
+    displayName: Publish Test Results
+    condition: always()
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: '$(Build.ArtifactStagingDirectory)\TestResults.xml'
+      failTaskOnFailedTests: true

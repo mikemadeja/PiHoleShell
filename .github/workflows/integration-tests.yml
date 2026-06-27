@@ -1,0 +1,81 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches: [ "develop", "main" ]
+
+jobs:
+  integration-tests:
+    name: PiHole Integration Tests (Azure DevOps)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Azure DevOps pipeline
+        id: trigger
+        env:
+          AZDO_PAT: ${{ secrets.AZDO_PAT }}
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          AUTH="Basic $(echo -n ":$AZDO_PAT" | base64 -w 0)"
+
+          RESPONSE=$(curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: $AUTH" \
+            "https://dev.azure.com/YOUR_ORG/YOUR_PROJECT/_apis/pipelines/YOUR_PIPELINE_ID/runs?api-version=7.1" \
+            -d "$(jq -n --arg ref "refs/heads/$BRANCH" '{
+              resources: { repositories: { self: { refName: $ref } } }
+            }')")
+
+          echo "$RESPONSE" | jq .
+
+          RUN_ID=$(echo "$RESPONSE" | jq -r '.id // empty')
+          RUN_URL=$(echo "$RESPONSE" | jq -r '._links.web.href // empty')
+
+          if [ -z "$RUN_ID" ]; then
+            echo "Failed to queue pipeline run. Response above."
+            exit 1
+          fi
+
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "run_url=$RUN_URL" >> "$GITHUB_OUTPUT"
+          echo "Queued Azure DevOps run #$RUN_ID: $RUN_URL"
+
+      - name: Post pipeline link to PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "Azure DevOps integration tests running: ${{ steps.trigger.outputs.run_url }}" \
+            --repo ${{ github.repository }}
+
+      - name: Wait for pipeline completion
+        env:
+          AZDO_PAT: ${{ secrets.AZDO_PAT }}
+        run: |
+          RUN_ID="${{ steps.trigger.outputs.run_id }}"
+          AUTH="Basic $(echo -n ":$AZDO_PAT" | base64 -w 0)"
+          URL="https://dev.azure.com/YOUR_ORG/YOUR_PROJECT/_apis/pipelines/YOUR_PIPELINE_ID/runs/$RUN_ID?api-version=7.1"
+
+          for i in $(seq 1 60); do
+            RESPONSE=$(curl -s -H "Authorization: $AUTH" "$URL")
+            STATE=$(echo "$RESPONSE" | jq -r '.state')
+            RESULT=$(echo "$RESPONSE" | jq -r '.result')
+
+            echo "[$i/60] State: $STATE | Result: $RESULT"
+
+            if [ "$STATE" = "completed" ]; then
+              if [ "$RESULT" = "succeeded" ]; then
+                echo "Integration tests passed."
+                exit 0
+              else
+                echo "Integration tests failed (result: $RESULT)."
+                echo "Details: ${{ steps.trigger.outputs.run_url }}"
+                exit 1
+              fi
+            fi
+
+            sleep 30
+          done
+
+          echo "Timed out after 30 minutes waiting for pipeline."
+          exit 1
