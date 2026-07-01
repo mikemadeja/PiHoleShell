@@ -13,11 +13,14 @@ The API Password you generated from your PiHole server
 .PARAMETER MaxResult
 How many results should be returned
 
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 20
+Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -MaxResult 20
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -75,7 +78,25 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
 function Get-PiHoleStatsQueryType {
     <#
 .SYNOPSIS
-https://TODOFINDNEWAPILINK
+Get DNS query type statistics from Pi-hole.
+
+.DESCRIPTION
+Retrieves a breakdown of DNS query types (A, AAAA, MX, etc.) processed by Pi-hole.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleStatsQueryType -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -130,7 +151,31 @@ https://TODOFINDNEWAPILINK
 function Get-PiHoleStatsTopDomain {
     <#
 .SYNOPSIS
-https://TODOFINDNEWAPILINK
+Get top domains from Pi-hole statistics.
+
+.DESCRIPTION
+Retrieves the most queried (or most blocked) domains tracked by Pi-hole.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER MaxResult
+How many results should be returned. Defaults to 10.
+
+.PARAMETER Blocked
+If $true, returns top blocked domains instead of top queried domains. Defaults to $false.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleStatsTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -MaxResult 5
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -195,13 +240,16 @@ The API Password you generated from your PiHole server
 How many results should be returned
 
 .PARAMETER Blocked
-If true, returns top clients by blocked queries instead of total queries
+If $true, returns top clients by blocked queries instead of total queries. Defaults to $false.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 10
+Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -MaxResult 10
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -279,14 +327,14 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
-
-This will dump the response instead of the formatted object
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

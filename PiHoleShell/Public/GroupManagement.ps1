@@ -1,8 +1,31 @@
 function Get-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Get Pi-hole groups.
 
+.DESCRIPTION
+Retrieves all groups configured on the Pi-hole server. Optionally filter by group name.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER GroupName
+The name of a specific group to retrieve. If not specified, all groups are returned.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
+
+.EXAMPLE
+Get-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -GroupName "Default"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -11,8 +34,8 @@ https://TODO
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
-        $Password,
-        $GroupName = $null,
+        [string]$Password,
+        [string]$GroupName = $null,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -87,8 +110,34 @@ https://TODO
 function New-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Create a new Pi-hole group.
 
+.DESCRIPTION
+Creates a new group on the Pi-hole server. Returns a warning if the group already exists.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER GroupName
+The name of the group to create
+
+.PARAMETER Comment
+An optional comment or description for the group
+
+.PARAMETER Enabled
+Whether the group should be enabled. Defaults to $true.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+New-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -GroupName "MyGroup"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -169,8 +218,34 @@ https://TODO
 function Update-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Update an existing Pi-hole group.
 
+.DESCRIPTION
+Updates the comment and/or enabled state of an existing group on the Pi-hole server. At least one of Comment or Enabled must be provided.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER GroupName
+The name of the group to update
+
+.PARAMETER Comment
+The new comment or description for the group
+
+.PARAMETER Enabled
+Whether the group should be enabled or disabled
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -GroupName "MyGroup" -Enabled $false
     #>
     #Work In Progress
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -274,8 +349,28 @@ https://TODO
 function Remove-PiHoleGroup {
     <#
 .SYNOPSIS
-https://TODO
+Remove a Pi-hole group.
 
+.DESCRIPTION
+Deletes an existing group from the Pi-hole server.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER GroupName
+The name of the group to remove
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -GroupName "MyGroup"
     #>
     #Work In Progress
     [CmdletBinding()]

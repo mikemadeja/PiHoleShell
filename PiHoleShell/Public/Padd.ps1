@@ -1,8 +1,25 @@
 function Get-PiHolePadd {
     <#
 .SYNOPSIS
-https://TODO
+Get Pi-hole PADD (Pi-hole At a Glance Dashboard) data.
 
+.DESCRIPTION
+Retrieves a comprehensive snapshot of Pi-hole status including queries, blocking state, network interface info, sensors, cache, and configuration.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding()]

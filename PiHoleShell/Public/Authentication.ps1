@@ -47,7 +47,7 @@ Ignore SSL when interacting with the PiHole API
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -129,8 +129,11 @@ The API Password you generated from your PiHole server
 .PARAMETER IgnoreSsl
 Ignore SSL when interacting with the PiHole API
 
+.PARAMETER Id
+The session ID to remove
+
 .EXAMPLE
-Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -Id 3
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

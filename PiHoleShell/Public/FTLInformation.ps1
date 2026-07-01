@@ -1,8 +1,25 @@
 function Get-PiHoleInfoMessage {
     <#
 .SYNOPSIS
-Get Pi-hole diagnosis messages
-Request Pi-hole diagnosis messages
+Get Pi-hole diagnosis messages.
+
+.DESCRIPTION
+Retrieves Pi-hole diagnosis messages from the server.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -71,9 +88,25 @@ Request Pi-hole diagnosis messages
 function Get-PiHoleInfoHost {
     <#
 .SYNOPSIS
-Get info about various host parameters
-This API hook returns a collection of host infos.
+Get info about various host parameters.
 
+.DESCRIPTION
+Returns a collection of host information from the Pi-hole server.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleInfoHost -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -137,8 +170,28 @@ This API hook returns a collection of host infos.
 function Get-PiHoleLogWebserver {
     <#
 .SYNOPSIS
-Get info about logs for webserver
+Get webserver log entries from the Pi-hole server.
 
+.DESCRIPTION
+Retrieves webserver log entries. Optionally provide a NextID to page through results.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER NextID
+The log entry ID to start from, used for paginating through log results
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleLogWebserver -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding()]

@@ -1,8 +1,31 @@
 function Get-PiHoleTeleporterDownload {
     <#
 .SYNOPSIS
-Get info about logs for webserver
+Download a Pi-hole teleporter backup archive.
 
+.DESCRIPTION
+Downloads a Pi-hole configuration backup (teleporter) as a .tar.gz file to the specified folder.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER FolderPath
+The local folder path where the backup file will be saved
+
+.PARAMETER FileName
+The base name of the output file. The .tar.gz extension will be appended automatically.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleTeleporterDownload -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -FolderPath "C:\Backups" -FileName "pihole-backup"
     #>
     #Work In Progress
     [CmdletBinding()]

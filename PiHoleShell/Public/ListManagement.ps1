@@ -1,8 +1,28 @@
 function Get-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Get Pi-hole allow/block lists.
 
+.DESCRIPTION
+Retrieves all lists configured on the Pi-hole server. Optionally filter by list address.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER List
+The URL of a specific list to retrieve. If not specified, all lists are returned.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -89,8 +109,34 @@ https://TODO
 function Search-PiHoleListDomain {
     <#
 .SYNOPSIS
-https://TODO
+Search for a domain in Pi-hole lists.
 
+.DESCRIPTION
+Searches Pi-hole allow/block lists for a given domain name.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER Domain
+The domain name to search for
+
+.PARAMETER PartialMatch
+Set to $true to allow partial matches. Defaults to $false (exact match only).
+
+.PARAMETER MaxResults
+The maximum number of results to return. Defaults to 20.
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Search-PiHoleListDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -Domain "ads.example.com"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -154,8 +200,40 @@ https://TODO
 function Add-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Add a new allow or block list to Pi-hole.
 
+.DESCRIPTION
+Adds a new list URL to the Pi-hole server. Throws if the list already exists.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER Address
+The URL of the list to add
+
+.PARAMETER Type
+Whether to add the list as an "Allow" or "Block" list
+
+.PARAMETER Comment
+An optional comment or description for the list
+
+.PARAMETER Group
+One or more group names to associate the list with. Defaults to "Default".
+
+.PARAMETER Enabled
+Whether the list should be enabled. Defaults to $true.
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -Address "https://someblocklistprovider.example/list.txt" -Type "Block"
     #>
     #Work In Progress
     [CmdletBinding()]
@@ -274,8 +352,31 @@ https://TODO
 function Remove-PiHoleList {
     <#
 .SYNOPSIS
-https://TODO
+Remove a list from Pi-hole.
 
+.DESCRIPTION
+Removes an allow or block list from the Pi-hole server by address and type.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER Address
+The URL of the list to remove
+
+.PARAMETER Type
+The type of list to remove ("Allow" or "Block")
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Remove-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD" -Address "https://someblocklistprovider.example/list.txt" -Type "Block"
     #>
     #Work In Progress (NEED TO FINISH)
     [CmdletBinding(SupportsShouldProcess = $true)]

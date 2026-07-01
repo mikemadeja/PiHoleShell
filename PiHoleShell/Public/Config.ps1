@@ -1,8 +1,25 @@
 function Get-PiHoleConfig {
     <#
 .SYNOPSIS
-https://TODO
+Get the current Pi-hole configuration.
 
+.DESCRIPTION
+Retrieves the Pi-hole configuration including DNS and DHCP settings.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding()]

@@ -1,8 +1,25 @@
 function Update-PiHoleActionsGravity {
     <#
 .SYNOPSIS
-https://TODO
+Trigger a gravity update on the Pi-hole server.
 
+.DESCRIPTION
+Sends a POST request to the Pi-hole API to update the gravity database.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Update-PiHoleActionsGravity -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     #Work In Progress
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -77,14 +94,14 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Invoke-PiHoleFlushLogs -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Invoke-PiHoleFlushLog -PiHoleServer "http://pihole.domain.com:8080" -Password "P@$$W0RD"
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Flushes PiHole logs')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
-        $Password,
+        [System.URI]$PiHoleServer,
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
