@@ -36,7 +36,7 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/action/restartdns"
+            Uri                  = "$($PiHoleServer.ToString().TrimEnd('/'))/api/action/restartdns"
             Method               = "Post"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl

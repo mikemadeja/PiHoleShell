@@ -36,7 +36,7 @@ Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Passwor
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$PiHoleServer/api/action/flush/logs"
+            Uri                  = "$($PiHoleServer.ToString().TrimEnd('/'))/api/action/flush/network"
             Method               = "Post"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl
