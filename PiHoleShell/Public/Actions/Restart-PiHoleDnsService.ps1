@@ -25,7 +25,8 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Restarts PiHole DNS')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        $PiHoleServer,
+        [Parameter(Mandatory = $true)]
+        [System.URI]$PiHoleServer,
         $Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
@@ -36,7 +37,7 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.ToString().TrimEnd('/'))/api/action/restartdns"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/action/restartdns"
             Method               = "Post"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl
