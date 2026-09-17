@@ -27,7 +27,8 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
-        $Password,
+        [Parameter(Mandatory = $true)]
+        [string]$Password,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
