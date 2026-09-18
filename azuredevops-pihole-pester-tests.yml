@@ -1,0 +1,69 @@
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  name: mmadeja-dt
+
+variables:
+  testResultsFile: '$(System.DefaultWorkingDirectory)/TestResults/pester.xml'
+
+steps:
+  - pwsh: |
+      $pester = Get-Module -ListAvailable -Name Pester | Where-Object { $_.Version -ge [version]'5.0.0' } | Select-Object -First 1
+      if (-not $pester) {
+        Write-Host "Installing Pester 5..."
+        Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck -Scope CurrentUser
+      }
+      else {
+        Write-Host "Using Pester $($pester.Version)"
+      }
+    displayName: 'Ensure Pester 5 is available'
+
+  - pwsh: |
+      $configContent = @"
+      `$PiHoleServer = [uri]'$env:PIHOLE_TEST_SERVER'
+      `$PiHoleToken = '$env:PIHOLE_TEST_TOKEN'
+      `$PiHoleIgnoreSsl = `$true
+      "@
+      Set-Content -Path (Join-Path '$(System.DefaultWorkingDirectory)' 'tests/IntegrationConfig.local.ps1') -Value $configContent -Encoding utf8
+    displayName: 'Write integration test config'
+    env:
+      PIHOLE_TEST_SERVER: $(PiHoleTestServer)
+      PIHOLE_TEST_TOKEN: $(PiHoleTestToken)
+
+  - pwsh: |
+      Import-Module Pester -MinimumVersion 5.0.0 -Force
+
+      $config = New-PesterConfiguration
+      $config.Run.Path = './tests'
+      $config.Run.Exit = $true
+      $config.Output.Verbosity = 'Detailed'
+      $config.TestResult.Enabled = $true
+      $config.TestResult.OutputFormat = 'NUnitXml'
+      $config.TestResult.OutputPath = '$(testResultsFile)'
+
+      Invoke-Pester -Configuration $config
+    displayName: 'Run Pester tests'
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+  - pwsh: |
+      Remove-Item -Path (Join-Path '$(System.DefaultWorkingDirectory)' 'tests/IntegrationConfig.local.ps1') -Force -ErrorAction SilentlyContinue
+    displayName: 'Clean up integration test config'
+    condition: always()
+
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFormat: 'NUnit'
+      testResultsFiles: '$(testResultsFile)'
+      failTaskOnFailedTests: false
