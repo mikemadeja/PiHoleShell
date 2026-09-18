@@ -28,7 +28,10 @@ jobs:
         id: get_tag
         run: |
           git fetch --tags
-          latestTag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          latestTag=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          if [ -z "$latestTag" ]; then
+            latestTag="v0.0.0"
+          fi
           echo "Latest tag: $latestTag"
           echo "latest_tag=$latestTag" >> $GITHUB_OUTPUT
 
