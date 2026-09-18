@@ -1,0 +1,62 @@
+name: Publish Dev Build to GitHub Releases
+
+on:
+  push:
+    branches: [ "develop" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  dev-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set module version to dev build
+        shell: pwsh
+        run: |
+          $modulePath = "PiHoleShell"
+          $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
+
+          if (-not $manifest) {
+            throw "No module manifest (*.psd1) found in $modulePath"
+          }
+
+          $shortSha = "${{ github.sha }}".Substring(0, 7)
+          $devVersion = "0.0.0-dev.$shortSha"
+          (Get-Content $manifest.FullName) -replace '0.0.0', $devVersion | Set-Content $manifest.FullName
+          Write-Host "Set dev module version to $devVersion"
+
+      - name: Zip folder
+        run: |
+          mkdir -p output
+          zip -r output/release.zip PiHoleShell
+
+      - name: Remove previous dev-latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete dev-latest --yes --cleanup-tag || true
+
+      - name: Create dev pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: dev-latest
+          name: "Development build (develop @ ${{ github.sha }})"
+          prerelease: true
+          body: |
+            Automatically built from the latest `develop` branch commit ${{ github.sha }}.
+
+            This is a test build for local verification only — it is **not** published to the PowerShell Gallery, and this release is overwritten on every push to `develop`.
+
+            To try it out, download and extract `release.zip`, then:
+            ```powershell
+            Import-Module .\PiHoleShell\PiHoleShell.psd1 -Force
+            ```
+          files: output/release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
