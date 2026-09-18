@@ -1,0 +1,37 @@
+name: Sync README Command Reference
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-readme:
+    if: github.event.pull_request.head.ref == 'develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Regenerate README command reference
+        shell: pwsh
+        run: ./tools/Update-ReadmeCommandReference.ps1
+
+      - name: Commit changes if needed
+        run: |
+          if [ -n "$(git status --porcelain README.md)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "docs: sync README command reference [skip ci]"
+            git push origin HEAD:${{ github.head_ref }}
+          else
+            echo "README.md command reference already up to date."
+          fi

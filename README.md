@@ -80,59 +80,60 @@ Every function accepts the same core parameters:
 
 ## Command Reference
 
-Functions marked 🚧 are still under active development — signatures and output shapes may change.
+Functions marked 🚧 are still under active development — signatures and output shapes may change. This section is generated from the module's actual exported functions by `tools/Update-ReadmeCommandReference.ps1`, and kept in sync automatically on every `develop` → `main` pull request — don't hand-edit the block below.
 
+<!-- COMMAND-REFERENCE:START -->
 ### Actions
 
 | Function | Description |
 |---|---|
-| `Invoke-PiHoleFlushNetwork` | Flush the network table, removing known devices and their addresses |
-| `Restart-PiHoleDnsService` | Restart the `pihole-FTL` service |
-| `Update-PiHoleActionsGravity` 🚧 | Run `pihole -g` to rebuild the gravity/adlists database |
+| `Invoke-PiHoleFlushNetwork` | Flushes the network table. This includes removing both all known devices and their associated addresses. |
+| `Restart-PiHoleDnsService` | Restarts the pihole-FTL service |
+| `Update-PiHoleActionsGravity` 🚧 | Update Pi-hole's adlists by running pihole -g. The output of the process is streamed with chunked encoding. Use the optional color query parameter to include ANSI color escape codes in the output. |
 
 ### DNS Control
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleDnsBlockingStatus` | Get current blocking status and any active timer |
-| `Set-PiHoleDnsBlocking` | Enable or disable blocking, optionally for a set duration |
+| `Get-PiHoleDnsBlockingStatus` | _No description yet_ |
+| `Set-PiHoleDnsBlocking` | _No description yet_ |
 
 ### Group Management
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleGroup` | List groups |
-| `New-PiHoleGroup` | Create a group |
-| `Update-PiHoleGroup` | Update an existing group |
-| `Remove-PiHoleGroup` 🚧 | Delete a group |
+| `Get-PiHoleGroup` | Get groups |
+| `New-PiHoleGroup` | Creates a new group in the groups object. |
+| `Remove-PiHoleGroup` 🚧 | Delete group |
+| `Update-PiHoleGroup` | Items may be updated by replacing them. |
 
 ### List Management
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleList` 🚧 | List allow/deny lists |
-| `Add-PiHoleList` 🚧 | Add a domain to an allow/deny list |
-| `Remove-PiHoleList` 🚧 | Remove lists |
-| `Search-PiHoleListDomain` | Search all lists for a domain, with optional partial matching |
+| `Add-PiHoleList` 🚧 | Add new list |
+| `Get-PiHoleList` 🚧 | Get lists |
+| `Remove-PiHoleList` 🚧 | Deletes multiple lists in the lists object. |
+| `Search-PiHoleListDomain` | _No description yet_ |
 
 ### Metrics
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleStatsSummary` | Overview of query, system, and FTL activity |
-| `Get-PiHoleStatsRecentBlocked` | Most recently blocked domain |
-| `Get-PiHoleStatsQueryType` | Query breakdown by DNS record type |
-| `Get-PiHoleStatsTopDomain` | Top permitted/blocked domains |
-| `Get-PiHoleStatsTopClient` | Top clients by query volume |
+| `Get-PiHoleStatsQueryType` | _No description yet_ |
+| `Get-PiHoleStatsRecentBlocked` | Request most recently blocked domain |
+| `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity Request various query, system, and FTL properties |
+| `Get-PiHoleStatsTopClient` | Get top clients Request the top clients (by query count) |
+| `Get-PiHoleStatsTopDomain` | _No description yet_ |
 
 ### Configuration & Diagnostics
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleConfig` 🚧 | Read the Pi-hole configuration |
-| `Get-PiHolePadd` 🚧 | Data used to power the PADD dashboard |
-| `Get-PiHoleInfoMessage` | Pi-hole diagnosis messages |
-| `Get-PiHoleInfoHost` 🚧 | Host system information |
+| `Get-PiHoleConfig` 🚧 | _No description yet_ |
+| `Get-PiHoleInfoHost` 🚧 | Get info about various host parameters This API hook returns a collection of host infos. |
+| `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages Request Pi-hole diagnosis messages |
+| `Get-PiHolePadd` 🚧 | _No description yet_ |
 
 ### Authentication
 
@@ -140,8 +141,9 @@ Session handling is automatic for every command above, but these are available f
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleCurrentAuthSession` | List active API sessions |
-| `Remove-PiHoleAuthSession` | Revoke a session by ID |
+| `Get-PiHoleCurrentAuthSession` | List of all current sessions including their validity and further information about the client such as the IP address and user agent. |
+| `Remove-PiHoleAuthSession` | Using this endpoint, a session can be deleted by its ID. |
+<!-- COMMAND-REFERENCE:END -->
 
 ## Testing
 
