@@ -75,6 +75,7 @@ jobs:
         with:
           tag_name: ${{ steps.bump.outputs.new_tag }}
           name: "Release ${{ steps.bump.outputs.new_tag }}"
+          generate_release_notes: true
           files: output/release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
