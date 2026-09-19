@@ -64,7 +64,7 @@ function Remove-PiHoleCurrentAuthSession {
     }
 
     try {
-        Invoke-RestMethod @Params
+        $null = Invoke-RestMethod @Params
     }
 
     catch {
