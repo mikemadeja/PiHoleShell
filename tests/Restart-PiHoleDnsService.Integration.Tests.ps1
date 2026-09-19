@@ -34,6 +34,10 @@ Describe 'Restart-PiHoleDnsService (Integration)' -Tag 'Integration' {
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
+        # The previous test just restarted pihole-FTL; give it a moment to come back up before
+        # restarting it again, or this occasionally hits a transient connection failure.
+        Start-Sleep -Seconds 5
+
         { Restart-PiHoleDnsService -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true } |
         Should -Not -Throw
     }
