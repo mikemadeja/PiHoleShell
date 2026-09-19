@@ -48,11 +48,11 @@ Import-Module -Name PiHoleShell
 
 1. Log into your Pi-hole web interface, then go to **Web Interface / API** settings and select **Configure app password**.
 
-   <img src="docs/images/webinterfance_api.png" alt="Pi-hole Web Interface / API settings" width="450"/>
+   <img src="https://raw.githubusercontent.com/mikemadeja/PiHoleShell/main/docs/images/webinterfance_api.png" alt="Pi-hole Web Interface / API settings" width="450"/>
 
 2. Copy the generated password, then click **Enable new app password**.
 
-   <img src="docs/images/configure_app_password.png" alt="Configure app password dialog" width="450"/>
+   <img src="https://raw.githubusercontent.com/mikemadeja/PiHoleShell/main/docs/images/configure_app_password.png" alt="Configure app password dialog" width="450"/>
 
 Keep this password secret — anyone with it has full API access to your Pi-hole.
 
