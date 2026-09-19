@@ -24,12 +24,13 @@ Describe 'Get-PiHoleStatsDatabaseTopDomain (Integration)' -Tag 'Integration' {
     }
 
     It 'returns top domains without error' -Skip:(-not $script:ConfigAvailable) {
-        { Get-PiHoleStatsDatabaseTopDomain -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -MaxResult 5 } |
-        Should -Not -Throw
+        $result = Get-PiHoleStatsDatabaseTopDomain -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -MaxResult 5
+        $result | Format-Table | Out-String | Write-Host
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseTopDomain -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.PSObject.Properties.Name | Should -Contain 'domains'
     }

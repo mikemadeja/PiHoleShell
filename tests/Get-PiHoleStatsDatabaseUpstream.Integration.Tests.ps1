@@ -25,6 +25,8 @@ Describe 'Get-PiHoleStatsDatabaseUpstream (Integration)' -Tag 'Integration' {
 
     It 'returns upstream metrics as a formatted object' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseUpstream -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
+        $result.Upstreams | Format-Table | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.TotalQueries | Should -BeGreaterOrEqual 0
@@ -32,6 +34,7 @@ Describe 'Get-PiHoleStatsDatabaseUpstream (Integration)' -Tag 'Integration' {
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseUpstream -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.total_queries | Should -Not -BeNullOrEmpty
     }

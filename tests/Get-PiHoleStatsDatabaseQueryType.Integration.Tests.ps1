@@ -25,6 +25,7 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
 
     It 'returns a formatted object with all query type properties' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.PSObject.Properties.Name | Should -Contain 'A'
@@ -33,6 +34,7 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.PSObject.Properties.Name | Should -Contain 'types'
     }

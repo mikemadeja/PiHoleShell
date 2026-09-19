@@ -25,6 +25,7 @@ Describe 'Get-PiHoleStatsQuerySuggestions (Integration)' -Tag 'Integration' {
 
     It 'returns filter suggestions as a formatted object' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsQuerySuggestions -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.Type | Should -Not -BeNullOrEmpty
@@ -35,6 +36,7 @@ Describe 'Get-PiHoleStatsQuerySuggestions (Integration)' -Tag 'Integration' {
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsQuerySuggestions -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.suggestions | Should -Not -BeNullOrEmpty
     }
