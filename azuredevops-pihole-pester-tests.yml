@@ -14,7 +14,9 @@ pool:
   name: mmadeja-dt
 
 variables:
-  testResultsFile: '$(System.DefaultWorkingDirectory)/TestResults/pester.xml'
+  - group: dns3
+  - name: testResultsFile
+    value: '$(System.DefaultWorkingDirectory)/TestResults/pester.xml'
 
 steps:
   - pwsh: |
@@ -30,15 +32,16 @@ steps:
 
   - pwsh: |
       $configContent = @"
-      `$PiHoleServer = [uri]'$env:PIHOLE_TEST_SERVER'
-      `$PiHoleToken = '$env:PIHOLE_TEST_TOKEN'
-      `$PiHoleIgnoreSsl = `$true
+      `$PiHoleServer = [uri]'$env:PIHOLE_SERVER'
+      `$PiHoleToken = '$env:PIHOLE_TOKEN'
+      `$PiHoleIgnoreSsl = $env:PIHOLE_IGNORE_SSL
       "@
       Set-Content -Path (Join-Path '$(System.DefaultWorkingDirectory)' 'tests/IntegrationConfig.local.ps1') -Value $configContent -Encoding utf8
     displayName: 'Write integration test config'
     env:
-      PIHOLE_TEST_SERVER: $(PiHoleTestServer)
-      PIHOLE_TEST_TOKEN: $(PiHoleTestToken)
+      PIHOLE_SERVER: $(PiHoleServer)
+      PIHOLE_TOKEN: $(PiHoleToken)
+      PIHOLE_IGNORE_SSL: $(PiHoleIgnoreSsl)
 
   - pwsh: |
       Import-Module Pester -MinimumVersion 5.0.0 -Force
