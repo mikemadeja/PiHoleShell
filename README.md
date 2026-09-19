@@ -120,6 +120,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleStatsQuerySuggestions` | Get query filter suggestions |
 | `Get-PiHoleStatsQueryType` | _No description yet_ |
 | `Get-PiHoleStatsRecentBlocked` | Request most recently blocked domain |
 | `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity Request various query, system, and FTL properties |
