@@ -120,12 +120,18 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleStatsDatabaseQueryType` | Get query types (long-term database) |
+| `Get-PiHoleStatsDatabaseSummary` | Get database content details |
+| `Get-PiHoleStatsDatabaseTopClient` | Get top clients (long-term database) |
+| `Get-PiHoleStatsDatabaseTopDomain` | Get top domains (long-term database) |
+| `Get-PiHoleStatsDatabaseUpstream` | Get metrics about Pi-hole's upstream destinations (long-term database) |
 | `Get-PiHoleStatsQuerySuggestions` | Get query filter suggestions |
 | `Get-PiHoleStatsQueryType` | _No description yet_ |
 | `Get-PiHoleStatsRecentBlocked` | Request most recently blocked domain |
 | `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity Request various query, system, and FTL properties |
 | `Get-PiHoleStatsTopClient` | Get top clients Request the top clients (by query count) |
 | `Get-PiHoleStatsTopDomain` | _No description yet_ |
+| `Get-PiHoleStatsUpstream` | Get metrics about Pi-hole's upstream destinations |
 
 ### Configuration & Diagnostics
 
