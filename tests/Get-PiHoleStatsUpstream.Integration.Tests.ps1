@@ -16,6 +16,9 @@ Describe 'Get-PiHoleStatsUpstream (Integration)' -Tag 'Integration' {
             $script:PiHoleServer = $PiHoleServer
             $script:PiHoleToken = $PiHoleToken
             $script:PiHoleIgnoreSsl = $PiHoleIgnoreSsl
+
+            # Generates some real query traffic so live stats aren't all zero/empty.
+            & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
     }
 

@@ -16,6 +16,11 @@ Describe 'Get-PiHoleStatsDatabaseTopClient (Integration)' -Tag 'Integration' {
             $script:PiHoleServer = $PiHoleServer
             $script:PiHoleToken = $PiHoleToken
             $script:PiHoleIgnoreSsl = $PiHoleIgnoreSsl
+
+            # Generates some real query traffic. Live stats reflect it immediately; the on-disk
+            # database stats this file tests only reflect it once FTL's periodic flush runs, so
+            # this mainly helps build up real history across repeated runs, not this run's own data.
+            & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
 
         # from=0 is rejected by the API with a 400; use a wide-but-valid recent window instead.
