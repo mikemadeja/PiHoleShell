@@ -119,6 +119,10 @@ function Remove-PiHoleCurrentAuthSession {
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        # Best-effort logout, called from every public function's finally block - a transient
+        # failure here (e.g. the server briefly unreachable right after a restart) must never
+        # fail the caller. Write-Error would do exactly that under $ErrorActionPreference =
+        # 'Stop', which Azure Pipelines' pwsh task sets by default.
+        Write-Warning -Message "Failed to close Pi-hole session: $($_.Exception.Message)"
     }
 }
