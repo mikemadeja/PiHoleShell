@@ -51,8 +51,6 @@ Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
         }
 
         else {
-            $ObjectFinal = @()
-            $Object = $null
             $IFaceV4RxBytes = [PSCustomObject]@{
                 Value = $Response.iface.v4.rx_bytes.value
                 Unit  = $Response.iface.v4.rx_bytes.unit
@@ -83,6 +81,7 @@ Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
                 Total          = $Response.queries.total
                 Blocked        = $Response.queries.blocked
                 PercentBlocked = $Response.queries.percent_blocked
+                QueryFrequency = $Response.queries.query_frequency
             }
             $Sensors = [PSCustomObject]@{
                 CpuTemp  = $Response.sensors.cpu_temp
@@ -121,22 +120,18 @@ Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
                 Queries       = $Queries
                 RecentBlocked = $Response.recent_blocked
                 Sensors       = $Sensors
-                System        = $Response.system
+                System        = ConvertTo-PiHolePascalCaseObject -InputObject $Response.system
                 TopBlocked    = $Response.top_blocked
                 TopClient     = $Response.top_client
                 TopDomain     = $Response.top_domain
-                Version       = $Response.version
+                Version       = ConvertTo-PiHolePascalCaseObject -InputObject $Response.version
             }
-            if ($Object) {
-                $ObjectFinal += $Object
-            }
-            Write-Output $ObjectFinal
+            Write-Output $Object
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

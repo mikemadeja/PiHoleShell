@@ -10,8 +10,8 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
-
-This will dump the response instead of the formatted object
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
@@ -50,6 +50,10 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
                 Total          = $Response.queries.total
                 Blocked        = $Response.queries.blocked
                 PercentBlocked = $Response.queries.percent_blocked
+                UniqueDomains  = $Response.queries.unique_domains
+                Forwarded      = $Response.queries.forwarded
+                Cached         = $Response.queries.cached
+                Frequency      = $Response.queries.frequency
                 Types          = [PSCustomObject]@{
                     A      = $Response.queries.types.A
                     AAAA   = $Response.queries.types.AAAA
@@ -105,15 +109,21 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
                     None     = $Response.queries.replies.NONE
                     Blob     = $Response.queries.replies.BLOB
                 }
+                Clients        = [PSCustomObject]@{
+                    Active = $Response.clients.active
+                    Total  = $Response.clients.total
+                }
+                Gravity        = [PSCustomObject]@{
+                    DomainsBeingBlocked = $Response.gravity.domains_being_blocked
+                    LastUpdate          = $Response.gravity.last_update
+                }
             }
-            $ObjectFinal += $Object
-            Write-Output $ObjectFinal
+            Write-Output $Object
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

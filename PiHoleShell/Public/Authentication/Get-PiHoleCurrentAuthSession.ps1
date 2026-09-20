@@ -29,48 +29,42 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
         [bool]$RawOutput = $false
     )
 
-    $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-    $Params = @{
-        Headers              = @{sid = $($Sid) }
-        Uri                  = "$($PiHoleServer.OriginalString)/api/auth/sessions"
-        Method               = "Get"
-        SkipCertificateCheck = $IgnoreSsl
-        ContentType          = "application/json"
-    }
-
     try {
+        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+
+        $Params = @{
+            Headers              = @{sid = $($Sid) }
+            Uri                  = "$($PiHoleServer.OriginalString)/api/auth/sessions"
+            Method               = "Get"
+            SkipCertificateCheck = $IgnoreSsl
+            ContentType          = "application/json"
+        }
+
         $Response = Invoke-RestMethod @Params
 
         if ($RawOutput) {
             Write-Output $Response
         }
-
         else {
-            if ($Response.Sessions) {
-                $ObjectFinal = @()
-                foreach ($Item in $Response.Sessions) {
-                    $Object = [PSCustomObject]@{
-                        Id             = $Item.id
-                        CurrentSession = $Item.current_session
-                        Valid          = $Item.valid
-                        TlsLogin       = $Item.tls.login
-                        TlsMixed       = $Item.tls.mixed
-                        LoginAt        = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.login_at).LocalTime
-                        LastActive     = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.last_active).LocalTime
-                        ValidUntil     = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.valid_until).LocalTime
-                        RemoteAddress  = $Item.remote_addr
-                        UserAgent      = $Item.user_agent
-                        App            = $Item.app
-                    }
-
-                    $ObjectFinal += $Object
-                    $Object = $null
+            $ObjectFinal = foreach ($Item in $Response.sessions) {
+                [PSCustomObject]@{
+                    Id             = $Item.id
+                    CurrentSession = $Item.current_session
+                    Valid          = $Item.valid
+                    TlsLogin       = $Item.tls.login
+                    TlsMixed       = $Item.tls.mixed
+                    LoginAt        = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.login_at).LocalTime
+                    LastActive     = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.last_active).LocalTime
+                    ValidUntil     = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.valid_until).LocalTime
+                    RemoteAddress  = $Item.remote_addr
+                    UserAgent      = $Item.user_agent
+                    XForwardedFor  = $Item.x_forwarded_for
+                    App            = $Item.app
+                    Cli            = $Item.cli
                 }
             }
-            Write-Output $ObjectFinal | Where-Object { $_.CurrentSession -match "False" }
+            Write-Output $ObjectFinal
         }
-        $ObjectFinal = @()
     }
 
     catch {
@@ -79,7 +73,7 @@ Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     finally {
         if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid
+            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
         }
     }
 }
