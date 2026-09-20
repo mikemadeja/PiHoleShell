@@ -13,13 +13,13 @@ The API Password you generated from your PiHole server
 True or False, if you set it to False when Blocking was set to true, it will disable blocking
 
 .PARAMETER TimeInSeconds
-How long should the opposite setting last, if you do not set a time, it will be set forever until you change it
+How long the opposite setting should last, in seconds
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -Blocking $false -TimeInSeconds 60
+Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Blocking $false -TimeInSeconds 60
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
@@ -31,7 +31,8 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "f
         [string]$Password,
         [ValidateSet("True", "False")]
         $Blocking,
-        [int]$TimeInSeconds = $null,
+        [Parameter(Mandatory = $true)]
+        [int]$TimeInSeconds,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )

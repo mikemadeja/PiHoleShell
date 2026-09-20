@@ -25,7 +25,7 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Search-PiHoleListDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -Domain "doubleclick.net"
+Search-PiHoleListDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Domain "doubleclick.net"
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/search/-domain-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

@@ -14,10 +14,10 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 The API Password you generated from your PiHole server
 
 .PARAMETER From
-Unix timestamp from when the data should be requested
+Local date/time from when the data should be requested. Defaults to 8 hours ago.
 
 .PARAMETER Until
-Unix timestamp until when the data should be requested
+Local date/time until when the data should be requested. Defaults to now.
 
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
@@ -26,7 +26,10 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseUpstream -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From 1672580025 -Until 1672666425
+Get-PiHoleStatsDatabaseUpstream -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+
+.EXAMPLE
+Get-PiHoleStatsDatabaseUpstream -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -From (Get-Date).AddDays(-7) -Until (Get-Date)
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/database/upstreams')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -35,10 +38,8 @@ Get-PiHoleStatsDatabaseUpstream -PiHoleServer "http://pihole.domain.com:8080" -P
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
-        [int]$From,
-        [Parameter(Mandatory = $true)]
-        [int]$Until,
+        [datetime]$From = (Get-Date).AddHours(-8),
+        [datetime]$Until = (Get-Date),
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
@@ -46,9 +47,12 @@ Get-PiHoleStatsDatabaseUpstream -PiHoleServer "http://pihole.domain.com:8080" -P
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
+        $FromUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $From).UnixTime
+        $UntilUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $Until).UnixTime
+
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/database/upstreams?from=$From&until=$Until"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/database/upstreams?from=$FromUnixTime&until=$UntilUnixTime"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"

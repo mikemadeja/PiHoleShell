@@ -23,18 +23,18 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
             & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
 
-        # from=0 is rejected by the API with a 400; use a wide-but-valid recent window instead.
-        $script:Until = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-        $script:From = $script:Until - (30 * 86400)
+        # The API rejects from=0 (epoch) with a 400, so use a recent, valid window instead.
+        $script:Until = Get-Date
+        $script:From = $script:Until.AddDays(-30)
     }
 
-    It 'returns a formatted object with all query type properties' -Skip:(-not $script:ConfigAvailable) {
+    It 'returns an array of Type/Count rows for every query type' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
-        $result | Format-List | Out-String | Write-Host
+        $result | Format-Table | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
-        $result.PSObject.Properties.Name | Should -Contain 'A'
-        $result.PSObject.Properties.Name | Should -Contain 'AAAA'
+        ($result | Where-Object Type -EQ 'A') | Should -Not -BeNullOrEmpty
+        ($result | Where-Object Type -EQ 'AAAA') | Should -Not -BeNullOrEmpty
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
@@ -48,5 +48,12 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -ErrorVariable errOut -ErrorAction SilentlyContinue
 
         $errOut | Should -Not -BeNullOrEmpty
+    }
+
+    It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-Table | Out-String | Write-Host
+
+        $result | Should -Not -BeNullOrEmpty
     }
 }

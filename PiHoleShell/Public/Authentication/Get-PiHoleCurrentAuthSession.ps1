@@ -16,7 +16,7 @@ Ignore SSL when interacting with the PiHole API
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/auth/sessions')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

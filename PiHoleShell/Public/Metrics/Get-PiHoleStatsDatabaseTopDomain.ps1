@@ -14,10 +14,10 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 The API Password you generated from your PiHole server
 
 .PARAMETER From
-Unix timestamp from when the data should be requested
+Local date/time from when the data should be requested. Defaults to 8 hours ago.
 
 .PARAMETER Until
-Unix timestamp until when the data should be requested
+Local date/time until when the data should be requested. Defaults to now.
 
 .PARAMETER MaxResult
 How many results should be returned
@@ -32,7 +32,10 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From 1672580025 -Until 1672666425 -MaxResult 10
+Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -MaxResult 10
+
+.EXAMPLE
+Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -From (Get-Date).AddDays(-7) -Until (Get-Date) -MaxResult 10
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/database/top_domains')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -41,10 +44,8 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
-        [int]$From,
-        [Parameter(Mandatory = $true)]
-        [int]$Until,
+        [datetime]$From = (Get-Date).AddHours(-8),
+        [datetime]$Until = (Get-Date),
         [int]$MaxResult = 10,
         [bool]$Blocked = $false,
         [bool]$IgnoreSsl = $false,
@@ -62,9 +63,12 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -
         Write-Verbose "Blocked: $BlockedParam"
         Write-Verbose "MaxResult: $MaxResult"
 
+        $FromUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $From).UnixTime
+        $UntilUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $Until).UnixTime
+
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/database/top_domains?from=$From&until=$Until&blocked=$BlockedParam&count=$MaxResult"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/database/top_domains?from=$FromUnixTime&until=$UntilUnixTime&blocked=$BlockedParam&count=$MaxResult"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"

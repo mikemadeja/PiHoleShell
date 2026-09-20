@@ -23,9 +23,9 @@ Describe 'Get-PiHoleStatsDatabaseTopClient (Integration)' -Tag 'Integration' {
             & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
 
-        # from=0 is rejected by the API with a 400; use a wide-but-valid recent window instead.
-        $script:Until = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-        $script:From = $script:Until - (30 * 86400)
+        # The API rejects from=0 (epoch) with a 400, so use a recent, valid window instead.
+        $script:Until = Get-Date
+        $script:From = $script:Until.AddDays(-30)
     }
 
     It 'returns top clients without error' -Skip:(-not $script:ConfigAvailable) {
@@ -44,5 +44,10 @@ Describe 'Get-PiHoleStatsDatabaseTopClient (Integration)' -Tag 'Integration' {
         $result = Get-PiHoleStatsDatabaseTopClient -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -ErrorVariable errOut -ErrorAction SilentlyContinue
 
         $errOut | Should -Not -BeNullOrEmpty
+    }
+
+    It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHoleStatsDatabaseTopClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -MaxResult 5
+        $result | Format-Table | Out-String | Write-Host
     }
 }

@@ -1,11 +1,29 @@
 function Get-PiHolePadd {
     <#
 .SYNOPSIS
-https://TODO
+Get summarized data for PADD
 
+.DESCRIPTION
+Request the summarized dashboard data used to power PADD (the Pi-hole ASCII dashboard):
+current CPU/memory load, blocking status, gravity size, network interfaces, query totals,
+sensors, and top clients/domains/blocked entries.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHolePadd -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/padd')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -74,7 +92,7 @@ https://TODO
             $Cache = [PSCustomObject]@{
                 Size     = $Response.cache.size
                 Inserted = $Response.cache.inserted
-                Evicted  = $Reponse.cache.evicted
+                Evicted  = $Response.cache.evicted
             }
 
             $Object = [PSCustomObject]@{
