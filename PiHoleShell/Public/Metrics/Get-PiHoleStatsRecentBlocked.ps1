@@ -27,7 +27,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer "http://pihole.domain.com:8080" -Pass
         [string]$Password,
         [int]$MaxResult = 1,
         [bool]$IgnoreSsl = $false,
-        [bool]$RawOutput
+        [bool]$RawOutput = $false
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl

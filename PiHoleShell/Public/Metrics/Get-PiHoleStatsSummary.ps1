@@ -27,7 +27,7 @@ Get-PiHoleStatsSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
-        [bool]$RawOutput
+        [bool]$RawOutput = $false
     )
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
