@@ -14,16 +14,19 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 The API Password you generated from your PiHole server
 
 .PARAMETER From
-Local date/time from when the data should be requested
+Local date/time from when the data should be requested. Defaults to 8 hours ago.
 
 .PARAMETER Until
-Local date/time until when the data should be requested
+Local date/time until when the data should be requested. Defaults to now.
 
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
 
 .EXAMPLE
 Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From (Get-Date).AddDays(-7) -Until (Get-Date)
@@ -35,10 +38,8 @@ Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Pa
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
-        [datetime]$From,
-        [Parameter(Mandatory = $true)]
-        [datetime]$Until,
+        [datetime]$From = (Get-Date).AddHours(-8),
+        [datetime]$Until = (Get-Date),
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )

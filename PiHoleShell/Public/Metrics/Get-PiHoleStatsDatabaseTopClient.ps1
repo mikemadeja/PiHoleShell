@@ -14,10 +14,10 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 The API Password you generated from your PiHole server
 
 .PARAMETER From
-Local date/time from when the data should be requested
+Local date/time from when the data should be requested. Defaults to 8 hours ago.
 
 .PARAMETER Until
-Local date/time until when the data should be requested
+Local date/time until when the data should be requested. Defaults to now.
 
 .PARAMETER MaxResult
 How many results should be returned
@@ -32,6 +32,9 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
+Get-PiHoleStatsDatabaseTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 10
+
+.EXAMPLE
 Get-PiHoleStatsDatabaseTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From (Get-Date).AddDays(-7) -Until (Get-Date) -MaxResult 10
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/database/top_clients')]
@@ -41,10 +44,8 @@ Get-PiHoleStatsDatabaseTopClient -PiHoleServer "http://pihole.domain.com:8080" -
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
-        [datetime]$From,
-        [Parameter(Mandatory = $true)]
-        [datetime]$Until,
+        [datetime]$From = (Get-Date).AddHours(-8),
+        [datetime]$Until = (Get-Date),
         [int]$MaxResult = 10,
         [bool]$Blocked = $false,
         [bool]$IgnoreSsl = $false,

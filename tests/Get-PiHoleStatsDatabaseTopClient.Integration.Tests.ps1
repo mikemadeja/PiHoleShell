@@ -45,4 +45,9 @@ Describe 'Get-PiHoleStatsDatabaseTopClient (Integration)' -Tag 'Integration' {
 
         $errOut | Should -Not -BeNullOrEmpty
     }
+
+    It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHoleStatsDatabaseTopClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -MaxResult 5
+        $result | Format-Table | Out-String | Write-Host
+    }
 }

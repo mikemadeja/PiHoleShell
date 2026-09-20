@@ -49,4 +49,11 @@ Describe 'Get-PiHoleStatsDatabaseSummary (Integration)' -Tag 'Integration' {
 
         $errOut | Should -Not -BeNullOrEmpty
     }
+
+    It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHoleStatsDatabaseSummary -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
+
+        $result | Should -Not -BeNullOrEmpty
+    }
 }
