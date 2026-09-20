@@ -20,7 +20,7 @@ If true, returns top domains by blocked queries instead of total queries
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 10
+Get-PiHoleStatsTopDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -MaxResult 10
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

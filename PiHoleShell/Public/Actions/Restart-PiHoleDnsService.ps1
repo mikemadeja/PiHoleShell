@@ -19,7 +19,7 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/restartdns')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Restarts PiHole DNS')]

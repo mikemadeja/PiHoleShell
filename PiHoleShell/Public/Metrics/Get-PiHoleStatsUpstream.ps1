@@ -20,7 +20,7 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsUpstream -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleStatsUpstream -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/upstreams')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

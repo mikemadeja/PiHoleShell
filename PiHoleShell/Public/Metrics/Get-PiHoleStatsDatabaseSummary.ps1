@@ -26,10 +26,10 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From (Get-Date).AddDays(-7) -Until (Get-Date)
+Get-PiHoleStatsDatabaseSummary -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -From (Get-Date).AddDays(-7) -Until (Get-Date)
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/database/summary')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

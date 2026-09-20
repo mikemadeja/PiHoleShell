@@ -19,7 +19,7 @@ How long the opposite setting should last, in seconds
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -Blocking $false -TimeInSeconds 60
+Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Blocking $false -TimeInSeconds 60
     #>
     [CmdletBinding()]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
