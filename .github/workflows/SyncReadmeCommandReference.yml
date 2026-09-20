@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   sync-readme:
@@ -20,18 +20,10 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      - name: Regenerate README command reference
+      # develop requires PRs for all changes, so this can't auto-commit/push a fix directly to
+      # develop (that used to work before branch protection was added, and now fails every time
+      # there's real drift to fix). Instead this just fails the check with instructions, the same
+      # way Invoke-ScriptAnalyzer already gates PSScriptAnalyzer.yml.
+      - name: Check README command reference is up to date
         shell: pwsh
-        run: ./tools/Update-ReadmeCommandReference.ps1
-
-      - name: Commit changes if needed
-        run: |
-          if [ -n "$(git status --porcelain README.md)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add README.md
-            git commit -m "docs: sync README command reference [skip ci]"
-            git push origin HEAD:${{ github.head_ref }}
-          else
-            echo "README.md command reference already up to date."
-          fi
+        run: ./tools/Update-ReadmeCommandReference.ps1 -Check

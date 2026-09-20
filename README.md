@@ -126,21 +126,21 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleStatsDatabaseTopDomain` | Get top domains (long-term database) |
 | `Get-PiHoleStatsDatabaseUpstream` | Get metrics about Pi-hole's upstream destinations (long-term database) |
 | `Get-PiHoleStatsQuerySuggestions` | Get query filter suggestions |
-| `Get-PiHoleStatsQueryType` | _No description yet_ |
+| `Get-PiHoleStatsQueryType` | Get query types Request a breakdown of query types (A, AAAA, ...) |
 | `Get-PiHoleStatsRecentBlocked` | Request most recently blocked domain |
 | `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity Request various query, system, and FTL properties |
 | `Get-PiHoleStatsTopClient` | Get top clients Request the top clients (by query count) |
-| `Get-PiHoleStatsTopDomain` | _No description yet_ |
+| `Get-PiHoleStatsTopDomain` | Get top domains Request the top domains (by query count) |
 | `Get-PiHoleStatsUpstream` | Get metrics about Pi-hole's upstream destinations |
 
 ### Configuration & Diagnostics
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleConfig` 🚧 | _No description yet_ |
+| `Get-PiHoleConfig` | Get current configuration of Pi-hole |
 | `Get-PiHoleInfoHost` 🚧 | Get info about various host parameters This API hook returns a collection of host infos. |
 | `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages Request Pi-hole diagnosis messages |
-| `Get-PiHolePadd` 🚧 | _No description yet_ |
+| `Get-PiHolePadd` | Get summarized data for PADD |
 
 ### Authentication
 
