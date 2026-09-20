@@ -138,7 +138,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 | Function | Description |
 |---|---|
 | `Get-PiHoleConfig` | Get current configuration of Pi-hole |
-| `Get-PiHoleInfoHost` 🚧 | Get info about various host parameters This API hook returns a collection of host infos. |
+| `Get-PiHoleInfoHost` | Get information about the host system |
 | `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages Request Pi-hole diagnosis messages |
 | `Get-PiHolePadd` | Get summarized data for PADD |
 
