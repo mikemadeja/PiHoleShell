@@ -23,9 +23,9 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
             & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
 
-        # from=0 is rejected by the API with a 400; use a wide-but-valid recent window instead.
-        $script:Until = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-        $script:From = $script:Until - (30 * 86400)
+        # The API rejects from=0 (epoch) with a 400, so use a recent, valid window instead.
+        $script:Until = Get-Date
+        $script:From = $script:Until.AddDays(-30)
     }
 
     It 'returns a formatted object with all query type properties' -Skip:(-not $script:ConfigAvailable) {
