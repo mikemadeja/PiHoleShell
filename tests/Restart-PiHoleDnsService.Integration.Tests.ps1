@@ -28,6 +28,7 @@ Describe 'Restart-PiHoleDnsService (Integration)' -Tag 'Integration' {
 
     It 'restarts the DNS service and returns a formatted status' -Skip:(-not $script:ConfigAvailable) {
         $result = Restart-PiHoleDnsService -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.Status | Should -Be 'Restarted'
@@ -38,8 +39,8 @@ Describe 'Restart-PiHoleDnsService (Integration)' -Tag 'Integration' {
         # restarting it again, or this occasionally hits a transient connection failure.
         Start-Sleep -Seconds 5
 
-        { Restart-PiHoleDnsService -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true } |
-        Should -Not -Throw
+        $result = Restart-PiHoleDnsService -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        Write-Host "RawOutput: [$result]"
     }
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {

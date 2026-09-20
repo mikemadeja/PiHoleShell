@@ -20,11 +20,15 @@ Describe 'Get-PiHoleStatsQuerySuggestions (Integration)' -Tag 'Integration' {
             $script:PiHoleServer = $PiHoleServer
             $script:PiHoleToken = $PiHoleToken
             $script:PiHoleIgnoreSsl = $PiHoleIgnoreSsl
+
+            # Generates some real query traffic so live stats aren't all zero/empty.
+            & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
     }
 
     It 'returns filter suggestions as a formatted object' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsQuerySuggestions -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.Type | Should -Not -BeNullOrEmpty
@@ -35,6 +39,7 @@ Describe 'Get-PiHoleStatsQuerySuggestions (Integration)' -Tag 'Integration' {
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsQuerySuggestions -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.suggestions | Should -Not -BeNullOrEmpty
     }

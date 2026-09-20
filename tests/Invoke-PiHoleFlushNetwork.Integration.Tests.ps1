@@ -25,14 +25,15 @@ Describe 'Invoke-PiHoleFlushNetwork (Integration)' -Tag 'Integration' {
 
     It 'flushes the network table and returns a formatted status' -Skip:(-not $script:ConfigAvailable) {
         $result = Invoke-PiHoleFlushNetwork -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.Status | Should -Be 'Flushed'
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
-        { Invoke-PiHoleFlushNetwork -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true } |
-        Should -Not -Throw
+        $result = Invoke-PiHoleFlushNetwork -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        Write-Host "RawOutput: [$result]"
     }
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {

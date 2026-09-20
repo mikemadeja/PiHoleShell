@@ -16,6 +16,11 @@ Describe 'Get-PiHoleStatsDatabaseSummary (Integration)' -Tag 'Integration' {
             $script:PiHoleServer = $PiHoleServer
             $script:PiHoleToken = $PiHoleToken
             $script:PiHoleIgnoreSsl = $PiHoleIgnoreSsl
+
+            # Generates some real query traffic. Live stats reflect it immediately; the on-disk
+            # database stats this file tests only reflect it once FTL's periodic flush runs, so
+            # this mainly helps build up real history across repeated runs, not this run's own data.
+            & (Join-Path $PSScriptRoot 'Initialize-PiHoleTestData.ps1') -DnsServer $PiHoleServer.Host
         }
 
         # from=0 is rejected by the API with a 400; use a wide-but-valid recent window instead.
@@ -25,6 +30,7 @@ Describe 'Get-PiHoleStatsDatabaseSummary (Integration)' -Tag 'Integration' {
 
     It 'returns database summary as a formatted object' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseSummary -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
+        $result | Format-List | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
         $result.SumQueries | Should -BeGreaterOrEqual 0
@@ -33,6 +39,7 @@ Describe 'Get-PiHoleStatsDatabaseSummary (Integration)' -Tag 'Integration' {
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseSummary -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result | Format-List | Out-String | Write-Host
 
         $result.PSObject.Properties.Name | Should -Contain 'sum_queries'
     }

@@ -28,6 +28,7 @@ Describe 'Update-PiHoleActionsGravity (Integration)' -Tag 'Integration' {
 
     It 'runs a gravity update and returns the raw API response' -Skip:(-not $script:ConfigAvailable) {
         $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true -Confirm:$false
+        Write-Host "RawOutput: [$result]"
 
         $result | Should -Not -BeNullOrEmpty
     }
