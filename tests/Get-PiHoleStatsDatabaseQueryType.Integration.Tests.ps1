@@ -28,13 +28,13 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
         $script:From = $script:Until.AddDays(-30)
     }
 
-    It 'returns a formatted object with all query type properties' -Skip:(-not $script:ConfigAvailable) {
+    It 'returns an array of Type/Count rows for every query type' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
-        $result | Format-List | Out-String | Write-Host
+        $result | Format-Table | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
-        $result.PSObject.Properties.Name | Should -Contain 'A'
-        $result.PSObject.Properties.Name | Should -Contain 'AAAA'
+        ($result | Where-Object Type -EQ 'A') | Should -Not -BeNullOrEmpty
+        ($result | Where-Object Type -EQ 'AAAA') | Should -Not -BeNullOrEmpty
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
@@ -52,7 +52,7 @@ Describe 'Get-PiHoleStatsDatabaseQueryType (Integration)' -Tag 'Integration' {
 
     It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleStatsDatabaseQueryType -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
-        $result | Format-List | Out-String | Write-Host
+        $result | Format-Table | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
     }

@@ -26,10 +26,10 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseQueryType -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleStatsDatabaseQueryType -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
 
 .EXAMPLE
-Get-PiHoleStatsDatabaseQueryType -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -From (Get-Date).AddDays(-7) -Until (Get-Date)
+Get-PiHoleStatsDatabaseQueryType -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -From (Get-Date).AddDays(-7) -Until (Get-Date)
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/stats/database/query_types')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -64,25 +64,14 @@ Get-PiHoleStatsDatabaseQueryType -PiHoleServer "http://pihole.domain.com:8080" -
             Write-Output $Response
         }
         else {
-            $Object = [PSCustomObject]@{
-                A      = $Response.types.A
-                AAAA   = $Response.types.AAAA
-                ANY    = $Response.types.ANY
-                SRV    = $Response.types.SRV
-                SOA    = $Response.types.SOA
-                PTR    = $Response.types.PTR
-                TXT    = $Response.types.TXT
-                NAPTR  = $Response.types.NAPTR
-                MX     = $Response.types.MX
-                DS     = $Response.types.DS
-                RRSIG  = $Response.types.RRSIG
-                DNSKEY = $Response.types.DNSKEY
-                NS     = $Response.types.NS
-                SVCB   = $Response.types.SVCB
-                HTTPS  = $Response.types.HTTPS
-                OTHER  = $Response.types.OTHER
+            $QueryTypes = @('A', 'AAAA', 'ANY', 'SRV', 'SOA', 'PTR', 'TXT', 'NAPTR', 'MX', 'DS', 'RRSIG', 'DNSKEY', 'NS', 'SVCB', 'HTTPS', 'OTHER')
+            $ObjectFinal = foreach ($Type in $QueryTypes) {
+                [PSCustomObject]@{
+                    Type  = $Type
+                    Count = $Response.types.$Type
+                }
             }
-            Write-Output $Object
+            Write-Output $ObjectFinal
         }
     }
 
