@@ -51,6 +51,16 @@ jobs:
           git tag ${{ steps.bump.outputs.new_tag }}
           git push origin ${{ steps.bump.outputs.new_tag }}
 
+      - name: Generate release notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/releases/generate-notes" \
+            -f tag_name="${{ steps.bump.outputs.new_tag }}" \
+            -f previous_tag_name="${{ steps.get_tag.outputs.latest_tag }}" \
+            --jq .body > release-notes.md
+          cat release-notes.md
+
       - name: Copy README into module folder
         shell: pwsh
         run: |
@@ -82,7 +92,7 @@ jobs:
         with:
           tag_name: ${{ steps.bump.outputs.new_tag }}
           name: "Release ${{ steps.bump.outputs.new_tag }}"
-          generate_release_notes: true
+          body_path: release-notes.md
           files: output/release.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -94,14 +104,19 @@ jobs:
             $modulePath = "PiHoleShell"  # Change to your actual module folder
             $manifest = Get-ChildItem -Path $modulePath -Filter PiHoleShell.psd1 -Recurse | Select-Object -First 1
 
-            (Get-Content $($manifest.fullname)) -replace '0.0.0', ($ENV:TAG -replace "v", "") | Out-File $manifest.fullname
-            Write-Host "Replacing 0.0.0 with $ENV:NEW_TAG"
-    
             if (-not $manifest) {
               throw "No module manifest (*.psd1) found in $modulePath"
             }
-    
+
+            # Surgical replace rather than Update-ModuleManifest, which rewrites and reformats
+            # the entire file (drops comments, changes array literal styles, etc.). The source
+            # manifest always has this exact static placeholder, since the version/notes bump
+            # here is never committed back to the repo.
+            $releaseNotes = (Get-Content -Path release-notes.md -Raw).Trim()
+            $releaseNotesEscaped = $releaseNotes -replace "'", "''"
+            $manifestContent = Get-Content -Path $manifest.FullName -Raw
+            $manifestContent = $manifestContent.Replace("'Initial release targeting PowerShell 7+'", "'$releaseNotesEscaped'")
+            Set-Content -Path $manifest.FullName -Value $manifestContent -NoNewline
+
             Write-Host "Publishing module: $($manifest.FullName)"
             Publish-Module -Path $manifest.DirectoryName -NuGetApiKey $apiKey -Verbose
-        env:
-          NEW_TAG: ${{ steps.bump.outputs.new_tag }}

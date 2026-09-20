@@ -20,7 +20,7 @@ If true, returns top clients by blocked queries instead of total queries
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl" -MaxResult 10
+Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -MaxResult 10
     #>
     [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

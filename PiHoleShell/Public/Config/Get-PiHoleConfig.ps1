@@ -1,11 +1,33 @@
 function Get-PiHoleConfig {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/config
+Get current configuration of Pi-hole
 
+.DESCRIPTION
+Request Pi-hole's full configuration tree (dns, dhcp, ntp, resolver, database, webserver,
+files, misc, and debug settings). The formatted output mirrors the API response as nested
+objects with PascalCase property names, so the entire configuration is available for
+inspection rather than a hand-picked subset.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+
+.EXAMPLE
+(Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password").Dns.Upstreams
     #>
-    #Work In Progress
-    [CmdletBinding()]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/config')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -15,6 +37,7 @@ https://ftl.pi-hole.net/master/docs/#get-/config
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
+
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
         $Params = @{
@@ -31,41 +54,13 @@ https://ftl.pi-hole.net/master/docs/#get-/config
             Write-Output $Response
         }
         else {
-            $ObjectFinal = @()
-            $Dns = [PSCustomObject]@{
-                Upstreams = $Response.config.dns.upstreams
-            }
-
-            $Dhcp = [PSCustomObject]@{
-                Active               = $Response.config.dhcp.active
-                Start                = $Response.config.dhcp.start
-                End                  = $Response.config.dhcp.end
-                Hosts                = $Response.config.dhcp.hosts
-                IgnoreUnknownClients = $Response.config.dhcp.ignoreUnknownClients
-                Ipv6                 = $Response.config.dhcp.ipv6
-                LeaseTime            = $Response.config.dhcp.leaseTime
-                Logging              = $Response.config.dhcp.logging
-                MultiDNS             = $Response.config.dhcp.multiDNS
-                Netmask              = $Response.config.dhcp.netmask
-                RapidCommit          = $Response.config.dhcp.rapidCommit
-                Router               = $Response.config.dhcp.router
-            }
-
-            $Object = [PSCustomObject]@{
-                Dns  = $Dns
-                Dhcp = $Dhcp
-            }
-
-            if ($Object) {
-                $ObjectFinal += $Object
-            }
-            Write-Output $ObjectFinal
+            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
+            Write-Output $Object
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

@@ -16,7 +16,7 @@ Ignore SSL when interacting with the PiHole API
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (

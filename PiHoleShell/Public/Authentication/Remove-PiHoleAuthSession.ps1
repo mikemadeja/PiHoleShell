@@ -13,7 +13,7 @@ The API Password you generated from your PiHole server
 Ignore SSL when interacting with the PiHole API
 
 .EXAMPLE
-Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "fjdsjfldsjfkldjslafjskdl"
+Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

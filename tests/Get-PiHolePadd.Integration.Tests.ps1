@@ -6,7 +6,7 @@
 
 $script:ConfigAvailable = Test-Path (Join-Path $PSScriptRoot 'IntegrationConfig.local.ps1')
 
-Describe 'Get-PiHoleStatsUpstream (Integration)' -Tag 'Integration' {
+Describe 'Get-PiHolePadd (Integration)' -Tag 'Integration' {
     BeforeAll {
         Import-Module .\PiHoleShell\PiHoleShell.psm1 -Force
 
@@ -22,25 +22,24 @@ Describe 'Get-PiHoleStatsUpstream (Integration)' -Tag 'Integration' {
         }
     }
 
-    It 'returns upstream metrics as a formatted object' -Skip:(-not $script:ConfigAvailable) {
-        $result = Get-PiHoleStatsUpstream -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+    It 'returns the PADD dashboard data as a formatted object' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHolePadd -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
         $result | Format-List | Out-String | Write-Host
-        $result.Upstreams | Format-Table | Out-String | Write-Host
 
         $result | Should -Not -BeNullOrEmpty
-        $result.Upstreams | Should -Not -BeNullOrEmpty
-        $result.TotalQueries | Should -BeGreaterOrEqual 0
+        $result.NodeName | Should -Not -BeNullOrEmpty
+        $result.Queries | Should -Not -BeNullOrEmpty
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
-        $result = Get-PiHoleStatsUpstream -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
+        $result = Get-PiHolePadd -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
         $result | Format-List | Out-String | Write-Host
 
-        $result.upstreams | Should -Not -BeNullOrEmpty
+        $result | Should -Not -BeNullOrEmpty
     }
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
-        $result = Get-PiHoleStatsUpstream -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -ErrorVariable errOut -ErrorAction SilentlyContinue
+        $result = Get-PiHolePadd -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -ErrorVariable errOut -ErrorAction SilentlyContinue
 
         $errOut | Should -Not -BeNullOrEmpty
     }
