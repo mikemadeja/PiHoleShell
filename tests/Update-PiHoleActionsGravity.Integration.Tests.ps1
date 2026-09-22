@@ -26,6 +26,14 @@ Describe 'Update-PiHoleActionsGravity (Integration)' -Tag 'Integration' {
         }
     }
 
+    It 'runs a gravity update and returns a formatted object' -Skip:(-not $script:ConfigAvailable) {
+        $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Confirm:$false
+        $result | Format-List | Out-String | Write-Host
+
+        $result | Should -Not -BeNullOrEmpty
+        $result.Status | Should -Be "Completed"
+    }
+
     It 'runs a gravity update and returns the raw API response' -Skip:(-not $script:ConfigAvailable) {
         $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true -Confirm:$false
         Write-Host "RawOutput: [$result]"

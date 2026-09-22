@@ -89,7 +89,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 |---|---|
 | `Invoke-PiHoleFlushNetwork` | Flushes the network table. This includes removing both all known devices and their associated addresses. |
 | `Restart-PiHoleDnsService` | Restarts the pihole-FTL service |
-| `Update-PiHoleActionsGravity` 🚧 | Update Pi-hole's adlists by running pihole -g. The output of the process is streamed with chunked encoding. Use the optional color query parameter to include ANSI color escape codes in the output. |
+| `Update-PiHoleActionsGravity` | Update Pi-hole's adlists by running pihole -g |
 
 ### DNS Control
 
