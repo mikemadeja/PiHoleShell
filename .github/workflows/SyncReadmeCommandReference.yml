@@ -3,14 +3,13 @@ name: Sync README Command Reference
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [ "main" ]
+    branches: [ "develop", "main" ]
 
 permissions:
   contents: read
 
 jobs:
   sync-readme:
-    if: github.event.pull_request.head.ref == 'develop'
     runs-on: ubuntu-latest
 
     steps:
@@ -20,10 +19,11 @@ jobs:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
 
-      # develop requires PRs for all changes, so this can't auto-commit/push a fix directly to
-      # develop (that used to work before branch protection was added, and now fails every time
-      # there's real drift to fix). Instead this just fails the check with instructions, the same
-      # way Invoke-ScriptAnalyzer already gates PSScriptAnalyzer.yml.
+      # Runs on every PR into develop (and into main, as a final check on promotion), so drift
+      # gets caught before it lands anywhere - develop requires PRs for all changes, so this
+      # can't auto-commit/push a fix directly to it (that used to work before branch protection
+      # was added). Instead this fails the check with instructions, the same way
+      # Invoke-ScriptAnalyzer already gates PSScriptAnalyzer.yml.
       - name: Check README command reference is up to date
         shell: pwsh
         run: ./tools/Update-ReadmeCommandReference.ps1 -Check

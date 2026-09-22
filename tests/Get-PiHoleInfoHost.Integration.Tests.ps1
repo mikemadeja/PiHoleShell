@@ -25,6 +25,7 @@ Describe 'Get-PiHoleInfoHost (Integration)' -Tag 'Integration' {
 
         $result | Should -Not -BeNullOrEmpty
         $result.NodeName | Should -Not -BeNullOrEmpty
+        $result.Model | Should -Not -BeNullOrEmpty
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {

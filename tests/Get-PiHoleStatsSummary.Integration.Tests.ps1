@@ -31,6 +31,8 @@ Describe 'Get-PiHoleStatsSummary (Integration)' -Tag 'Integration' {
         $result.Types | Should -Not -BeNullOrEmpty
         $result.Status | Should -Not -BeNullOrEmpty
         $result.Replies | Should -Not -BeNullOrEmpty
+        $result.Clients | Should -Not -BeNullOrEmpty
+        $result.Gravity | Should -Not -BeNullOrEmpty
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
