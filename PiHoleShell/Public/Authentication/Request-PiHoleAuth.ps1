@@ -1,8 +1,8 @@
 function Request-PiHoleAuth {
     #INTERNAL FUNCTION
+    [CmdletBinding()]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
-        [CmdletBinding()]
         [System.URI]$PiHoleServer,
         [string]$Password,
         [bool]$IgnoreSsl = $false
@@ -25,6 +25,5 @@ function Request-PiHoleAuth {
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 }

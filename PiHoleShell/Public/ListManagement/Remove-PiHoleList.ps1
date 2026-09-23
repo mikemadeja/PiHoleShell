@@ -1,7 +1,11 @@
 function Remove-PiHoleList {
     <#
 .SYNOPSIS
-Deletes multiple lists in the lists object.
+Remove a list
+
+.DESCRIPTION
+Unsubscribes Pi-hole from an allow or block list. The Pi-hole API deletes lists in a batch,
+so this sends a single-item batch containing just the list you specify.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -12,11 +16,18 @@ The API Password you generated from your PiHole server
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
 
-.PARAMETER RawOutput
-This will dump the response instead of the formatted objec
+.PARAMETER Address
+The URL of the list to remove
 
+.PARAMETER Type
+Whether this is an Allow list or a Block list
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+Remove-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Address "https://hosts-file.net/ad_servers.txt" -Type Block
     #>
-    #Work In Progress (NEED TO FINISH)
     [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists-batchDelete')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -25,19 +36,16 @@ This will dump the response instead of the formatted objec
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
+        [Parameter(Mandatory = $true)]
         [System.Uri]$Address,
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Allow", "Block")]
         [string]$Type,
         [bool]$RawOutput = $false
     )
     try {
         $Target = "Pi-Hole list $Address of type $Type"
         if ($PSCmdlet.ShouldProcess($Target, "Remove list")) {
-            $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
-
-            if ($FindMatchingList) {
-
-            }
-
             $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
             $Body = @(
@@ -65,38 +73,20 @@ This will dump the response instead of the formatted objec
             }
 
             else {
-                $ObjectFinal = @()
-                $Object = $null
-
-                foreach ($Item in $Response.lists) {
-                    $Object = [PSCustomObject]@{
-                        Address        = $Item.address
-                        Comment        = $Item.comment
-                        Groups         = $AllGroupsNames
-                        Enabled        = $Item.enabled
-                        Id             = $Item.id
-                        DateAdded      = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                        DateModified   = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                        Type           = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
-                        DateUpdated    = $DateUpdated
-                        Number         = $Item.number
-                        InvalidDomains = $Item.invalid_domains
-                        AbpEntries     = $Item.abp_entries
-                        Status         = $Item.status
-                    }
-                    if ($Object) {
-                        $ObjectFinal += $Object
-                    }
+                # A successful delete returns 204 No Content, so there's no response body to
+                # build a rich object from.
+                $Object = [PSCustomObject]@{
+                    Address = $Address
+                    Type    = $Type
+                    Status  = "Removed"
                 }
-
-                Write-Output $ObjectFinal
+                Write-Output $Object
             }
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {
