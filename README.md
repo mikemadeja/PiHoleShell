@@ -138,6 +138,10 @@ Functions marked 🚧 are still under active development — signatures and outp
 | Function | Description |
 |---|---|
 | `Get-PiHoleConfig` | Get current configuration of Pi-hole |
+| `Get-PiHoleHistory` | Get activity graph data |
+| `Get-PiHoleHistoryClient` | Get per-client activity graph data |
+| `Get-PiHoleHistoryDatabase` | Get activity graph data (long-term data) |
+| `Get-PiHoleHistoryDatabaseClient` | Get per-client activity graph data (long-term data) |
 | `Get-PiHoleInfoHost` | Get information about the host system |
 | `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages Request Pi-hole diagnosis messages |
 | `Get-PiHolePadd` | Get summarized data for PADD |
