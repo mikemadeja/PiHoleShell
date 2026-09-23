@@ -88,7 +88,6 @@ This will dump the response instead of the formatted object
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

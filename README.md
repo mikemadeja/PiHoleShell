@@ -89,14 +89,14 @@ Functions marked 🚧 are still under active development — signatures and outp
 |---|---|
 | `Invoke-PiHoleFlushNetwork` | Flushes the network table. This includes removing both all known devices and their associated addresses. |
 | `Restart-PiHoleDnsService` | Restarts the pihole-FTL service |
-| `Update-PiHoleActionsGravity` 🚧 | Update Pi-hole's adlists by running pihole -g. The output of the process is streamed with chunked encoding. Use the optional color query parameter to include ANSI color escape codes in the output. |
+| `Update-PiHoleActionsGravity` | Update Pi-hole's adlists by running pihole -g |
 
 ### DNS Control
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleDnsBlockingStatus` | _No description yet_ |
-| `Set-PiHoleDnsBlocking` | _No description yet_ |
+| `Get-PiHoleDnsBlockingStatus` | Get Pi-hole's current DNS blocking status |
+| `Set-PiHoleDnsBlocking` | Enable or disable Pi-hole's DNS blocking |
 
 ### Group Management
 
@@ -111,9 +111,9 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
-| `Add-PiHoleList` 🚧 | Add new list |
+| `Add-PiHoleList` | Add a new list |
 | `Get-PiHoleList` 🚧 | Get lists |
-| `Remove-PiHoleList` 🚧 | Deletes multiple lists in the lists object. |
+| `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
 
 ### Metrics
