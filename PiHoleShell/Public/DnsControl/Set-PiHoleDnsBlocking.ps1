@@ -1,7 +1,13 @@
 function Set-PiHoleDnsBlocking {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/dns/blocking
+Enable or disable Pi-hole's DNS blocking
+
+.DESCRIPTION
+Turns Pi-hole's DNS blocking on or off. Optionally pass -TimeInSeconds to have Pi-hole
+automatically revert to the opposite setting after that many seconds - for example,
+disabling blocking for 60 seconds to temporarily let all DNS queries through, after which
+blocking resumes on its own.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
