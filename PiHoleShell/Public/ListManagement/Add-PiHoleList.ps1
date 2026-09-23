@@ -1,7 +1,11 @@
 function Add-PiHoleList {
     <#
 .SYNOPSIS
-Add new list
+Add a new list
+
+.DESCRIPTION
+Subscribes Pi-hole to a new allow or block list. The list is fetched and applied the next
+time gravity runs (see Update-PiHoleActionsGravity).
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -12,11 +16,27 @@ The API Password you generated from your PiHole server
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
 
+.PARAMETER Address
+The URL of the list to subscribe to
+
+.PARAMETER Type
+Whether this is an Allow list or a Block list
+
+.PARAMETER Comment
+An optional comment to store alongside the list
+
+.PARAMETER Group
+The group(s) this list applies to. Defaults to "Default"
+
+.PARAMETER Enabled
+Whether the list is enabled immediately. Defaults to $true
+
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
+.EXAMPLE
+Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Address "https://hosts-file.net/ad_servers.txt" -Type Block
     #>
-    #Work In Progress
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
@@ -25,6 +45,7 @@ This will dump the response instead of the formatted object
         [Parameter(Mandatory = $true)]
         [string]$Password,
         [bool]$IgnoreSsl = $false,
+        [Parameter(Mandatory = $true)]
         [System.Uri]$Address,
         [Parameter(Mandatory = $true)]
         [ValidateSet("Allow", "Block")]
@@ -61,7 +82,6 @@ This will dump the response instead of the formatted object
 
         $Body = @{
             address = $Address
-            type    = $Type
             groups  = [Object[]]($AllGroupsIds)
             comment = $Comment
             enabled = $Enabled
@@ -69,7 +89,7 @@ This will dump the response instead of the formatted object
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/lists"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/lists?type=$($Type.ToLower())"
             Method               = "Post"
             SkipCertificateCheck = $IgnoreSsl
             Body                 = $Body | ConvertTo-Json -Depth 10
@@ -78,21 +98,19 @@ This will dump the response instead of the formatted object
 
         $Response = Invoke-RestMethod @Params
 
-        if ($Item.date_updated -eq 0) {
-            $DateUpdated = $null
-        }
-        else {
-            $DateUpdated = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-        }
-
         if ($RawOutput) {
             Write-Output $Response
         }
 
         else {
             $ObjectFinal = @()
-            $Object = $null
             foreach ($Item in $Response.lists) {
+                if ($Item.date_updated -eq 0) {
+                    $DateUpdated = $null
+                }
+                else {
+                    $DateUpdated = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                }
 
                 $Object = [PSCustomObject]@{
                     Address        = $Item.address
@@ -120,7 +138,6 @@ This will dump the response instead of the formatted object
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

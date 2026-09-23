@@ -73,7 +73,6 @@ Get groups
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

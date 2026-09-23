@@ -111,9 +111,9 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
-| `Add-PiHoleList` 🚧 | Add new list |
+| `Add-PiHoleList` | Add a new list |
 | `Get-PiHoleList` 🚧 | Get lists |
-| `Remove-PiHoleList` 🚧 | Deletes multiple lists in the lists object. |
+| `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
 
 ### Metrics
