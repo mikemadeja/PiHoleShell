@@ -95,8 +95,8 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
-| `Get-PiHoleDnsBlockingStatus` | _No description yet_ |
-| `Set-PiHoleDnsBlocking` | _No description yet_ |
+| `Get-PiHoleDnsBlockingStatus` | Get Pi-hole's current DNS blocking status |
+| `Set-PiHoleDnsBlocking` | Enable or disable Pi-hole's DNS blocking |
 
 ### Group Management
 

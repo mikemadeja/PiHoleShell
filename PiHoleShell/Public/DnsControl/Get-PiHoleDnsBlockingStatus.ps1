@@ -1,7 +1,12 @@
 function Get-PiHoleDnsBlockingStatus {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/config
+Get Pi-hole's current DNS blocking status
+
+.DESCRIPTION
+Returns whether Pi-hole is currently blocking DNS queries. If blocking has been temporarily
+toggled with a timer (see Set-PiHoleDnsBlocking), this also returns how many seconds remain
+until the opposite setting reverts.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
