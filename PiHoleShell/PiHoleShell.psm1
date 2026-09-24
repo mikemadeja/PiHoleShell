@@ -33,5 +33,7 @@ Export-ModuleMember -Function @(
         #ListManagement
         'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', `
         #FTLInformation
-        'Get-PiHoleInfoMessage', 'Get-PiHoleInfoHost'
+        'Get-PiHoleInfoMessage', 'Get-PiHoleInfoHost', `
+        #History
+        'Get-PiHoleHistory', 'Get-PiHoleHistoryDatabase', 'Get-PiHoleHistoryClient', 'Get-PiHoleHistoryDatabaseClient'
 )
