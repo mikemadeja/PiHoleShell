@@ -43,7 +43,7 @@ Describe 'Update-PiHoleActionsGravity (Integration)' -Tag 'Integration' {
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
         $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Confirm:$false -ErrorVariable errOut -ErrorAction SilentlyContinue
-        Write-Host "Error: [$errOut]"
+        Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
 
         $errOut | Should -Not -BeNullOrEmpty
     }
