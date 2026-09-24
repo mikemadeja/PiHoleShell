@@ -1,7 +1,10 @@
 function Remove-PiHoleGroup {
     <#
 .SYNOPSIS
-Delete group
+Delete a group
+
+.DESCRIPTION
+Deletes a group from Pi-hole. Any lists or clients assigned to it are unassigned, not deleted.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -9,14 +12,18 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
+.PARAMETER GroupName
+The name of the group to delete
+
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
+.EXAMPLE
+Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -GroupName "Kids"
     #>
-    #Work In Progress
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/groups/-name-')]
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -34,8 +41,10 @@ This will dump the response instead of the formatted object
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $Body = @{
-            name = $GroupName
+        $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
+
+        if (-not $GetGroupName) {
+            throw "Cannot find $GroupName on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
         }
 
         $Params = @{
@@ -44,32 +53,24 @@ This will dump the response instead of the formatted object
             Method               = "Delete"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
-            Body                 = $Body | ConvertTo-Json -Depth 10
         }
-        $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
 
-        if ($GetGroupName) {
-            $Response = Invoke-RestMethod @Params
+        $Response = Invoke-RestMethod @Params
 
-            if ($RawOutput) {
-                Write-Output $Response
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $Object = [PSCustomObject]@{
+                Name   = $GroupName
+                Status = "Deleted"
             }
-            else {
-                $ObjectFinal = @()
-                $Object = [PSCustomObject]@{
-                    Name   = $GroupName
-                    Status = "Deleted"
-                }
-                $ObjectFinal = $Object
-            }
-            Write-Verbose -Message "Deleted $($Object.GroupName)"
-            Write-Output $ObjectFinal
+            Write-Output $Object
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

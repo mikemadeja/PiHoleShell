@@ -1,8 +1,35 @@
 function New-PiHoleGroup {
     <#
 .SYNOPSIS
-Creates a new group in the groups object.
+Creates a new group
 
+.DESCRIPTION
+Creates a new group in Pi-hole's groups object. Lists and clients can be assigned to groups
+to apply blocking rules selectively rather than globally.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Password
+The API Password you generated from your PiHole server
+
+.PARAMETER GroupName
+The name of the group to create
+
+.PARAMETER Comment
+An optional comment to store alongside the group
+
+.PARAMETER Enabled
+Whether the group is enabled immediately. Defaults to $true
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.PARAMETER RawOutput
+This will dump the response instead of the formatted object
+
+.EXAMPLE
+New-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -GroupName "Kids"
     #>
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/groups')]
     [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
@@ -52,24 +79,23 @@ Creates a new group in the groups object.
             }
 
             else {
-                $ObjectFinal = @()
-                $Object = [PSCustomObject]@{
-                    Name    = $GroupName
-                    Comment = $Comment
-                    Enabled = $Enabled
+                $ObjectFinal = foreach ($Item in $Response.groups) {
+                    [PSCustomObject]@{
+                        Name         = $Item.name
+                        Comment      = $Item.comment
+                        Enabled      = $Item.enabled
+                        Id           = $Item.id
+                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    }
                 }
-                Write-Verbose -Message "Name - $($Object.GroupName)"
-                Write-Verbose -Message "Comment - $($Object.Comment)"
-                Write-Verbose -Message "Enabled - $($Object.Enabled)"
-                $ObjectFinal = $Object
+                Write-Output $ObjectFinal
             }
-            Write-Output $ObjectFinal
         }
     }
 
     catch {
         Write-Error -Message $_.Exception.Message
-        break
     }
 
     finally {

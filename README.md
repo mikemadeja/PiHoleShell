@@ -103,9 +103,9 @@ Functions marked 🚧 are still under active development — signatures and outp
 | Function | Description |
 |---|---|
 | `Get-PiHoleGroup` | Get groups |
-| `New-PiHoleGroup` | Creates a new group in the groups object. |
-| `Remove-PiHoleGroup` 🚧 | Delete group |
-| `Update-PiHoleGroup` | Items may be updated by replacing them. |
+| `New-PiHoleGroup` | Creates a new group |
+| `Remove-PiHoleGroup` | Delete a group |
+| `Update-PiHoleGroup` | Update a group |
 
 ### List Management
 
