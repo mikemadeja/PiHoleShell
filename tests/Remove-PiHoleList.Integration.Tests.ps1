@@ -60,7 +60,7 @@ Describe 'Remove-PiHoleList (Integration)' -Tag 'Integration' {
         Add-PiHoleList -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Address $script:TestListAddress -Type Block | Out-Null
 
         $result = Remove-PiHoleList -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Address $script:TestListAddress -Type Block -Confirm:$false -ErrorVariable errOut -ErrorAction SilentlyContinue
-        Write-Host "Error: [$errOut]"
+        Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
 
         $errOut | Should -Not -BeNullOrEmpty
     }
