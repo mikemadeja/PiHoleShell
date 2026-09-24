@@ -58,7 +58,7 @@ Describe 'Add-PiHoleList (Integration)' -Tag 'Integration' {
         Add-PiHoleList -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Address $script:TestListAddress -Type Block | Out-Null
 
         $result = Add-PiHoleList -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Address $script:TestListAddress -Type Block -ErrorVariable errOut -ErrorAction SilentlyContinue
-        Write-Host "Error: [$errOut]"
+        Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
 
         $errOut | Should -Not -BeNullOrEmpty
 
@@ -67,7 +67,7 @@ Describe 'Add-PiHoleList (Integration)' -Tag 'Integration' {
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
         $result = Add-PiHoleList -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Address $script:TestListAddress -Type Block -ErrorVariable errOut -ErrorAction SilentlyContinue
-        Write-Host "Error: [$errOut]"
+        Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
 
         $errOut | Should -Not -BeNullOrEmpty
     }

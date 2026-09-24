@@ -1,19 +1,19 @@
-function Remove-PiHoleGroup {
+function Get-PiHoleHistory {
     <#
 .SYNOPSIS
-Delete a group
+Get activity graph data
 
 .DESCRIPTION
-Deletes a group from Pi-hole. Any lists or clients assigned to it are unassigned, not deleted.
+Request the data needed to generate the "total queries over time" graph, covering roughly
+the last 24 hours. The sum of Cached/Blocked/Forwarded for a given entry may be smaller than
+Total - the remainder are queries that don't fit into any of those categories (e.g. a busy
+database, or an unknown query status).
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
 
 .PARAMETER Password
 The API Password you generated from your PiHole server
-
-.PARAMETER GroupName
-The name of the group to delete
 
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
@@ -22,35 +22,26 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -GroupName "Kids"
+Get-PiHoleHistory -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/groups/-name-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/history')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
-        [string]$GroupName,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
-
     )
+
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
-
-        if (-not $GetGroupName) {
-            throw "Cannot find $GroupName on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-        }
-
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
-            Method               = "Delete"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/history"
+            Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
         }
@@ -61,11 +52,16 @@ Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
             Write-Output $Response
         }
         else {
-            $Object = [PSCustomObject]@{
-                Name   = $GroupName
-                Status = "Deleted"
+            $ObjectFinal = foreach ($Item in $Response.history) {
+                [PSCustomObject]@{
+                    Timestamp = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.timestamp).LocalTime
+                    Total     = $Item.total
+                    Cached    = $Item.cached
+                    Blocked   = $Item.blocked
+                    Forwarded = $Item.forwarded
+                }
             }
-            Write-Output $Object
+            Write-Output $ObjectFinal
         }
     }
 
