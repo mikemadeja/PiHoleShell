@@ -56,8 +56,17 @@ steps:
 
       if ($env:BUILD_REASON -eq 'PullRequest') {
           try {
+              # The default checkout is shallow, which leaves no common ancestor with the target
+              # branch to diff against ("no merge base") - unshallow first so the diff can work.
+              if ((git rev-parse --is-shallow-repository) -eq 'true') {
+                  git fetch --unshallow --quiet
+                  if ($LASTEXITCODE -ne 0) { throw "git fetch --unshallow failed" }
+              }
+
+              # Fetch with an explicit refspec so origin/<branch> is created even if the
+              # checkout's default fetch refspec is restricted to a single branch.
               $targetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH -replace '^refs/heads/', ''
-              git fetch origin $targetBranch --quiet
+              git fetch origin "${targetBranch}:refs/remotes/origin/${targetBranch}" --quiet
               if ($LASTEXITCODE -ne 0) { throw "git fetch failed for '$targetBranch'" }
 
               $changedFiles = git diff --name-only "origin/$targetBranch...HEAD"

@@ -24,18 +24,23 @@ Describe 'Get-PiHoleHistoryDatabase (Integration)' -Tag 'Integration' {
     }
 
     It 'returns history as formatted objects' -Skip:(-not $script:ConfigAvailable) {
-        $result = Get-PiHoleHistoryDatabase -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl
-        $result | Select-Object -First 5 | Format-Table | Out-String | Write-Host
+        # An empty array is a legitimate response here (no queries logged in the window), unlike
+        # the Stats(database) summary endpoints which always return a populated object shape even
+        # with zero matching rows - so this only asserts the call succeeds and, if there's data,
+        # that its shape is correct, rather than requiring non-empty results.
+        { $script:result = Get-PiHoleHistoryDatabase -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl } | Should -Not -Throw
+        $script:result | Select-Object -First 5 | Format-Table | Out-String | Write-Host
 
-        $result | Should -Not -BeNullOrEmpty
-        $result[0].Total | Should -BeGreaterOrEqual 0
+        if ($script:result) {
+            $script:result[0].Total | Should -BeGreaterOrEqual 0
+        }
     }
 
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleHistoryDatabase -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -From $script:From -Until $script:Until -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
         $result | Format-List | Out-String | Write-Host
 
-        $result.history | Should -Not -BeNullOrEmpty
+        $result.PSObject.Properties.Name | Should -Contain 'history'
     }
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
@@ -45,9 +50,7 @@ Describe 'Get-PiHoleHistoryDatabase (Integration)' -Tag 'Integration' {
     }
 
     It 'defaults to the last 8 hours when From/Until are omitted' -Skip:(-not $script:ConfigAvailable) {
-        $result = Get-PiHoleHistoryDatabase -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
-        $result | Format-Table | Out-String | Write-Host
-
-        $result | Should -Not -BeNullOrEmpty
+        { $script:result = Get-PiHoleHistoryDatabase -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl } | Should -Not -Throw
+        $script:result | Format-Table | Out-String | Write-Host
     }
 }
