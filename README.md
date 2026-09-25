@@ -87,6 +87,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 
 | Function | Description |
 |---|---|
+| `Invoke-PiHoleFlushLogs` | Flushes the DNS logs |
 | `Invoke-PiHoleFlushNetwork` | Flushes the network table. This includes removing both all known devices and their associated addresses. |
 | `Restart-PiHoleDnsService` | Restarts the pihole-FTL service |
 | `Update-PiHoleActionsGravity` | Update Pi-hole's adlists by running pihole -g |
