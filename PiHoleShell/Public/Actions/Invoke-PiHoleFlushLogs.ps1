@@ -1,10 +1,11 @@
-function Invoke-PiHoleFlushNetwork {
+function Invoke-PiHoleFlushLogs {
     <#
 .SYNOPSIS
-Flushes the network table. This includes removing both all known devices and their associated addresses.
+Flushes the DNS logs
 
 .DESCRIPTION
-Flushes Pi-hole's network table, removing all known devices and their associated addresses.
+Flushes the Pi-hole DNS logs. This empties the DNS log file and purges the most recent 24
+hours of query history from both the long-term database and FTL's internal memory.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -19,11 +20,12 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+Invoke-PiHoleFlushLogs -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/flush/network')]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/flush/logs')]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Flushes PiHole logs')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseSingularNouns", "", Justification = "Logs matches the Pi-hole API's own endpoint name, /action/flush/logs")]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
@@ -38,7 +40,7 @@ Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Passwor
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/action/flush/network"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/action/flush/logs"
             Method               = "Post"
             ContentType          = "application/json"
             SkipCertificateCheck = $IgnoreSsl
