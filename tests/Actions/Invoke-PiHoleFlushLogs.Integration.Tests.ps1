@@ -6,7 +6,7 @@
 
 # Config availability must be known at discovery time so the -Skip parameter on each It block
 # (evaluated during discovery, before BeforeAll runs) sees the correct value.
-$script:ConfigAvailable = Test-Path (Join-Path $PSScriptRoot 'IntegrationConfig.local.ps1')
+$script:ConfigAvailable = Test-Path (Join-Path (Split-Path $PSScriptRoot -Parent) 'IntegrationConfig.local.ps1')
 
 Describe 'Invoke-PiHoleFlushLogs (Integration)' -Tag 'Integration' {
     BeforeAll {
@@ -14,7 +14,7 @@ Describe 'Invoke-PiHoleFlushLogs (Integration)' -Tag 'Integration' {
 
         # Recomputed here (not read from the discovery-time $script:ConfigAvailable above) because
         # Pester runs discovery and run in separate scopes, so BeforeAll cannot see that value.
-        $configPath = Join-Path $PSScriptRoot 'IntegrationConfig.local.ps1'
+        $configPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'IntegrationConfig.local.ps1'
         if (Test-Path $configPath) {
             . $configPath
             $script:PiHoleServer = $PiHoleServer
