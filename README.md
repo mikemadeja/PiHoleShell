@@ -116,6 +116,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleList` 🚧 | Get lists |
 | `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
+| `Update-PiHoleList` | Update a list |
 
 ### Metrics
 
