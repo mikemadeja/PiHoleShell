@@ -46,13 +46,87 @@ steps:
   - pwsh: |
       Import-Module Pester -MinimumVersion 5.0.0 -Force
 
+      # On a PR build, scope the run to tests for the files that actually changed - tests/ mirrors
+      # PiHoleShell/Public/<Category>/ 1:1, so a changed function maps directly to its test file(s).
+      # Any ambiguity (shared/private code, module manifest, shared test helpers, or the diff itself
+      # failing) falls back to the full suite rather than risk silently skipping real coverage.
+      # Direct pushes to develop/main (not PR builds) always run the full suite.
+      $runFullSuite = $true
+      $testPaths = [System.Collections.Generic.List[string]]::new()
+
+      if ($env:BUILD_REASON -eq 'PullRequest') {
+          try {
+              # The default checkout is shallow, which leaves no common ancestor with the target
+              # branch to diff against ("no merge base") - unshallow first so the diff can work.
+              if ((git rev-parse --is-shallow-repository) -eq 'true') {
+                  git fetch --unshallow --quiet
+                  if ($LASTEXITCODE -ne 0) { throw "git fetch --unshallow failed" }
+              }
+
+              # Fetch with an explicit refspec so origin/<branch> is created even if the
+              # checkout's default fetch refspec is restricted to a single branch.
+              $targetBranch = $env:SYSTEM_PULLREQUEST_TARGETBRANCH -replace '^refs/heads/', ''
+              git fetch origin "${targetBranch}:refs/remotes/origin/${targetBranch}" --quiet
+              if ($LASTEXITCODE -ne 0) { throw "git fetch failed for '$targetBranch'" }
+
+              $changedFiles = git diff --name-only "origin/$targetBranch...HEAD"
+              if ($LASTEXITCODE -ne 0) { throw "git diff failed against 'origin/$targetBranch'" }
+
+              if ($changedFiles) {
+                  $runFullSuite = $false
+
+                  foreach ($file in $changedFiles) {
+                      if ($runFullSuite) { break }
+
+                      if ($file -match '^PiHoleShell/Private/' -or
+                          $file -eq 'PiHoleShell/PiHoleShell.psm1' -or
+                          $file -eq 'PiHoleShell/PiHoleShell.psd1' -or
+                          $file -eq 'PiHoleShell/Public/Authentication/Request-PiHoleAuth.ps1' -or
+                          $file -eq 'tests/Initialize-PiHoleTestData.ps1' -or
+                          $file -eq 'tests/IntegrationConfig.example.ps1') {
+                          Write-Host "Shared/core file changed ($file) - running the full suite"
+                          $runFullSuite = $true
+                      }
+                      elseif ($file -match '^PiHoleShell/Public/([^/]+)/([^/]+)\.ps1$') {
+                          $category = $Matches[1]
+                          $function = $Matches[2]
+                          $testDir = "tests/$category"
+                          if (Test-Path $testDir) {
+                              Get-ChildItem -Path $testDir -Filter "$function.*Tests.ps1" | ForEach-Object {
+                                  $testPaths.Add($_.FullName)
+                              }
+                          }
+                      }
+                      elseif ($file -match '^tests/.*\.Tests\.ps1$' -and (Test-Path $file)) {
+                          $testPaths.Add((Resolve-Path $file).Path)
+                      }
+                      # Anything else (README, workflows, tools/, etc.) has no test impact - ignored.
+                  }
+              }
+          }
+          catch {
+              Write-Warning "Could not compute changed-file test scope, falling back to the full suite: $($_.Exception.Message)"
+              $runFullSuite = $true
+          }
+      }
+
       $config = New-PesterConfiguration
-      $config.Run.Path = './tests'
       $config.Run.Exit = $true
       $config.Output.Verbosity = 'Detailed'
       $config.TestResult.Enabled = $true
       $config.TestResult.OutputFormat = 'NUnitXml'
       $config.TestResult.OutputPath = '$(testResultsFile)'
+
+      $testPaths = $testPaths | Select-Object -Unique
+      if ($runFullSuite -or $testPaths.Count -eq 0) {
+          Write-Host "Running the full test suite"
+          $config.Run.Path = './tests'
+      }
+      else {
+          Write-Host "Running scoped tests for changed files:"
+          $testPaths | ForEach-Object { Write-Host "  $_" }
+          $config.Run.Path = $testPaths
+      }
 
       Invoke-Pester -Configuration $config
     displayName: 'Run Pester tests'
