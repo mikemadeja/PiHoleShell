@@ -20,10 +20,14 @@ variables:
 
 steps:
   - pwsh: |
-      $pester = Get-Module -ListAvailable -Name Pester | Where-Object { $_.Version -ge [version]'5.0.0' } | Select-Object -First 1
+      # Pinned to major version 5 specifically (not just ">= 5.0.0", which would also accept a
+      # newer major version like 6.x if one happens to be installed on the agent - Pester's
+      # result-object shape isn't guaranteed compatible across major versions, and the rest of
+      # this pipeline (including the failed-test summary below) depends on Pester 5's shape).
+      $pester = Get-Module -ListAvailable -Name Pester | Where-Object { $_.Version.Major -eq 5 } | Sort-Object Version -Descending | Select-Object -First 1
       if (-not $pester) {
         Write-Host "Installing Pester 5..."
-        Install-Module -Name Pester -MinimumVersion 5.0.0 -Force -SkipPublisherCheck -Scope CurrentUser
+        Install-Module -Name Pester -MinimumVersion 5.0.0 -MaximumVersion 5.99.99 -Force -SkipPublisherCheck -Scope CurrentUser
       }
       else {
         Write-Host "Using Pester $($pester.Version)"
@@ -44,7 +48,7 @@ steps:
       PIHOLE_IGNORE_SSL: $(PiHoleIgnoreSsl)
 
   - pwsh: |
-      Import-Module Pester -MinimumVersion 5.0.0 -Force
+      Import-Module Pester -MinimumVersion 5.0.0 -MaximumVersion 5.99.99 -Force
 
       # On a PR build, scope the run to tests for the files that actually changed - tests/ mirrors
       # PiHoleShell/Public/<Category>/ 1:1, so a changed function maps directly to its test file(s).
@@ -111,7 +115,10 @@ steps:
       }
 
       $config = New-PesterConfiguration
-      $config.Run.Exit = $true
+      # Exit is handled manually below (after printing the failed-test summary) instead of
+      # letting Invoke-Pester call exit itself, which would skip that summary entirely.
+      $config.Run.Exit = $false
+      $config.Run.PassThru = $true
       $config.Output.Verbosity = 'Detailed'
       $config.TestResult.Enabled = $true
       $config.TestResult.OutputFormat = 'NUnitXml'
@@ -128,7 +135,24 @@ steps:
           $config.Run.Path = $testPaths
       }
 
-      Invoke-Pester -Configuration $config
+      $result = Invoke-Pester -Configuration $config
+
+      if ($result.FailedCount -gt 0) {
+          Write-Host ""
+          Write-Host "=================================================="
+          Write-Host " FAILED TESTS ($($result.FailedCount))"
+          Write-Host "=================================================="
+          foreach ($test in $result.Failed) {
+              Write-Host ""
+              Write-Host "[-] $($test.ExpandedPath)"
+              foreach ($errorRecord in $test.ErrorRecord) {
+                  Write-Host "    $($errorRecord.Exception.Message)"
+              }
+          }
+          Write-Host ""
+      }
+
+      exit $result.FailedCount
     displayName: 'Run Pester tests'
     workingDirectory: '$(System.DefaultWorkingDirectory)'
 
