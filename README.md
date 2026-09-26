@@ -18,6 +18,7 @@ A PowerShell module for automating and scripting against the **Pi-hole v6 REST A
 - [Getting an API Password](#getting-an-api-password)
 - [Quick Start](#quick-start)
 - [Command Reference](#command-reference)
+- [Example Output](docs/EXAMPLES.md)
 - [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
@@ -81,6 +82,8 @@ Every function accepts the same core parameters:
 ## Command Reference
 
 Functions marked 🚧 are still under active development — signatures and output shapes may change. This section is generated from the module's actual exported functions by `tools/Update-ReadmeCommandReference.ps1`, and kept in sync automatically on every `develop` → `main` pull request — don't hand-edit the block below.
+
+See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every function below.
 
 <!-- COMMAND-REFERENCE:START -->
 ### Actions
