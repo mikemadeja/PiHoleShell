@@ -1,12 +1,11 @@
-function Get-PiHoleInfoMessage {
+function Get-PiHoleInfoMessageCount {
     <#
 .SYNOPSIS
-Get Pi-hole diagnosis messages
+Get count of Pi-hole diagnosis messages
 
 .DESCRIPTION
-Request Pi-hole's diagnosis messages - warnings FTL has generated about its own configuration
-or operation (e.g. rate-limiting a noisy client). See Get-PiHoleInfoMessageCount for just the
-count, and Remove-PiHoleInfoMessage to dismiss one.
+Request the number of Pi-hole diagnosis messages currently outstanding. See
+Get-PiHoleInfoMessage for the messages themselves, and Remove-PiHoleInfoMessage to dismiss one.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -21,9 +20,9 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+Get-PiHoleInfoMessageCount -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/info/messages')]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/info/messages/count')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -33,12 +32,13 @@ Get-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password "y
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
+
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
         $Params = @{
             Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/info/messages"
+            Uri                  = "$($PiHoleServer.OriginalString)/api/info/messages/count"
             Method               = "Get"
             SkipCertificateCheck = $IgnoreSsl
             ContentType          = "application/json"
@@ -49,29 +49,11 @@ Get-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password "y
         if ($RawOutput) {
             Write-Output $Response
         }
-
         else {
-            $ObjectFinal = @()
-            foreach ($Item in $Response.messages) {
-                $Object = $null
-                $Object = [PSCustomObject]@{
-                    Id        = $Item.id
-                    Timestamp = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.timestamp).LocalTime
-                    Type      = $Item.type
-                    Plain     = $Item.plain
-                    Html      = $Item.html
-
-                }
-
-                Write-Verbose -Message "Name - $($Object.Id)"
-                Write-Verbose -Message "Timestamp - $($Object.Timestamp)"
-                Write-Verbose -Message "Type - $($Object.Type)"
-                Write-Verbose -Message "Plain - $($Object.Plain)"
-                Write-Verbose -Message "Html - $($Object.Html)"
-                $ObjectFinal += $Object
+            $Object = [PSCustomObject]@{
+                Count = $Response.count
             }
-
-            Write-Output $ObjectFinal
+            Write-Output $Object
         }
     }
 

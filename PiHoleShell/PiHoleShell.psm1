@@ -31,9 +31,10 @@ Export-ModuleMember -Function @(
         'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsSummary', 'Get-PiHoleStatsTopClient', 'Get-PiHoleStatsQuerySuggestions', `
         'Get-PiHoleStatsUpstream', 'Get-PiHoleStatsDatabaseUpstream', 'Get-PiHoleStatsDatabaseSummary', 'Get-PiHoleStatsDatabaseTopDomain', 'Get-PiHoleStatsDatabaseTopClient', 'Get-PiHoleStatsDatabaseQueryType' `
         #ListManagement
-        'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', `
+        'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', 'Update-PiHoleList', `
         #FTLInformation
-        'Get-PiHoleInfoMessage', 'Get-PiHoleInfoHost', `
+        'Get-PiHoleInfoMessage', 'Get-PiHoleInfoHost', 'Get-PiHoleInfoClient', 'Get-PiHoleInfoLogin', 'Get-PiHoleInfoSystem', 'Get-PiHoleInfoFtl', `
+        'Get-PiHoleInfoSensors', 'Get-PiHoleInfoDatabase', 'Get-PiHoleInfoVersion', 'Get-PiHoleInfoMetrics', 'Get-PiHoleInfoMessageCount', 'Remove-PiHoleInfoMessage', `
         #History
         'Get-PiHoleHistory', 'Get-PiHoleHistoryDatabase', 'Get-PiHoleHistoryClient', 'Get-PiHoleHistoryDatabaseClient'
 )

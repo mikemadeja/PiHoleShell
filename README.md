@@ -116,6 +116,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleList` 🚧 | Get lists |
 | `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
+| `Update-PiHoleList` | Update a list |
 
 ### Metrics
 
@@ -143,9 +144,19 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleHistoryClient` | Get per-client activity graph data |
 | `Get-PiHoleHistoryDatabase` | Get activity graph data (long-term data) |
 | `Get-PiHoleHistoryDatabaseClient` | Get per-client activity graph data (long-term data) |
+| `Get-PiHoleInfoClient` | Get information about the requesting client |
+| `Get-PiHoleInfoDatabase` | Get info about the long-term database |
+| `Get-PiHoleInfoFtl` | Get info about various FTL parameters |
 | `Get-PiHoleInfoHost` | Get information about the host system |
-| `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages Request Pi-hole diagnosis messages |
+| `Get-PiHoleInfoLogin` | Get login page information |
+| `Get-PiHoleInfoMessage` | Get Pi-hole diagnosis messages |
+| `Get-PiHoleInfoMessageCount` | Get count of Pi-hole diagnosis messages |
+| `Get-PiHoleInfoMetrics` | Get metrics info |
+| `Get-PiHoleInfoSensors` | Get info about various sensors |
+| `Get-PiHoleInfoSystem` | Get info about various system parameters |
+| `Get-PiHoleInfoVersion` | Get Pi-hole version |
 | `Get-PiHolePadd` | Get summarized data for PADD |
+| `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
 
 ### Authentication
 
