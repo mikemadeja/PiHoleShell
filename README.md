@@ -18,6 +18,7 @@ A PowerShell module for automating and scripting against the **Pi-hole v6 REST A
 - [Getting an API Password](#getting-an-api-password)
 - [Quick Start](#quick-start)
 - [Command Reference](#command-reference)
+- [Example Output](docs/EXAMPLES.md)
 - [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
@@ -82,6 +83,8 @@ Every function accepts the same core parameters:
 
 Functions marked 🚧 are still under active development — signatures and output shapes may change. This section is generated from the module's actual exported functions by `tools/Update-ReadmeCommandReference.ps1`, and kept in sync automatically on every `develop` → `main` pull request — don't hand-edit the block below.
 
+See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every function below.
+
 <!-- COMMAND-REFERENCE:START -->
 ### Actions
 
@@ -113,7 +116,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 | Function | Description |
 |---|---|
 | `Add-PiHoleList` | Add a new list |
-| `Get-PiHoleList` 🚧 | Get lists |
+| `Get-PiHoleList` | Get lists |
 | `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
 | `Update-PiHoleList` | Update a list |
@@ -155,7 +158,9 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleInfoSensors` | Get info about various sensors |
 | `Get-PiHoleInfoSystem` | Get info about various system parameters |
 | `Get-PiHoleInfoVersion` | Get Pi-hole version |
+| `Get-PiHoleLogWebserver` | Get webserver log content |
 | `Get-PiHolePadd` | Get summarized data for PADD |
+| `Get-PiHoleTeleporterDownload` | Export Pi-hole settings |
 | `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
 
 ### Authentication
