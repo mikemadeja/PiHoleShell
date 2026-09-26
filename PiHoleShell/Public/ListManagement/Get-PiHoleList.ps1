@@ -3,11 +3,18 @@ function Get-PiHoleList {
 .SYNOPSIS
 Get lists
 
+.DESCRIPTION
+Request Pi-hole's subscribed allow/block lists. Omit -List to get every list; specify it to
+get just that one.
+
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
 
 .PARAMETER Password
 The API Password you generated from your PiHole server
+
+.PARAMETER List
+The URL of a specific list to return. Omit to return every list
 
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
@@ -15,8 +22,12 @@ Set to $true to skip SSL certificate validation
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 
+.EXAMPLE
+Get-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+
+.EXAMPLE
+Get-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -List "https://hosts-file.net/ad_servers.txt"
     #>
-    #Work In Progress
     [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/lists/-list-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
