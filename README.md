@@ -113,7 +113,7 @@ Functions marked 🚧 are still under active development — signatures and outp
 | Function | Description |
 |---|---|
 | `Add-PiHoleList` | Add a new list |
-| `Get-PiHoleList` 🚧 | Get lists |
+| `Get-PiHoleList` | Get lists |
 | `Remove-PiHoleList` | Remove a list |
 | `Search-PiHoleListDomain` | _No description yet_ |
 | `Update-PiHoleList` | Update a list |
@@ -155,7 +155,9 @@ Functions marked 🚧 are still under active development — signatures and outp
 | `Get-PiHoleInfoSensors` | Get info about various sensors |
 | `Get-PiHoleInfoSystem` | Get info about various system parameters |
 | `Get-PiHoleInfoVersion` | Get Pi-hole version |
+| `Get-PiHoleLogWebserver` | Get webserver log content |
 | `Get-PiHolePadd` | Get summarized data for PADD |
+| `Get-PiHoleTeleporterDownload` | Export Pi-hole settings |
 | `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
 
 ### Authentication
