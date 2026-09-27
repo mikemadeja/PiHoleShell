@@ -52,6 +52,7 @@ $categoryOrder = [ordered]@{
     GroupManagement = 'Group Management'
     ListManagement  = 'List Management'
     DomainManagement = 'Domain Management'
+    ClientManagement = 'Client Management'
     Metrics         = 'Metrics'
     Config          = 'Configuration & Diagnostics'
     Authentication  = 'Authentication'
@@ -284,6 +285,35 @@ Add-Example -Category DomainManagement -FunctionName 'Remove-PiHoleDomain' `
     -Result (Remove-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Domain $docsDomain -Type Allow -Kind Exact -Confirm:$false)
 #endregion
 
+#region ClientManagement
+$docsClient = '192.168.99.99'
+Invoke-Quietly { Remove-PiHoleClient -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Client $docsClient -Confirm:$false }
+
+Add-Example -Category ClientManagement -FunctionName 'New-PiHoleClient' `
+    -Invocation "New-PiHoleClient -PiHoleServer `$PiHoleServer -Password `$Password -Client `"$docsClient`" -Comment `"Example client`"" `
+    -Result (New-PiHoleClient -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Client $docsClient -Comment 'Example client')
+
+# Same settle-time reasoning as ListManagement/DomainManagement above - give the test server a
+# moment before relying on the client just being created.
+Start-Sleep -Seconds 3
+
+Add-Example -Category ClientManagement -FunctionName 'Get-PiHoleClient' `
+    -Invocation 'Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category ClientManagement -FunctionName 'Get-PiHoleClientSuggestion' `
+    -Invocation 'Get-PiHoleClientSuggestion -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleClientSuggestion -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category ClientManagement -FunctionName 'Update-PiHoleClient' `
+    -Invocation "Update-PiHoleClient -PiHoleServer `$PiHoleServer -Password `$Password -Client `"$docsClient`" -Comment `"Updated comment`"" `
+    -Result (Update-PiHoleClient -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Client $docsClient -Comment 'Updated comment')
+
+Add-Example -Category ClientManagement -FunctionName 'Remove-PiHoleClient' `
+    -Invocation "Remove-PiHoleClient -PiHoleServer `$PiHoleServer -Password `$Password -Client `"$docsClient`"" `
+    -Result (Remove-PiHoleClient -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Client $docsClient -Confirm:$false)
+#endregion
+
 #region Metrics
 foreach ($fn in 'Get-PiHoleStatsSummary', 'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsTopClient', 'Get-PiHoleStatsUpstream', 'Get-PiHoleStatsQuerySuggestions') {
     Add-Example -Category Metrics -FunctionName $fn `
@@ -313,6 +343,34 @@ foreach ($fn in 'Get-PiHoleHistoryDatabase', 'Get-PiHoleHistoryDatabaseClient') 
         -Note 'Defaults to the last 8 hours; pass -From/-Until for a different window.' `
         -Result (& $fn -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 }
+#endregion
+
+#region NetworkInformation
+# The NetworkInformation folder isn't its own README category either - same fallback-folding
+# reasoning as History above.
+Add-Example -Category Config -FunctionName 'Get-PiHoleNetworkGateway' `
+    -Invocation 'Get-PiHoleNetworkGateway -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleNetworkGateway -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Config -FunctionName 'Get-PiHoleNetworkRoute' `
+    -Invocation 'Get-PiHoleNetworkRoute -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleNetworkRoute -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Config -FunctionName 'Get-PiHoleNetworkInterface' `
+    -Invocation 'Get-PiHoleNetworkInterface -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleNetworkInterface -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Config -FunctionName 'Get-PiHoleNetworkDevice' `
+    -Invocation 'Get-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'Shows up to 10 devices by default; pass -MaxDevices for more.' `
+    -Result (Get-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+$dummyDeviceId = 999999
+Remove-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -DeviceId $dummyDeviceId -Confirm:$false -ErrorVariable removeDeviceError -ErrorAction SilentlyContinue | Out-Null
+Add-Example -Category Config -FunctionName 'Remove-PiHoleNetworkDevice' `
+    -Invocation 'Remove-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $Password -DeviceId 5' `
+    -Note 'Network devices arise from Pi-hole having genuinely seen a device and cannot be manufactured on demand, so this example shows the error for a device ID that does not exist rather than a fabricated success.' `
+    -Result $(if ($removeDeviceError) { [PSCustomObject]@{ Error = $removeDeviceError[-1].Exception.Message } })
 #endregion
 
 #region Actions
