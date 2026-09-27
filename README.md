@@ -130,6 +130,16 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Remove-PiHoleDomain` | Remove a domain |
 | `Update-PiHoleDomain` | Update a domain |
 
+### Client Management
+
+| Function | Description |
+|---|---|
+| `Get-PiHoleClient` | Get clients |
+| `Get-PiHoleClientSuggestion` | Get client suggestions |
+| `New-PiHoleClient` | Add a new client |
+| `Remove-PiHoleClient` | Remove a client |
+| `Update-PiHoleClient` | Update a client |
+
 ### Metrics
 
 | Function | Description |
@@ -168,9 +178,14 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Get-PiHoleInfoSystem` | Get info about various system parameters |
 | `Get-PiHoleInfoVersion` | Get Pi-hole version |
 | `Get-PiHoleLogWebserver` | Get webserver log content |
+| `Get-PiHoleNetworkDevice` | Get info about the devices in your local network as seen by your Pi-hole |
+| `Get-PiHoleNetworkGateway` | Get info about the gateway of your Pi-hole |
+| `Get-PiHoleNetworkInterface` | Get info about the interfaces of your Pi-hole |
+| `Get-PiHoleNetworkRoute` | Get info about the routes of your Pi-hole |
 | `Get-PiHolePadd` | Get summarized data for PADD |
 | `Get-PiHoleTeleporterDownload` | Export Pi-hole settings |
 | `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
+| `Remove-PiHoleNetworkDevice` | Delete a device from the network table |
 
 ### Authentication
 
