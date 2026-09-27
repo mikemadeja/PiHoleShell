@@ -24,7 +24,7 @@ Export-ModuleMember -Function @(
         #DnsControl
         'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', `
         #Config
-        'Get-PiHoleConfig', `
+        'Get-PiHoleConfig', 'Set-PiHoleConfig', 'Add-PiHoleConfigArrayItem', 'Remove-PiHoleConfigArrayItem', 'Get-PiHoleConfigProperty', `
         #Padd
         'Get-PiHolePadd', `
         #Metrics

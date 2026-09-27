@@ -98,6 +98,44 @@ function ConvertTo-PiHolePascalCaseObject {
     }
 }
 
+function ConvertTo-PiHoleFriendlyErrorMessage {
+    #INTERNAL FUNCTION
+    #
+    # Pi-hole's own error responses often carry a clearer message/hint than the generic HTTP
+    # exception text (e.g. "Unable to change configuration (read-only): ...app_sudo is false"
+    # vs just "403 Forbidden"). This extracts and combines them when present, and adds a
+    # concrete pointer to fix the most common cause of a blocked config write - the app
+    # password's app_sudo setting - since Pi-hole's own hint says what's wrong but not how to
+    # fix it.
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingEmptyCatchBlock", "", Justification = "Falls back to the raw exception message when the response body isn't valid JSON - nothing to report.")]
+    param (
+        [Parameter(Mandatory = $true)]
+        $ErrorRecord
+    )
+
+    $Message = $ErrorRecord.Exception.Message
+
+    if ($ErrorRecord.ErrorDetails.Message) {
+        try {
+            $ApiError = ($ErrorRecord.ErrorDetails.Message | ConvertFrom-Json).error
+            if ($ApiError.message) {
+                $Message = $ApiError.message
+                if ($ApiError.hint) {
+                    $Message += ": $($ApiError.hint)"
+                }
+                if ($ApiError.hint -like '*app_sudo*') {
+                    $Message += " Enable it in your Pi-hole admin UI under Settings > All Settings by searching for 'app_sudo' and setting webserver.api.app_sudo to true."
+                }
+            }
+        }
+        catch {
+            # ErrorDetails.Message wasn't valid JSON - fall back to the raw exception message
+        }
+    }
+
+    return $Message
+}
+
 function Remove-PiHoleCurrentAuthSession {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
     [CmdletBinding()]
