@@ -23,6 +23,7 @@ $displayNames = [ordered]@{
     DnsControl        = 'DNS Control'
     GroupManagement   = 'Group Management'
     ListManagement    = 'List Management'
+    DomainManagement  = 'Domain Management'
     Metrics           = 'Metrics'
     Config            = 'Configuration & Diagnostics'
     Padd              = 'Configuration & Diagnostics'
@@ -30,7 +31,7 @@ $displayNames = [ordered]@{
     Teleporter        = 'Configuration & Diagnostics'
     Authentication    = 'Authentication'
 }
-$categoryOrder = @('Actions', 'DnsControl', 'GroupManagement', 'ListManagement', 'Metrics', 'Config', 'Authentication')
+$categoryOrder = @('Actions', 'DnsControl', 'GroupManagement', 'ListManagement', 'DomainManagement', 'Metrics', 'Config', 'Authentication')
 $categoryIntros = @{
     Authentication = 'Session handling is automatic for every command above, but these are available for managing sessions directly:'
 }
