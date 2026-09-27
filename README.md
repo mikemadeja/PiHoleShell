@@ -121,6 +121,15 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Search-PiHoleListDomain` | _No description yet_ |
 | `Update-PiHoleList` | Update a list |
 
+### Domain Management
+
+| Function | Description |
+|---|---|
+| `Get-PiHoleDomain` | Get domains |
+| `New-PiHoleDomain` | Add a new domain |
+| `Remove-PiHoleDomain` | Remove a domain |
+| `Update-PiHoleDomain` | Update a domain |
+
 ### Metrics
 
 | Function | Description |

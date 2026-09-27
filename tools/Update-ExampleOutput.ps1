@@ -51,6 +51,7 @@ $categoryOrder = [ordered]@{
     DnsControl      = 'DNS Control'
     GroupManagement = 'Group Management'
     ListManagement  = 'List Management'
+    DomainManagement = 'Domain Management'
     Metrics         = 'Metrics'
     Config          = 'Configuration & Diagnostics'
     Authentication  = 'Authentication'
@@ -256,6 +257,31 @@ Add-Example -Category ListManagement -FunctionName 'Search-PiHoleListDomain' `
 Add-Example -Category ListManagement -FunctionName 'Remove-PiHoleList' `
     -Invocation "Remove-PiHoleList -PiHoleServer `$PiHoleServer -Password `$Password -Address `"$docsListAddress`" -Type Block" `
     -Result (Remove-PiHoleList -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Address $docsListAddress -Type Block -Confirm:$false)
+#endregion
+
+#region DomainManagement
+$docsDomain = 'piholeshell-docs-example.com'
+Invoke-Quietly { Remove-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Domain $docsDomain -Type Allow -Kind Exact -Confirm:$false }
+
+Add-Example -Category DomainManagement -FunctionName 'New-PiHoleDomain' `
+    -Invocation "New-PiHoleDomain -PiHoleServer `$PiHoleServer -Password `$Password -Domain `"$docsDomain`" -Type Allow -Kind Exact -Comment `"Example domain`"" `
+    -Result (New-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Domain $docsDomain -Type Allow -Kind Exact -Comment 'Example domain')
+
+# Same settle-time reasoning as ListManagement above - give the test server a moment before
+# relying on the domain just being created.
+Start-Sleep -Seconds 3
+
+Add-Example -Category DomainManagement -FunctionName 'Get-PiHoleDomain' `
+    -Invocation 'Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category DomainManagement -FunctionName 'Update-PiHoleDomain' `
+    -Invocation "Update-PiHoleDomain -PiHoleServer `$PiHoleServer -Password `$Password -Domain `"$docsDomain`" -Type Allow -Kind Exact -Enabled `$false" `
+    -Result (Update-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Domain $docsDomain -Type Allow -Kind Exact -Enabled $false)
+
+Add-Example -Category DomainManagement -FunctionName 'Remove-PiHoleDomain' `
+    -Invocation "Remove-PiHoleDomain -PiHoleServer `$PiHoleServer -Password `$Password -Domain `"$docsDomain`" -Type Allow -Kind Exact" `
+    -Result (Remove-PiHoleDomain -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Domain $docsDomain -Type Allow -Kind Exact -Confirm:$false)
 #endregion
 
 #region Metrics
