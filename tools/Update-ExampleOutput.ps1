@@ -156,6 +156,48 @@ Add-Example -Category Config -FunctionName 'Get-PiHoleConfig' `
     -Invocation 'Get-PiHoleConfig -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleConfig -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
+Add-Example -Category Config -FunctionName 'Get-PiHoleConfigProperty' `
+    -Invocation 'Get-PiHoleConfigProperty -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleConfigProperty -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+# Set-PiHoleConfig/Add-PiHoleConfigArrayItem/Remove-PiHoleConfigArrayItem all require the app
+# password used here to have "app_sudo" enabled in Pi-hole (Settings > All Settings) - Pi-hole
+# blocks config changes from app passwords by default. Skip these three with a placeholder if
+# that isn't the case, rather than failing the whole run.
+$appSudoEnabled = (Get-PiHoleConfig -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl).Webserver.Api.AppSudo
+if ($appSudoEnabled) {
+    $originalDebugApi = (Get-PiHoleConfig -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl).Debug.Api
+    $toggledDebugApi = -not $originalDebugApi
+
+    Add-Example -Category Config -FunctionName 'Set-PiHoleConfig' `
+        -Invocation "Set-PiHoleConfig -PiHoleServer `$PiHoleServer -Password `$Password -Settings @{ debug = @{ api = `$$($toggledDebugApi.ToString().ToLower()) } }" `
+        -Result (Set-PiHoleConfig -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Settings @{ debug = @{ api = $toggledDebugApi } } -Restart $false)
+    Set-PiHoleConfig -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Settings @{ debug = @{ api = $originalDebugApi } } -Restart $false | Out-Null
+
+    $docsHostEntry = '192.0.2.1 piholeshell-docs-example.com'
+    Invoke-Quietly { Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Element 'dns/hosts' -Value $docsHostEntry -Restart $false -Confirm:$false }
+
+    Add-Example -Category Config -FunctionName 'Add-PiHoleConfigArrayItem' `
+        -Invocation "Add-PiHoleConfigArrayItem -PiHoleServer `$PiHoleServer -Password `$Password -Element `"dns/hosts`" -Value `"$docsHostEntry`"" `
+        -Result (Add-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Element 'dns/hosts' -Value $docsHostEntry -Restart $false)
+
+    Add-Example -Category Config -FunctionName 'Remove-PiHoleConfigArrayItem' `
+        -Invocation "Remove-PiHoleConfigArrayItem -PiHoleServer `$PiHoleServer -Password `$Password -Element `"dns/hosts`" -Value `"$docsHostEntry`"" `
+        -Result (Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Element 'dns/hosts' -Value $docsHostEntry -Restart $false -Confirm:$false)
+}
+else {
+    $appSudoNote = 'Requires "app_sudo" enabled for this app password (Settings > All Settings in your Pi-hole admin UI) - not captured this run since it is disabled here.'
+    Add-Example -Category Config -FunctionName 'Set-PiHoleConfig' `
+        -Invocation 'Set-PiHoleConfig -PiHoleServer $PiHoleServer -Password $Password -Settings @{ debug = @{ api = $true } }' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category Config -FunctionName 'Add-PiHoleConfigArrayItem' `
+        -Invocation 'Add-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $Password -Element "dns/hosts" -Value "192.0.2.1 example.com"' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category Config -FunctionName 'Remove-PiHoleConfigArrayItem' `
+        -Invocation 'Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $Password -Element "dns/hosts" -Value "192.0.2.1 example.com"' `
+        -Note $appSudoNote -Skipped
+}
+
 Add-Example -Category Config -FunctionName 'Get-PiHolePadd' `
     -Invocation 'Get-PiHolePadd -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHolePadd -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
