@@ -28,6 +28,15 @@ Describe 'Get-PiHoleConfig (Integration)' -Tag 'Integration' {
         $result.Dhcp | Should -Not -BeNullOrEmpty
     }
 
+    It 'filters to just one element when -Element is specified' -Skip:(-not $script:ConfigAvailable) {
+        $result = Get-PiHoleConfig -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/upstreams'
+        $result | Format-List | Out-String | Write-Host
+
+        $result | Should -Not -BeNullOrEmpty
+        $result.Dns.Upstreams | Should -Not -BeNullOrEmpty
+        $result.Dhcp | Should -BeNullOrEmpty
+    }
+
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         $result = Get-PiHoleConfig -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -RawOutput $true
         $result | Format-List | Out-String | Write-Host

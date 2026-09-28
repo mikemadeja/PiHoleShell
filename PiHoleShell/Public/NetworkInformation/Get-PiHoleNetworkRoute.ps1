@@ -1,14 +1,12 @@
-function Get-PiHoleConfig {
+function Get-PiHoleNetworkRoute {
     <#
 .SYNOPSIS
-Get current configuration of Pi-hole
+Get info about the routes of your Pi-hole
 
 .DESCRIPTION
-Request Pi-hole's full configuration tree (dns, dhcp, ntp, resolver, database, webserver,
-files, misc, and debug settings). The formatted output mirrors the API response as nested
-objects with PascalCase property names, so the entire configuration is available for
-inspection rather than a hand-picked subset. Pass -Element to request just one subset of
-the tree instead of everything.
+Returns information about your Pi-hole's networking routes. Not every field applies to every
+route type, so the response is returned as nested objects with PascalCase property names
+rather than a hand-picked subset - use -RawOutput to see the untouched API response.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -16,12 +14,9 @@ The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "h
 .PARAMETER Password
 The API Password you generated from your PiHole server
 
-.PARAMETER Element
-Only return this part of the configuration tree, as a slash-separated path (e.g.
-"dns/upstreams" or "dns/hosts"). Omit to return the entire configuration
-
 .PARAMETER Detailed
-Include detailed information about the configuration (e.g. value types and validation info)
+Include more detailed information about the individual routes. Available fields depend on the
+route type and state
 
 .PARAMETER IgnoreSsl
 Set to $true to skip SSL certificate validation
@@ -30,34 +25,23 @@ Set to $true to skip SSL certificate validation
 This will dump the response instead of the formatted object
 
 .EXAMPLE
-Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
-
-.EXAMPLE
-(Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password").Dns.Upstreams
-
-.EXAMPLE
-Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Element "dns/upstreams"
+Get-PiHoleNetworkRoute -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/config')]
+    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#get-/network/routes')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [string]$Element,
         [Nullable[bool]]$Detailed,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-
     try {
         $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/config"
-        if ($Element) {
-            $Uri += "/$($Element.Trim('/'))"
-        }
+        $Uri = "$($PiHoleServer.OriginalString)/api/network/routes"
         if ($PSBoundParameters.ContainsKey('Detailed')) {
             $Uri += "?detailed=$($Detailed.ToString().ToLower())"
         }
@@ -76,7 +60,7 @@ Get-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
             Write-Output $Response
         }
         else {
-            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
+            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.routes
             Write-Output $Object
         }
     }
