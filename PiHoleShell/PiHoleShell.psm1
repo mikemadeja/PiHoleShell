@@ -40,5 +40,9 @@ Export-ModuleMember -Function @(
         #Teleporter
         'Get-PiHoleTeleporterDownload', `
         #DomainManagement
-        'Get-PiHoleDomain', 'New-PiHoleDomain', 'Update-PiHoleDomain', 'Remove-PiHoleDomain'
+        'Get-PiHoleDomain', 'New-PiHoleDomain', 'Update-PiHoleDomain', 'Remove-PiHoleDomain', `
+        #ClientManagement
+        'Get-PiHoleClient', 'New-PiHoleClient', 'Update-PiHoleClient', 'Remove-PiHoleClient', 'Get-PiHoleClientSuggestion', `
+        #NetworkInformation
+        'Get-PiHoleNetworkGateway', 'Get-PiHoleNetworkRoute', 'Get-PiHoleNetworkInterface', 'Get-PiHoleNetworkDevice', 'Remove-PiHoleNetworkDevice'
 )
