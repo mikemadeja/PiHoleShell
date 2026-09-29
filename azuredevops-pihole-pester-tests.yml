@@ -82,8 +82,34 @@ steps:
                   foreach ($file in $changedFiles) {
                       if ($runFullSuite) { break }
 
-                      if ($file -match '^PiHoleShell/Private/' -or
-                          $file -eq 'PiHoleShell/PiHoleShell.psm1' -or
+                      if ($file -eq 'PiHoleShell/PiHoleShell.psm1') {
+                          # A pure addition to the export list can't break any existing, already-
+                          # passing test, so only fall back to the full suite when an existing
+                          # export was actually removed. Comparing whole diff lines doesn't work
+                          # here since several exports share one line - adding a new function to
+                          # an existing category's line shows as that whole line being removed
+                          # and re-added, even though nothing already there was dropped. Instead,
+                          # extract the quoted names from just the removed lines and just the
+                          # added lines and compare those sets: a name that reappears in the
+                          # added lines was only reformatted, not actually removed.
+                          $manifestDiff = git diff "origin/$targetBranch...HEAD" -- $file
+                          if ($LASTEXITCODE -ne 0) { throw "git diff failed for '$file'" }
+
+                          $removedLines = ($manifestDiff | Where-Object { $_ -match '^-' -and $_ -notmatch '^---' }) -join "`n"
+                          $addedLines = ($manifestDiff | Where-Object { $_ -match '^\+' -and $_ -notmatch '^\+\+\+' }) -join "`n"
+                          $removedNames = [regex]::Matches($removedLines, "'([A-Za-z0-9-]+)'") | ForEach-Object { $_.Groups[1].Value }
+                          $addedNames = [regex]::Matches($addedLines, "'([A-Za-z0-9-]+)'") | ForEach-Object { $_.Groups[1].Value }
+
+                          $trulyRemoved = $removedNames | Where-Object { $_ -notin $addedNames }
+                          if ($trulyRemoved) {
+                              Write-Host "Export(s) removed from $file ($($trulyRemoved -join ', ')) - running the full suite"
+                              $runFullSuite = $true
+                          }
+                          else {
+                              Write-Host "Only additions in $file - no full-suite fallback needed"
+                          }
+                      }
+                      elseif ($file -match '^PiHoleShell/Private/' -or
                           $file -eq 'PiHoleShell/PiHoleShell.psd1' -or
                           $file -eq 'PiHoleShell/Public/Authentication/Request-PiHoleAuth.ps1' -or
                           $file -eq 'tests/Initialize-PiHoleTestData.ps1' -or
