@@ -144,6 +144,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleQuery` | Get queries |
 | `Get-PiHoleStatsDatabaseQueryType` | Get query types (long-term database) |
 | `Get-PiHoleStatsDatabaseSummary` | Get database content details |
 | `Get-PiHoleStatsDatabaseTopClient` | Get top clients (long-term database) |

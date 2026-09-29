@@ -29,7 +29,7 @@ Export-ModuleMember -Function @(
         'Get-PiHolePadd', `
         #Metrics
         'Get-PiHoleStatsRecentBlocked', 'Get-PiHoleStatsQueryType', 'Get-PiHoleStatsTopDomain', 'Get-PiHoleStatsSummary', 'Get-PiHoleStatsTopClient', 'Get-PiHoleStatsQuerySuggestions', `
-        'Get-PiHoleStatsUpstream', 'Get-PiHoleStatsDatabaseUpstream', 'Get-PiHoleStatsDatabaseSummary', 'Get-PiHoleStatsDatabaseTopDomain', 'Get-PiHoleStatsDatabaseTopClient', 'Get-PiHoleStatsDatabaseQueryType' `
+        'Get-PiHoleStatsUpstream', 'Get-PiHoleStatsDatabaseUpstream', 'Get-PiHoleStatsDatabaseSummary', 'Get-PiHoleStatsDatabaseTopDomain', 'Get-PiHoleStatsDatabaseTopClient', 'Get-PiHoleStatsDatabaseQueryType', 'Get-PiHoleQuery', `
         #ListManagement
         'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', 'Update-PiHoleList', `
         #FTLInformation
