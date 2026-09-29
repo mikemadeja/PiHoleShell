@@ -38,6 +38,11 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
     It 'updates only the comment, preserving Group' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Comment 'original comment' | Out-Null
 
+        # The test server takes a moment to make a just-added client queryable/updatable again -
+        # a real hardware limitation of this Pi Zero W, not a module bug (same settle-time
+        # reasoning as tools/Update-ExampleOutput.ps1 uses for Lists/Domains/Groups).
+        Start-Sleep -Seconds 2
+
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Comment 'updated comment'
         $result | Format-List | Out-String | Write-Host
 
@@ -50,6 +55,8 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
 
     It 'updates only Group, preserving the current comment' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Comment 'keep this comment' | Out-Null
+
+        Start-Sleep -Seconds 2
 
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Group $script:TestGroupName
         $result | Format-List | Out-String | Write-Host
@@ -64,6 +71,8 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
     It 'errors when -Group names a group that does not exist' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient | Out-Null
 
+        Start-Sleep -Seconds 2
+
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Group 'DefinitelyNotARealGroup' -ErrorVariable errOut -ErrorAction SilentlyContinue
         Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
 
@@ -75,6 +84,8 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
     It 'returns the raw API response when RawOutput is set' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient | Out-Null
 
+        Start-Sleep -Seconds 2
+
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Comment 'raw output test' -RawOutput $true
         $result | Format-List | Out-String | Write-Host
 
@@ -85,6 +96,8 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
 
     It 'errors when neither Comment nor Group is specified' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient | Out-Null
+
+        Start-Sleep -Seconds 2
 
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -ErrorVariable errOut -ErrorAction SilentlyContinue
 
@@ -101,6 +114,8 @@ Describe 'Update-PiHoleClient (Integration)' -Tag 'Integration' {
 
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
         New-PiHoleClient -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient | Out-Null
+
+        Start-Sleep -Seconds 2
 
         $result = Update-PiHoleClient -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Client $script:TestClient -Comment 'irrelevant' -ErrorVariable errOut -ErrorAction SilentlyContinue
 
