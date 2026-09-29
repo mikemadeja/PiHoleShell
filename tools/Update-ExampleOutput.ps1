@@ -369,6 +369,11 @@ foreach ($fn in 'Get-PiHoleStatsDatabaseSummary', 'Get-PiHoleStatsDatabaseQueryT
         -Note 'Defaults to the last 8 hours; pass -From/-Until for a different window.' `
         -Result (& $fn -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 }
+
+Add-Example -Category Metrics -FunctionName 'Get-PiHoleQuery' `
+    -Invocation 'Get-PiHoleQuery -PiHoleServer $PiHoleServer -Password $Password -Length 5' `
+    -Note 'Returns the most recent 100 queries by default; supports many optional filters (domain, client, type, status...) - see Get-PiHoleStatsQuerySuggestions for valid filter values.' `
+    -Result (Get-PiHoleQuery -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Length 5)
 #endregion
 
 #region History
