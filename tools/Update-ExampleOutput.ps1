@@ -428,6 +428,21 @@ Add-Example -Category Config -FunctionName 'Remove-PiHoleNetworkDevice' `
     -Result $(if ($removeDeviceError) { [PSCustomObject]@{ Error = $removeDeviceError[-1].Exception.Message } })
 #endregion
 
+#region DHCP
+# The DHCP folder isn't its own README category either - same fallback-folding reasoning as
+# History/NetworkInformation above.
+Add-Example -Category Config -FunctionName 'Get-PiHoleDhcpLease' `
+    -Invocation 'Get-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+$dummyDhcpIp = '192.0.2.123'
+Remove-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Ip $dummyDhcpIp -Confirm:$false -ErrorVariable removeLeaseError -ErrorAction SilentlyContinue | Out-Null
+Add-Example -Category Config -FunctionName 'Remove-PiHoleDhcpLease' `
+    -Invocation 'Remove-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password -Ip "192.168.1.50"' `
+    -Note 'DHCP leases arise from Pi-hole genuinely handing one out and cannot be manufactured on demand, so this example shows the error for an IP address with no active lease rather than a fabricated success.' `
+    -Result $(if ($removeLeaseError) { [PSCustomObject]@{ Error = $removeLeaseError[-1].Exception.Message } })
+#endregion
+
 #region Actions
 if ($IncludeDisruptive) {
     Add-Example -Category Actions -FunctionName 'Invoke-PiHoleFlushNetwork' `

@@ -99,9 +99,9 @@ New-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -GroupName "PiHo
 Name         : PiHoleShellDocsExampleGroup
 Comment      : Example group
 Enabled      : True
-Id           : 53
-DateAdded    : 9/30/2026 9:12:05 AM
-DateModified : 9/30/2026 9:12:05 AM
+Id           : 60
+DateAdded    : 9/30/2026 4:22:23 PM
+DateModified : 9/30/2026 4:22:23 PM
 ```
 
 ### Get-PiHoleGroup
@@ -143,9 +143,9 @@ DateModified : 9/30/2026 8:48:26 AM
 Name         : PiHoleShellDocsExampleGroup
 Comment      : Example group
 Enabled      : True
-Id           : 53
-DateAdded    : 9/30/2026 9:12:05 AM
-DateModified : 9/30/2026 9:12:05 AM
+Id           : 60
+DateAdded    : 9/30/2026 4:22:23 PM
+DateModified : 9/30/2026 4:22:23 PM
 ```
 
 ### Update-PiHoleGroup
@@ -159,9 +159,9 @@ Update-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -GroupName "P
 Name         : PiHoleShellDocsExampleGroup
 Comment      : Example group
 Enabled      : False
-Id           : 53
-DateAdded    : 9/30/2026 9:12:05 AM
-DateModified : 9/30/2026 9:12:24 AM
+Id           : 60
+DateAdded    : 9/30/2026 4:22:23 PM
+DateModified : 9/30/2026 4:22:41 PM
 ```
 
 ### Remove-PiHoleGroup
@@ -190,9 +190,9 @@ Address        : https://blocklistproject.github.io/Lists/alt-version/ransomware
 Comment        : Example list
 Groups         : {Default}
 Enabled        : True
-Id             : 80
-DateAdded      : 9/30/2026 9:13:02 AM
-DateModified   : 9/30/2026 9:13:02 AM
+Id             : 71
+DateAdded      : 9/30/2026 4:23:18 PM
+DateModified   : 9/30/2026 4:23:18 PM
 Type           : Block
 DateUpdated    : 
 Number         : 0
@@ -246,7 +246,7 @@ DateAdded      : 7/6/2025 2:20:46 AM
 DateModified   : 7/6/2025 2:20:46 AM
 Type           : block
 DateUpdated    : 7/6/2025 2:20:46 AM
-Number         : 175219
+Number         : 175912
 InvalidDomains : 0
 AbpEntries     : 0
 Status         : 2
@@ -294,9 +294,9 @@ Address        : https://blocklistproject.github.io/Lists/alt-version/ransomware
 Comment        : Example list
 Groups         : {Default}
 Enabled        : False
-Id             : 80
-DateAdded      : 9/30/2026 9:13:02 AM
-DateModified   : 9/30/2026 9:13:36 AM
+Id             : 71
+DateAdded      : 9/30/2026 4:23:18 PM
+DateModified   : 9/30/2026 4:23:51 PM
 Type           : Block
 DateUpdated    : 
 Number         : 0
@@ -352,8 +352,8 @@ Type           : block
 Groups         : {0}
 DateAdded      : 7/6/2025 2:20:46 AM
 DateModified   : 7/6/2025 2:20:46 AM
-DateUpdated    : 9/28/2026 3:20:00 PM
-Number         : 175219
+DateUpdated    : 9/30/2026 10:20:00 AM
+Number         : 175912
 InvalidDomains : 0
 AbpEntries     : 0
 Status         : 2
@@ -421,9 +421,9 @@ Kind         : Exact
 Comment      : Example domain
 Groups       : {Default}
 Enabled      : True
-Id           : 18
-DateAdded    : 9/30/2026 9:14:17 AM
-DateModified : 9/30/2026 9:14:17 AM
+Id           : 22
+DateAdded    : 9/30/2026 4:24:29 PM
+DateModified : 9/30/2026 4:24:29 PM
 ```
 
 ### Get-PiHoleDomain
@@ -441,9 +441,9 @@ Kind         : exact
 Comment      : Example domain
 Groups       : {Default}
 Enabled      : True
-Id           : 18
-DateAdded    : 9/30/2026 9:14:17 AM
-DateModified : 9/30/2026 9:14:17 AM
+Id           : 22
+DateAdded    : 9/30/2026 4:24:29 PM
+DateModified : 9/30/2026 4:24:29 PM
 ```
 
 ### Update-PiHoleDomain
@@ -461,9 +461,9 @@ Kind         : Exact
 Comment      : Example domain
 Groups       : {Default}
 Enabled      : False
-Id           : 18
-DateAdded    : 9/30/2026 9:14:17 AM
-DateModified : 9/30/2026 9:14:50 AM
+Id           : 22
+DateAdded    : 9/30/2026 4:24:29 PM
+DateModified : 9/30/2026 4:25:02 PM
 ```
 
 ### Remove-PiHoleDomain
@@ -494,9 +494,9 @@ Client       : 192.168.99.99
 Name         : 
 Comment      : Example client
 Groups       : {Default}
-Id           : 20
-DateAdded    : 9/30/2026 9:15:21 AM
-DateModified : 9/30/2026 9:15:21 AM
+Id           : 23
+DateAdded    : 9/30/2026 4:25:33 PM
+DateModified : 9/30/2026 4:25:33 PM
 ```
 
 ### Get-PiHoleClient
@@ -511,9 +511,9 @@ Client       : 192.168.99.99
 Name         : 
 Comment      : Example client
 Groups       : {Default}
-Id           : 20
-DateAdded    : 9/30/2026 9:15:21 AM
-DateModified : 9/30/2026 9:15:21 AM
+Id           : 23
+DateAdded    : 9/30/2026 4:25:33 PM
+DateModified : 9/30/2026 4:25:33 PM
 ```
 
 ### Get-PiHoleClientSuggestion
@@ -526,13 +526,13 @@ Get-PiHoleClientSuggestion -PiHoleServer $PiHoleServer -Password $Password
 
 HwAddr    : ip-127.0.0.1
 MacVendor : 
-LastQuery : 9/30/2026 9:00:01 AM
+LastQuery : 9/30/2026 4:19:28 PM
 Addresses : 127.0.0.1
 Names     : localhost
 
 HwAddr    : 74:56:3c:bb:f4:0b
 MacVendor : Giga-Byte Technology Co.,Ltd.
-LastQuery : 9/30/2026 7:49:13 AM
+LastQuery : 9/30/2026 4:19:27 PM
 Addresses : 192.168.1.162
 Names     :
 ```
@@ -549,9 +549,9 @@ Client       : 192.168.99.99
 Name         : 
 Comment      : Updated comment
 Groups       : {Default}
-Id           : 20
-DateAdded    : 9/30/2026 9:15:21 AM
-DateModified : 9/30/2026 9:16:00 AM
+Id           : 23
+DateAdded    : 9/30/2026 4:25:33 PM
+DateModified : 9/30/2026 4:26:12 PM
 ```
 
 ### Remove-PiHoleClient
@@ -576,18 +576,18 @@ Get-PiHoleStatsSummary -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Total          : 287
-Blocked        : 93
-PercentBlocked : 32.404182434082
-UniqueDomains  : 22
-Forwarded      : 33
-Cached         : 161
+Total          : 42
+Blocked        : 8
+PercentBlocked : 19.0476188659668
+UniqueDomains  : 15
+Forwarded      : 27
+Cached         : 7
 Frequency      : 0
-Types          : @{A=136; AAAA=139; ANY=0; SRV=0; SOA=0; PTR=12; TXT=0; NAPTR=0; MX=0; DS=0; RRSIG=0; DNSKEY=0; NS=0; SVCB=0; HTTPS=0; OTHER=0}
-Status         : @{Unknown=0; Gravity=93; Forwarded=33; Cache=122; Regex=0; DenyList=0; ExternalBlockedIp=0; ExternalBlockedNull=0; ExternalBlockedNxra=0; GravityCname=0; RegexCname=0; DenyListCname=0; Retired=0; RetiredDnssec=0; InProgress=0; Dbbusy=0; SpecialDomain=0; CacheStale=39; ExternalBlockedEde15=0}
-Replies        : @{Unknown=7; Nodata=17; Nxdomain=3; Cname=0; Ip=251; Domain=9; Rrname=0; ServFail=0; Refused=0; Notimp=0; Other=0; Dnssec=0; None=0; Blob=0}
+Types          : @{A=19; AAAA=20; ANY=0; SRV=0; SOA=0; PTR=3; TXT=0; NAPTR=0; MX=0; DS=0; RRSIG=0; DNSKEY=0; NS=0; SVCB=0; HTTPS=0; OTHER=0}
+Status         : @{Unknown=0; Gravity=8; Forwarded=27; Cache=7; Regex=0; DenyList=0; ExternalBlockedIp=0; ExternalBlockedNull=0; ExternalBlockedNxra=0; GravityCname=0; RegexCname=0; DenyListCname=0; Retired=0; RetiredDnssec=0; InProgress=0; Dbbusy=0; SpecialDomain=0; CacheStale=0; ExternalBlockedEde15=0}
+Replies        : @{Unknown=10; Nodata=2; Nxdomain=1; Cname=0; Ip=27; Domain=2; Rrname=0; ServFail=0; Refused=0; Notimp=0; Other=0; Dnssec=0; None=0; Blob=0}
 Clients        : @{Active=2; Total=2}
-Gravity        : @{DomainsBeingBlocked=494568; LastUpdate=1790769668}
+Gravity        : @{DomainsBeingBlocked=494952; LastUpdate=1790799702}
 ```
 
 ### Get-PiHoleStatsRecentBlocked
@@ -598,7 +598,7 @@ Get-PiHoleStatsRecentBlocked -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Blocked : googlesyndication.com
+Blocked : adservice.google.com
 ```
 
 ### Get-PiHoleStatsQueryType
@@ -610,10 +610,10 @@ Get-PiHoleStatsQueryType -PiHoleServer $PiHoleServer -Password $Password
 ```
 
 Type  : A
-Count : 136
+Count : 19
 
 Type  : AAAA
-Count : 139
+Count : 20
 
 Type  : ANY
 Count : 0
@@ -635,20 +635,20 @@ Get-PiHoleStatsTopDomain -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
+Domain : mozilla.org
+Count  : 4
+
 Domain : bbc.com
-Count  : 22
+Count  : 4
 
-Domain : microsoft.com
-Count  : 22
-
-Domain : example.com
-Count  : 20
-
-Domain : apple.com
-Count  : 20
+Domain : stackoverflow.com
+Count  : 4
 
 Domain : cloudflare.com
-Count  : 16
+Count  : 4
+
+Domain : reddit.com
+Count  : 4
 
 _(showing 5 of 10 results)_
 ```
@@ -663,11 +663,11 @@ Get-PiHoleStatsTopClient -PiHoleServer $PiHoleServer -Password $Password
 
 IP    : 192.168.1.162
 Name  : 
-Count : 275
+Count : 39
 
 IP    : 127.0.0.1
 Name  : localhost
-Count : 12
+Count : 3
 ```
 
 ### Get-PiHoleStatsUpstream
@@ -678,9 +678,9 @@ Get-PiHoleStatsUpstream -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-TotalQueries     : 287
-ForwardedQueries : 33
-Upstreams        : {@{Ip=blocklist; Name=blocklist; Port=-1; Count=93; ResponseTime=0; Variance=0}, @{Ip=cache; Name=cache; Port=-1; Count=161; ResponseTime=0; Variance=0}, @{Ip=8.8.4.4; Name=dns.google; Port=53; Count=18; ResponseTime=0.0253777056932449; Variance=0.00323175294284653}, @{Ip=8.8.8.8; Name=dns.google; Port=53; Count=15; ResponseTime=0.0273200273513794; Variance=0.00394722979890426}}
+TotalQueries     : 42
+ForwardedQueries : 27
+Upstreams        : {@{Ip=blocklist; Name=blocklist; Port=-1; Count=8; ResponseTime=0; Variance=0}, @{Ip=cache; Name=cache; Port=-1; Count=7; ResponseTime=0; Variance=0}, @{Ip=8.8.8.8; Name=dns.google; Port=53; Count=27; ResponseTime=0.0287302732467651; Variance=0.00306724246755919}}
 ```
 
 ### Get-PiHoleStatsQuerySuggestions
@@ -691,10 +691,10 @@ Get-PiHoleStatsQuerySuggestions -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Domain     : {bbc.com, microsoft.com, example.com, apple.com…}
+Domain     : {mozilla.org, bbc.com, stackoverflow.com, cloudflare.com…}
 ClientIp   : {192.168.1.162, 127.0.0.1}
 ClientName : {localhost}
-Upstream   : {blocklist, cache, 8.8.4.4#53 (dns.google), 8.8.8.8#53 (dns.google)…}
+Upstream   : {blocklist, cache, 8.8.8.8#53 (dns.google), permitted}
 Type       : {A, AAAA, ANY, SRV…}
 Status     : {UNKNOWN, GRAVITY, FORWARDED, CACHE…}
 Reply      : {UNKNOWN, NODATA, NXDOMAIN, CNAME…}
@@ -711,9 +711,9 @@ Get-PiHoleStatsDatabaseSummary -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-SumQueries     : 287
-SumBlocked     : 93
-PercentBlocked : 32.404182434082
+SumQueries     : 42
+SumBlocked     : 8
+PercentBlocked : 19.0476188659668
 TotalClients   : 3
 ```
 
@@ -728,7 +728,7 @@ Get-PiHoleStatsDatabaseQueryType -PiHoleServer $PiHoleServer -Password $Password
 ```
 
 Type  : A
-Count : 139
+Count : 20
 
 Type  : AAAA
 Count : 0
@@ -740,7 +740,7 @@ Type  : SRV
 Count : 0
 
 Type  : SOA
-Count : 12
+Count : 3
 
 _(showing 5 of 16 results)_
 ```
@@ -755,20 +755,20 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Domain : bbc.com
-Count  : 22
+Domain : nytimes.com
+Count  : 4
 
-Domain : microsoft.com
-Count  : 22
+Domain : bbc.com
+Count  : 4
+
+Domain : mozilla.org
+Count  : 4
 
 Domain : example.com
-Count  : 20
+Count  : 4
 
-Domain : apple.com
-Count  : 20
-
-Domain : cloudflare.com
-Count  : 16
+Domain : stackoverflow.com
+Count  : 4
 
 _(showing 5 of 10 results)_
 ```
@@ -785,15 +785,15 @@ Get-PiHoleStatsDatabaseTopClient -PiHoleServer $PiHoleServer -Password $Password
 
 IP    : 192.168.1.162
 Name  : 
-Count : 182
-
-IP    : 127.0.0.1
-Name  : localhost
-Count : 9
+Count : 31
 
 IP    : 127.0.0.1
 Name  : 
-Count : 3
+Count : 2
+
+IP    : 127.0.0.1
+Name  : localhost
+Count : 1
 ```
 
 ### Get-PiHoleStatsDatabaseUpstream
@@ -806,9 +806,9 @@ Get-PiHoleStatsDatabaseUpstream -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-TotalQueries     : 287
-ForwardedQueries : 33
-Upstreams        : {@{Ip=1; Name=; Port=4294967295; Count=22; ResponseTime=0; Variance=0}, @{Ip=2; Name=; Port=4294967295; Count=11; ResponseTime=0; Variance=0}, @{Ip=cache; Name=cache; Port=-1; Count=122; ResponseTime=0; Variance=0}, @{Ip=blocklist; Name=blocklist; Port=-1; Count=132; ResponseTime=0; Variance=0}}
+TotalQueries     : 42
+ForwardedQueries : 27
+Upstreams        : {@{Ip=2; Name=; Port=4294967295; Count=27; ResponseTime=0; Variance=0}, @{Ip=cache; Name=cache; Port=-1; Count=7; ResponseTime=0; Variance=0}, @{Ip=blocklist; Name=blocklist; Port=-1; Count=8; ResponseTime=0; Variance=0}}
 ```
 
 ### Get-PiHoleQuery
@@ -821,69 +821,69 @@ Get-PiHoleQuery -PiHoleServer $PiHoleServer -Password $Password -Length 5
 
 ```
 
-Id       : 286
-Time     : 9/30/2026 9:00:01 AM
-Type     : PTR
-Domain   : 4.4.8.8.in-addr.arpa
-Cname    : 
-Status   : CACHE
-Client   : @{Ip=127.0.0.1; Name=localhost}
-Dnssec   : UNKNOWN
-Reply    : @{Type=DOMAIN; Time=0.0011289119720459}
-ListId   : 
-Upstream : 
-Ede      : @{Code=-1; Text=}
-
-Id       : 285
-Time     : 9/30/2026 9:00:01 AM
-Type     : PTR
-Domain   : 8.8.8.8.in-addr.arpa
-Cname    : 
-Status   : CACHE
-Client   : @{Ip=127.0.0.1; Name=localhost}
-Dnssec   : UNKNOWN
-Reply    : @{Type=DOMAIN; Time=0.00119900703430176}
-ListId   : 
-Upstream : 
-Ede      : @{Code=-1; Text=}
-
-Id       : 284
-Time     : 9/30/2026 9:00:01 AM
+Id       : 41
+Time     : 9/30/2026 4:19:28 PM
 Type     : PTR
 Domain   : 1.0.0.127.in-addr.arpa
 Cname    : 
 Status   : CACHE
 Client   : @{Ip=127.0.0.1; Name=localhost}
 Dnssec   : UNKNOWN
-Reply    : @{Type=DOMAIN; Time=0.0010991096496582}
+Reply    : @{Type=DOMAIN; Time=0.0016322135925293}
 ListId   : 
 Upstream : 
 Ede      : @{Code=-1; Text=}
 
-Id       : 283
-Time     : 9/30/2026 9:00:01 AM
-Type     : PTR
-Domain   : 162.1.168.192.in-addr.arpa
+Id       : 40
+Time     : 9/30/2026 4:19:28 PM
+Type     : AAAA
+Domain   : adservice.google.com
+Cname    : 
+Status   : GRAVITY
+Client   : @{Ip=192.168.1.162; Name=}
+Dnssec   : UNKNOWN
+Reply    : @{Type=IP; Time=0.00115633010864258}
+ListId   : -53
+Upstream : 
+Ede      : @{Code=-1; Text=}
+
+Id       : 39
+Time     : 9/30/2026 4:19:28 PM
+Type     : A
+Domain   : adservice.google.com
+Cname    : 
+Status   : GRAVITY
+Client   : @{Ip=192.168.1.162; Name=}
+Dnssec   : UNKNOWN
+Reply    : @{Type=IP; Time=0.00106549263000488}
+ListId   : -53
+Upstream : 
+Ede      : @{Code=-1; Text=}
+
+Id       : 38
+Time     : 9/30/2026 4:19:28 PM
+Type     : AAAA
+Domain   : microsoft.com
 Cname    : 
 Status   : CACHE
-Client   : @{Ip=127.0.0.1; Name=localhost}
+Client   : @{Ip=192.168.1.162; Name=}
 Dnssec   : UNKNOWN
-Reply    : @{Type=NXDOMAIN; Time=0.0204389095306396}
+Reply    : @{Type=IP; Time=0.000108957290649414}
 ListId   : 
 Upstream : 
 Ede      : @{Code=-1; Text=}
 
-Id       : 282
-Time     : 9/30/2026 8:00:00 AM
-Type     : PTR
-Domain   : 4.4.8.8.in-addr.arpa
+Id       : 37
+Time     : 9/30/2026 4:19:28 PM
+Type     : AAAA
+Domain   : microsoft.com
 Cname    : 
-Status   : CACHE
-Client   : @{Ip=127.0.0.1; Name=localhost}
+Status   : FORWARDED
+Client   : @{Ip=192.168.1.162; Name=}
 Dnssec   : UNKNOWN
-Reply    : @{Type=DOMAIN; Time=0.00113701820373535}
+Reply    : @{Type=IP; Time=0.0397381782531738}
 ListId   : 
-Upstream : 
+Upstream : 8.8.8.8#53
 Ede      : @{Code=-1; Text=}
 ```
 
@@ -978,20 +978,20 @@ CpuPercent    : 0
 MemoryPercent : 0
 ActiveClients : 2
 Blocking      : enabled
-Cache         : @{Size=10000; Inserted=157; Evicted=0}
+Cache         : @{Size=10000; Inserted=38; Evicted=0}
 Config        : @{DhcpActive=False; DhcpStart=; DhcpEnd=; DhcpIpv6=False; DnsDnssec=False; DnsDomain=lan; DnsNumUpstreams=2; DnsPort=53; DnsrevServerAactive=False; PrivacyLevel=0}
-GravitySize   : 494568
+GravitySize   : 494952
 HostModel     : Raspberry Pi Zero W Rev 1.1
 IFace         : @{v4=; v6=}
 NodeName      : dns3.localdomain
 Pid           : 388
-Queries       : @{Total=287; Blocked=93; PercentBlocked=32.404182434082; QueryFrequency=0}
-RecentBlocked : googlesyndication.com
-Sensors       : @{CpuTemp=40.622; HotLimit=60; Unit=C}
-System        : @{Uptime=127777; Memory=; Procs=73; Cpu=; Ftl=}
-TopBlocked    : ads.pubmatic.com
+Queries       : @{Total=42; Blocked=8; PercentBlocked=19.0476188659668; QueryFrequency=0}
+RecentBlocked : adservice.google.com
+Sensors       : @{CpuTemp=41.698; HotLimit=60; Unit=C}
+System        : @{Uptime=153598; Memory=; Procs=73; Cpu=; Ftl=}
+TopBlocked    : googleadservices.com
 TopClient     : 192.168.1.162
-TopDomain     : bbc.com
+TopDomain     : nytimes.com
 Version       : @{Core=; Web=; Ftl=; Docker=}
 ```
 
@@ -1028,11 +1028,11 @@ Get-PiHoleInfoSystem -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Uptime : 127787
+Uptime : 153609
 Memory : @{Ram=; Swap=}
 Procs  : 73
-Cpu    : @{NumProcessors=1; PercentCpu=95.8000030517578; Load=}
-Ftl    : @{PercentMemory=2.42485022544861; PercentCpu=95.5}
+Cpu    : @{NumProcessors=1; PercentCpu=96.5; Load=}
+Ftl    : @{PercentMemory=3.01092410087585; PercentCpu=96}
 ```
 
 ### Get-PiHoleInfoFtl
@@ -1043,16 +1043,16 @@ Get-PiHoleInfoFtl -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Database         : @{Gravity=494568; Antigravity=0; Groups=4; Lists=14; Clients=0; Domains=; Regex=}
+Database         : @{Gravity=494952; Antigravity=0; Groups=4; Lists=14; Clients=0; Domains=; Regex=}
 PrivacyLevel     : 0
 QueryFrequency   : 0
 Clients          : @{Total=2; Active=2}
 Pid              : 388
-Uptime           : 7963466.771567
-PercentMemory    : 2.42485022544861
-PercentCpu       : 96.5999984741211
+Uptime           : 3776419.413644
+PercentMemory    : 3.01092410087585
+PercentCpu       : 96.4000015258789
 AllowDestructive : True
-Dnsmasq          : @{DnsCacheInserted=157; DnsCacheLiveFreed=0; DnsQueriesForwarded=72; DnsAuthAnswered=0; DnsLocalAnswered=215; DnsStaleAnswered=39; DnsUnanswered=0; DnssecMaxCryptoUse=0; DnssecMaxSigFail=0; DnssecMaxWork=0; Bootp=0; Pxe=0; DhcpAck=0; DhcpDecline=0; DhcpDiscover=0; DhcpInform=0; DhcpNak=0; DhcpOffer=0; DhcpRelease=0; DhcpRequest=0; Noanswer=0; LeasesAllocated4=0; LeasesPruned4=0; LeasesAllocated6=0; LeasesPruned6=0; TcpConnections=0; DhcpLeasequery=0; DhcpLeaseUnassigned=0; DhcpLeaseActve=0; DhcpLeaseUnknown=0}
+Dnsmasq          : @{DnsCacheInserted=38; DnsCacheLiveFreed=0; DnsQueriesForwarded=27; DnsAuthAnswered=0; DnsLocalAnswered=15; DnsStaleAnswered=0; DnsUnanswered=0; DnssecMaxCryptoUse=0; DnssecMaxSigFail=0; DnssecMaxWork=0; Bootp=0; Pxe=0; DhcpAck=0; DhcpDecline=0; DhcpDiscover=0; DhcpInform=0; DhcpNak=0; DhcpOffer=0; DhcpRelease=0; DhcpRequest=0; Noanswer=0; LeasesAllocated4=0; LeasesPruned4=0; LeasesAllocated6=0; LeasesPruned6=0; TcpConnections=0; DhcpLeasequery=0; DhcpLeaseUnassigned=0; DhcpLeaseActve=0; DhcpLeaseUnknown=0}
 ```
 
 ### Get-PiHoleInfoSensors
@@ -1064,7 +1064,7 @@ Get-PiHoleInfoSensors -PiHoleServer $PiHoleServer -Password $Password
 ```
 
 List     : {@{Name=cpu_thermal; Path=hwmon0; Source=devices/virtual/thermal/thermal_zone0; Temps=}, @{Name=rpi_volt; Path=hwmon1; Source=devices/platform/soc/soc:firmware/raspberrypi-hwmon; Temps=}}
-CpuTemp  : 40.622
+CpuTemp  : 41.16
 HotLimit : 60
 Unit     : C
 ```
@@ -1081,12 +1081,12 @@ Size                  : 13983744
 Type                  : Regular file
 Mode                  : rw-r-----
 AccessTime            : 6/25/2025 12:32:44 AM
-ModifiedTime          : 9/30/2026 6:58:06 AM
-ChangeTime            : 9/30/2026 6:58:06 AM
+ModifiedTime          : 9/30/2026 3:18:14 PM
+ChangeTime            : 9/30/2026 3:18:15 PM
 Owner                 : @{User=; Group=}
-Queries               : 287
-EarliestTimestamp     : 9/29/2026 9:10:00 AM
-QueriesDisk           : 287
+Queries               : 42
+EarliestTimestamp     : 9/29/2026 4:20:00 PM
+QueriesDisk           : 42
 EarliestTimestampDisk : 
 SqliteVersion         : 3.53.1
 ```
@@ -1155,11 +1155,17 @@ Get-PiHoleInfoMessage -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Id        : 1
-Timestamp : 9/30/2026 7:38:07 AM
+Id        : 22
+Timestamp : 9/30/2026 4:16:55 PM
+Type      : LIST
+Plain     : List with ID 63 (https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/domains/light.txt) was inaccessible during last gravity run
+Html      : <a href="groups/lists?listid=63">List with ID <strong>63</strong> (<code>https://codeberg.org/hagezi/mirror2/raw/branch/main/dns-blocklists/domains/light.txt</code>)</a> was inaccessible during last gravity run
+
+Id        : 23
+Timestamp : 9/30/2026 4:18:16 PM
 Type      : LOAD
-Plain     : Long-term load (15min avg) larger than number of processors: 1.0 > 1
-Html      : Long-term load (15min avg) larger than number of processors: <strong>1.0 &gt; 1</strong><br>This may slow down DNS resolution and can cause bottlenecks.
+Plain     : Long-term load (15min avg) larger than number of processors: 1.9 > 1
+Html      : Long-term load (15min avg) larger than number of processors: <strong>1.9 &gt; 1</strong><br>This may slow down DNS resolution and can cause bottlenecks.
 ```
 
 ### Get-PiHoleInfoMessageCount
@@ -1170,7 +1176,7 @@ Get-PiHoleInfoMessageCount -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Count : 1
+Count : 2
 ```
 
 ### Remove-PiHoleInfoMessage
@@ -1194,8 +1200,8 @@ Get-PiHoleLogWebserver -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Log    : {@{Timestamp=9/30/2026 6:58:08 AM; Message=Initializing HTTP server on ports "8089,8489s"; Priority=}, @{Timestamp=9/30/2026 7:16:07 AM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:12:16:06 +0000] "PATCH /api/config?restart=false HTTP/1.1" 200 4590 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}, @{Timestamp=9/30/2026 7:16:08 AM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:12:16:07 +0000] "DELETE /api/auth HTTP/1.1" 204 558 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}, @{Timestamp=9/30/2026 7:16:12 AM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:12:16:07 +0000] "POST /api/auth HTTP/1.1" 200 808 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}…}
-NextID : 13
+Log    : {@{Timestamp=9/30/2026 3:18:16 PM; Message=Initializing HTTP server on ports "8089,8489s"; Priority=}, @{Timestamp=9/30/2026 3:29:52 PM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:20:29:51 +0000] "PATCH /api/config?restart=false HTTP/1.1" 200 4588 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}, @{Timestamp=9/30/2026 3:29:53 PM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:20:29:52 +0000] "DELETE /api/auth HTTP/1.1" 204 558 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}, @{Timestamp=9/30/2026 3:29:54 PM; Message=ACCESS: 192.168.1.162 - - [30/Sep/2026:20:29:45 +0000] "POST /api/auth HTTP/1.1" 200 806 - Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6; Priority=}…}
+NextID : 33
 Pid    : 388
 File   : /var/log/pihole/webserver.log
 ```
@@ -1208,8 +1214,8 @@ Get-PiHoleLogDnsmasq -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Log    : {@{Timestamp=9/30/2026 6:58:08 AM; Message=started, version pi-hole-v2.93 cachesize 10000; Priority=}, @{Timestamp=9/30/2026 6:58:08 AM; Message=DNS service limited to local subnets; Priority=}, @{Timestamp=9/30/2026 6:58:08 AM; Message=compile time options: IPv6 GNU-getopt no-DBus no-UBus no-i18n IDN2 DHCP DHCPv6 Lua TFTP no-conntrack ipset no-nftset auth DNSSEC loop-detect inotify dumpfile; Priority=}, @{Timestamp=9/30/2026 6:58:08 AM; Message=using nameserver 8.8.8.8#53; Priority=}…}
-NextID : 57
+Log    : {@{Timestamp=9/30/2026 3:18:16 PM; Message=started, version pi-hole-v2.93 cachesize 10000; Priority=}, @{Timestamp=9/30/2026 3:18:16 PM; Message=DNS service limited to local subnets; Priority=}, @{Timestamp=9/30/2026 3:18:16 PM; Message=compile time options: IPv6 GNU-getopt no-DBus no-UBus no-i18n IDN2 DHCP DHCPv6 Lua TFTP no-conntrack ipset no-nftset auth DNSSEC loop-detect inotify dumpfile; Priority=}, @{Timestamp=9/30/2026 3:18:16 PM; Message=using nameserver 8.8.8.8#53; Priority=}…}
+NextID : 69
 Pid    : 388
 File   : /var/log/pihole/pihole.log
 ```
@@ -1222,8 +1228,8 @@ Get-PiHoleLogFtl -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Log    : {@{Timestamp=9/30/2026 6:58:08 AM; Message= -> Unknown DNS queries: 0; Priority=INFO}, @{Timestamp=9/30/2026 6:58:08 AM; Message= -> Unique domains: 0; Priority=INFO}, @{Timestamp=9/30/2026 6:58:08 AM; Message= -> Unique clients: 0; Priority=INFO}, @{Timestamp=9/30/2026 6:58:08 AM; Message= -> DNS cache records: 0; Priority=INFO}…}
-NextID : 535
+Log    : {@{Timestamp=9/30/2026 3:44:48 PM; Message=   -> s_cost: 1024; Priority=DEBUG_API}, @{Timestamp=9/30/2026 3:44:48 PM; Message=   -> t_cost: 32; Priority=DEBUG_API}, @{Timestamp=9/30/2026 3:44:48 PM; Message=   -> Salt: 'ZM+UIgW0FxI1Ns0FbtOwxg=='; Priority=DEBUG_API}, @{Timestamp=9/30/2026 3:44:48 PM; Message=   -> Hash: 'REBNkE/jmdkRF3uyFRUpnxcQCKuSaS3U30DMsqWp0yE='; Priority=DEBUG_API}…}
+NextID : 919
 Pid    : 388
 File   : /var/log/pihole/FTL.log
 ```
@@ -1252,31 +1258,31 @@ Get-PiHoleHistory -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Timestamp : 9/29/2026 9:15:00 AM
+Timestamp : 9/29/2026 4:25:00 PM
 Total     : 0
 Cached    : 0
 Blocked   : 0
 Forwarded : 0
 
-Timestamp : 9/29/2026 9:25:00 AM
+Timestamp : 9/29/2026 4:35:00 PM
 Total     : 0
 Cached    : 0
 Blocked   : 0
 Forwarded : 0
 
-Timestamp : 9/29/2026 9:35:00 AM
+Timestamp : 9/29/2026 4:45:00 PM
 Total     : 0
 Cached    : 0
 Blocked   : 0
 Forwarded : 0
 
-Timestamp : 9/29/2026 9:45:00 AM
+Timestamp : 9/29/2026 4:55:00 PM
 Total     : 0
 Cached    : 0
 Blocked   : 0
 Forwarded : 0
 
-Timestamp : 9/29/2026 9:55:00 AM
+Timestamp : 9/29/2026 5:05:00 PM
 Total     : 0
 Cached    : 0
 Blocked   : 0
@@ -1293,19 +1299,19 @@ Get-PiHoleHistoryClient -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Timestamp : 9/29/2026 9:15:00 AM
+Timestamp : 9/29/2026 4:25:00 PM
 Clients   : {@{IP=192.168.1.162; Name=; Count=0}, @{IP=others; Name=; Count=0}}
 
-Timestamp : 9/29/2026 9:25:00 AM
+Timestamp : 9/29/2026 4:35:00 PM
 Clients   : {@{IP=192.168.1.162; Name=; Count=0}, @{IP=others; Name=; Count=0}}
 
-Timestamp : 9/29/2026 9:35:00 AM
+Timestamp : 9/29/2026 4:45:00 PM
 Clients   : {@{IP=192.168.1.162; Name=; Count=0}, @{IP=others; Name=; Count=0}}
 
-Timestamp : 9/29/2026 9:45:00 AM
+Timestamp : 9/29/2026 4:55:00 PM
 Clients   : {@{IP=192.168.1.162; Name=; Count=0}, @{IP=others; Name=; Count=0}}
 
-Timestamp : 9/29/2026 9:55:00 AM
+Timestamp : 9/29/2026 5:05:00 PM
 Clients   : {@{IP=192.168.1.162; Name=; Count=0}, @{IP=others; Name=; Count=0}}
 
 _(showing 5 of 145 results)_
@@ -1321,29 +1327,11 @@ Get-PiHoleHistoryDatabase -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Timestamp : 9/30/2026 7:30:00 AM
-Total     : 47
-Cached    : 12
-Blocked   : 9
-Forwarded : 26
-
-Timestamp : 9/30/2026 7:40:00 AM
-Total     : 232
-Cached    : 141
-Blocked   : 84
-Forwarded : 7
-
-Timestamp : 9/30/2026 8:00:00 AM
-Total     : 4
-Cached    : 4
-Blocked   : 0
-Forwarded : 0
-
-Timestamp : 9/30/2026 9:00:00 AM
-Total     : 4
-Cached    : 4
-Blocked   : 0
-Forwarded : 0
+Timestamp : 9/30/2026 4:10:00 PM
+Total     : 42
+Cached    : 7
+Blocked   : 8
+Forwarded : 27
 ```
 
 ### Get-PiHoleHistoryDatabaseClient
@@ -1356,16 +1344,7 @@ Get-PiHoleHistoryDatabaseClient -PiHoleServer $PiHoleServer -Password $Password
 
 ```
 
-Timestamp : 9/30/2026 9:00:00 AM
-Clients   : @{ClientId=3; Count=1}
-
-Timestamp : 9/30/2026 8:00:00 AM
-Clients   : @{ClientId=3; Count=1}
-
-Timestamp : 9/30/2026 7:40:00 AM
-Clients   : @{ClientId=5; Count=1}
-
-Timestamp : 9/30/2026 7:30:00 AM
+Timestamp : 9/30/2026 4:10:00 PM
 Clients   : {@{ClientId=3; Count=1}, @{ClientId=2; Count=1}, @{ClientId=5; Count=1}}
 ```
 
@@ -1475,7 +1454,7 @@ Address     : b8:27:eb:11:a4:d5
 Broadcast   : ff:ff:ff:ff:ff:ff
 PermAddress : b8:27:eb:11:a4:d5
 Stats       : @{RxBytes=; TxBytes=; Bits=64}
-Addresses   : {@{Family=inet; Scope=universe; Flags=; Prefixlen=24; Address=192.168.1.248; AddressType=private; Local=192.168.1.248; LocalType=private; Broadcast=192.168.1.255; BroadcastType=private; Label=wlan0; Prefered=71284; Valid=71284; Cstamp=1790649687.41; Tstamp=1790762750.49}, @{Family=inet6; Scope=link; Flags=permanent; Prefixlen=64; Address=fe80::ba27:ebff:fe11:a4d5; AddressType=link-local (LL); Prefered=4294967295; Valid=4294967295; Cstamp=1790649682.83; Tstamp=1790649682.83}}
+Addresses   : {@{Family=inet; Scope=universe; Flags=; Prefixlen=24; Address=192.168.1.248; AddressType=private; Local=192.168.1.248; LocalType=private; Broadcast=192.168.1.255; BroadcastType=private; Label=wlan0; Prefered=76172; Valid=76172; Cstamp=1790649687.41; Tstamp=1790793450.81}, @{Family=inet6; Scope=link; Flags=permanent; Prefixlen=64; Address=fe80::ba27:ebff:fe11:a4d5; AddressType=link-local (LL); Prefered=4294967295; Valid=4294967295; Cstamp=1790649682.83; Tstamp=1790649682.83}}
 ```
 
 ### Get-PiHoleNetworkDevice
@@ -1491,20 +1470,20 @@ Get-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $Password
 Id         : 2
 HwAddr     : ip-127.0.0.1
 Interface  : lo
-FirstSeen  : 9/30/2026 7:34:38 AM
-LastQuery  : 9/30/2026 9:00:01 AM
-NumQueries : 12
+FirstSeen  : 9/30/2026 4:19:27 PM
+LastQuery  : 9/30/2026 4:19:28 PM
+NumQueries : 3
 MacVendor  : 
-Ips        : @{Ip=127.0.0.1; Name=localhost; LastSeen=9/30/2026 9:17:00 AM; NameUpdated=9/30/2026 9:17:00 AM}
+Ips        : @{Ip=127.0.0.1; Name=localhost; LastSeen=9/30/2026 4:28:00 PM; NameUpdated=9/30/2026 4:28:00 PM}
 
 Id         : 1
 HwAddr     : 74:56:3c:bb:f4:0b
 Interface  : wlan0
-FirstSeen  : 9/30/2026 7:34:37 AM
-LastQuery  : 9/30/2026 7:49:13 AM
-NumQueries : 275
+FirstSeen  : 9/30/2026 4:19:27 PM
+LastQuery  : 9/30/2026 4:19:27 PM
+NumQueries : 39
 MacVendor  : Giga-Byte Technology Co.,Ltd.
-Ips        : @{Ip=192.168.1.162; Name=; LastSeen=9/30/2026 9:17:00 AM; NameUpdated=12/31/1969 6:00:00 PM}
+Ips        : @{Ip=192.168.1.162; Name=; LastSeen=9/30/2026 4:28:00 PM; NameUpdated=12/31/1969 6:00:00 PM}
 ```
 
 ### Remove-PiHoleNetworkDevice
@@ -1520,6 +1499,29 @@ Remove-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $Password -Devi
 Error : Response status code does not indicate success: 404 (Not Found).
 ```
 
+### Get-PiHoleDhcpLease
+
+```powershell
+Get-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password
+```
+
+```
+(no output)
+```
+
+### Remove-PiHoleDhcpLease
+
+_DHCP leases arise from Pi-hole genuinely handing one out and cannot be manufactured on demand, so this example shows the error for an IP address with no active lease rather than a fabricated success._
+
+```powershell
+Remove-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password -Ip "192.168.1.50"
+```
+
+```
+
+Error : Response status code does not indicate success: 400 (Bad Request).
+```
+
 ## Authentication
 
 ### Get-PiHoleCurrentAuthSession
@@ -1531,13 +1533,27 @@ Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password
 ```
 
 Id             : 0
+CurrentSession : False
+Valid          : True
+TlsLogin       : True
+TlsMixed       : False
+LoginAt        : 9/30/2026 4:16:56 PM
+LastActive     : 9/30/2026 4:16:56 PM
+ValidUntil     : 9/30/2026 4:46:56 PM
+RemoteAddress  : 192.168.1.162
+UserAgent      : Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6
+XForwardedFor  : 
+App            : True
+Cli            : False
+
+Id             : 1
 CurrentSession : True
 Valid          : True
 TlsLogin       : True
 TlsMixed       : False
-LoginAt        : 9/30/2026 9:09:06 AM
-LastActive     : 9/30/2026 9:09:11 AM
-ValidUntil     : 9/30/2026 9:39:11 AM
+LoginAt        : 9/30/2026 4:19:34 PM
+LastActive     : 9/30/2026 4:19:39 PM
+ValidUntil     : 9/30/2026 4:49:39 PM
 RemoteAddress  : 192.168.1.162
 UserAgent      : Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.26200; en-US) PowerShell/7.6.6
 XForwardedFor  : 
@@ -1550,13 +1566,13 @@ Cli            : False
 _Deletes a session by its ID (as shown by Get-PiHoleCurrentAuthSession), not the caller's own session._
 
 ```powershell
-Remove-PiHoleAuthSession -PiHoleServer $PiHoleServer -Password $Password -Id 0
+Remove-PiHoleAuthSession -PiHoleServer $PiHoleServer -Password $Password -Id 1
 ```
 
 ```
 
 
-Id     : 0
+Id     : 1
 Status : Removed
 ```
 
