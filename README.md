@@ -108,7 +108,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 |---|---|
 | `Get-PiHoleGroup` | Get groups |
 | `New-PiHoleGroup` | Creates a new group |
-| `Remove-PiHoleGroup` | Delete a group |
+| `Remove-PiHoleGroup` | Delete one or more groups |
 | `Update-PiHoleGroup` | Update a group |
 
 ### List Management
@@ -180,6 +180,8 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Get-PiHoleInfoSensors` | Get info about various sensors |
 | `Get-PiHoleInfoSystem` | Get info about various system parameters |
 | `Get-PiHoleInfoVersion` | Get Pi-hole version |
+| `Get-PiHoleLogDnsmasq` | Get DNS log content |
+| `Get-PiHoleLogFtl` | Get FTL log content |
 | `Get-PiHoleLogWebserver` | Get webserver log content |
 | `Get-PiHoleNetworkDevice` | Get info about the devices in your local network as seen by your Pi-hole |
 | `Get-PiHoleNetworkGateway` | Get info about the gateway of your Pi-hole |
