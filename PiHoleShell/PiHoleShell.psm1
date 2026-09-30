@@ -34,7 +34,7 @@ Export-ModuleMember -Function @(
         'Get-PiHoleList', 'Search-PiHoleListDomain', 'Add-PiHoleList', 'Remove-PiHoleList', 'Update-PiHoleList', `
         #FTLInformation
         'Get-PiHoleInfoMessage', 'Get-PiHoleInfoHost', 'Get-PiHoleInfoClient', 'Get-PiHoleInfoLogin', 'Get-PiHoleInfoSystem', 'Get-PiHoleInfoFtl', `
-        'Get-PiHoleInfoSensors', 'Get-PiHoleInfoDatabase', 'Get-PiHoleInfoVersion', 'Get-PiHoleInfoMetrics', 'Get-PiHoleInfoMessageCount', 'Remove-PiHoleInfoMessage', 'Get-PiHoleLogWebserver', `
+        'Get-PiHoleInfoSensors', 'Get-PiHoleInfoDatabase', 'Get-PiHoleInfoVersion', 'Get-PiHoleInfoMetrics', 'Get-PiHoleInfoMessageCount', 'Remove-PiHoleInfoMessage', 'Get-PiHoleLogWebserver', 'Get-PiHoleLogDnsmasq', 'Get-PiHoleLogFtl', `
         #History
         'Get-PiHoleHistory', 'Get-PiHoleHistoryDatabase', 'Get-PiHoleHistoryClient', 'Get-PiHoleHistoryDatabaseClient', `
         #Teleporter

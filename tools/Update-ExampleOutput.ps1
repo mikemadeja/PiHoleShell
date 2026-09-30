@@ -237,6 +237,14 @@ Add-Example -Category Config -FunctionName 'Get-PiHoleLogWebserver' `
     -Invocation 'Get-PiHoleLogWebserver -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleLogWebserver -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
+Add-Example -Category Config -FunctionName 'Get-PiHoleLogDnsmasq' `
+    -Invocation 'Get-PiHoleLogDnsmasq -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleLogDnsmasq -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Config -FunctionName 'Get-PiHoleLogFtl' `
+    -Invocation 'Get-PiHoleLogFtl -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleLogFtl -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 $teleporterFolder = Join-Path ([System.IO.Path]::GetTempPath()) 'PiHoleShellDocsExample'
 if (Test-Path $teleporterFolder) { Remove-Item $teleporterFolder -Recurse -Force }
 New-Item -ItemType Directory -Path $teleporterFolder | Out-Null
