@@ -108,6 +108,15 @@ function Invoke-Quietly {
 Write-Host "Capturing example output against $PiHoleServer ..."
 
 #region Authentication
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthStatus' `
+    -Invocation 'Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'Password is optional - omit it to check whether your Pi-hole requires a login at all for this client, without authenticating. This test server does require login, so the result below is from a real authenticated check.' `
+    -Result (Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthTotp' `
+    -Invocation 'Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 Add-Example -Category Authentication -FunctionName 'Get-PiHoleCurrentAuthSession' `
     -Invocation 'Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
@@ -426,6 +435,21 @@ Add-Example -Category Config -FunctionName 'Remove-PiHoleNetworkDevice' `
     -Invocation 'Remove-PiHoleNetworkDevice -PiHoleServer $PiHoleServer -Password $Password -DeviceId 5' `
     -Note 'Network devices arise from Pi-hole having genuinely seen a device and cannot be manufactured on demand, so this example shows the error for a device ID that does not exist rather than a fabricated success.' `
     -Result $(if ($removeDeviceError) { [PSCustomObject]@{ Error = $removeDeviceError[-1].Exception.Message } })
+#endregion
+
+#region DHCP
+# The DHCP folder isn't its own README category either - same fallback-folding reasoning as
+# History/NetworkInformation above.
+Add-Example -Category Config -FunctionName 'Get-PiHoleDhcpLease' `
+    -Invocation 'Get-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+$dummyDhcpIp = '192.0.2.123'
+Remove-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Ip $dummyDhcpIp -Confirm:$false -ErrorVariable removeLeaseError -ErrorAction SilentlyContinue | Out-Null
+Add-Example -Category Config -FunctionName 'Remove-PiHoleDhcpLease' `
+    -Invocation 'Remove-PiHoleDhcpLease -PiHoleServer $PiHoleServer -Password $Password -Ip "192.168.1.50"' `
+    -Note 'DHCP leases arise from Pi-hole genuinely handing one out and cannot be manufactured on demand, so this example shows the error for an IP address with no active lease rather than a fabricated success.' `
+    -Result $(if ($removeLeaseError) { [PSCustomObject]@{ Error = $removeLeaseError[-1].Exception.Message } })
 #endregion
 
 #region Actions

@@ -18,7 +18,7 @@ Export-ModuleMember -Function @(
     #Actions
     'Update-PiHoleActionsGravity', 'Invoke-PiHoleFlushNetwork', 'Invoke-PiHoleFlushLogs', 'Restart-PiHoleDnsService' `
         #Authentication
-        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', `
+        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', 'Get-PiHoleAuthStatus', 'Get-PiHoleAuthTotp', `
         #GroupManagement
         'Get-PiHoleGroup', 'New-PiHoleGroup', 'Update-PiHoleGroup', 'Remove-PiHoleGroup', `
         #DnsControl
@@ -44,5 +44,7 @@ Export-ModuleMember -Function @(
         #ClientManagement
         'Get-PiHoleClient', 'New-PiHoleClient', 'Update-PiHoleClient', 'Remove-PiHoleClient', 'Get-PiHoleClientSuggestion', `
         #NetworkInformation
-        'Get-PiHoleNetworkGateway', 'Get-PiHoleNetworkRoute', 'Get-PiHoleNetworkInterface', 'Get-PiHoleNetworkDevice', 'Remove-PiHoleNetworkDevice'
+        'Get-PiHoleNetworkGateway', 'Get-PiHoleNetworkRoute', 'Get-PiHoleNetworkInterface', 'Get-PiHoleNetworkDevice', 'Remove-PiHoleNetworkDevice', `
+        #DHCP
+        'Get-PiHoleDhcpLease', 'Remove-PiHoleDhcpLease'
 )
