@@ -108,6 +108,15 @@ function Invoke-Quietly {
 Write-Host "Capturing example output against $PiHoleServer ..."
 
 #region Authentication
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthStatus' `
+    -Invocation 'Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'Password is optional - omit it to check whether your Pi-hole requires a login at all for this client, without authenticating. This test server does require login, so the result below is from a real authenticated check.' `
+    -Result (Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthTotp' `
+    -Invocation 'Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 Add-Example -Category Authentication -FunctionName 'Get-PiHoleCurrentAuthSession' `
     -Invocation 'Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
@@ -124,6 +133,11 @@ Add-Example -Category Authentication -FunctionName 'Remove-PiHoleAuthSession' `
     -Invocation "Remove-PiHoleAuthSession -PiHoleServer `$PiHoleServer -Password `$Password -Id $extraSessionId" `
     -Note 'Deletes a session by its ID (as shown by Get-PiHoleCurrentAuthSession), not the caller''s own session.' `
     -Result (Remove-PiHoleAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Id $extraSessionId)
+
+Add-Example -Category Authentication -FunctionName 'New-PiHoleAppPassword' `
+    -Invocation 'New-PiHoleAppPassword -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'This only generates a candidate password/hash pair - it has no effect until the returned Hash is set as webserver.api.app_pwhash in the Pi-hole configuration, which this example deliberately does not do, so the real password used throughout this document keeps working.' `
+    -Result (New-PiHoleAppPassword -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
 $extraSid2 = & (Get-Module PiHoleShell) { param($s, $p, $i) Request-PiHoleAuth -PiHoleServer $s -Password $p -IgnoreSsl $i } $PiHoleServer $PiHoleToken $PiHoleIgnoreSsl
 Add-Example -Category Authentication -FunctionName 'Remove-PiHoleCurrentAuthSession' `

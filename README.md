@@ -200,7 +200,10 @@ Session handling is automatic for every command above, but these are available f
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleAuthStatus` | Check if authentication is required |
+| `Get-PiHoleAuthTotp` | Suggest new TOTP credentials |
 | `Get-PiHoleCurrentAuthSession` | List of all current sessions including their validity and further information about the client such as the IP address and user agent. |
+| `New-PiHoleAppPassword` | Create a new application password |
 | `Remove-PiHoleAuthSession` | Using this endpoint, a session can be deleted by its ID. |
 <!-- COMMAND-REFERENCE:END -->
 
