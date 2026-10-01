@@ -134,11 +134,6 @@ Add-Example -Category Authentication -FunctionName 'Remove-PiHoleAuthSession' `
     -Note 'Deletes a session by its ID (as shown by Get-PiHoleCurrentAuthSession), not the caller''s own session.' `
     -Result (Remove-PiHoleAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Id $extraSessionId)
 
-Add-Example -Category Authentication -FunctionName 'New-PiHoleAppPassword' `
-    -Invocation 'New-PiHoleAppPassword -PiHoleServer $PiHoleServer -Password $Password' `
-    -Note 'This only generates a candidate password/hash pair - it has no effect until the returned Hash is set as webserver.api.app_pwhash in the Pi-hole configuration, which this example deliberately does not do, so the real password used throughout this document keeps working.' `
-    -Result (New-PiHoleAppPassword -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
-
 $extraSid2 = & (Get-Module PiHoleShell) { param($s, $p, $i) Request-PiHoleAuth -PiHoleServer $s -Password $p -IgnoreSsl $i } $PiHoleServer $PiHoleToken $PiHoleIgnoreSsl
 Add-Example -Category Authentication -FunctionName 'Remove-PiHoleCurrentAuthSession' `
     -Invocation 'Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid' `
