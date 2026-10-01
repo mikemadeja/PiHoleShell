@@ -18,7 +18,7 @@ Export-ModuleMember -Function @(
     #Actions
     'Update-PiHoleActionsGravity', 'Invoke-PiHoleFlushNetwork', 'Invoke-PiHoleFlushLogs', 'Restart-PiHoleDnsService' `
         #Authentication
-        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', `
+        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', 'Get-PiHoleAuthStatus', 'Get-PiHoleAuthTotp', `
         #GroupManagement
         'Get-PiHoleGroup', 'New-PiHoleGroup', 'Update-PiHoleGroup', 'Remove-PiHoleGroup', `
         #DnsControl

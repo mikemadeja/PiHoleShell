@@ -108,6 +108,15 @@ function Invoke-Quietly {
 Write-Host "Capturing example output against $PiHoleServer ..."
 
 #region Authentication
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthStatus' `
+    -Invocation 'Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'Password is optional - omit it to check whether your Pi-hole requires a login at all for this client, without authenticating. This test server does require login, so the result below is from a real authenticated check.' `
+    -Result (Get-PiHoleAuthStatus -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthTotp' `
+    -Invocation 'Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $Password' `
+    -Result (Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 Add-Example -Category Authentication -FunctionName 'Get-PiHoleCurrentAuthSession' `
     -Invocation 'Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
