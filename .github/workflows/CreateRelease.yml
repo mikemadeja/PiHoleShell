@@ -35,13 +35,31 @@ jobs:
           echo "Latest tag: $latestTag"
           echo "latest_tag=$latestTag" >> $GITHUB_OUTPUT
 
-      - name: Calculate next tag (patch bump)
+      - name: Calculate next tag (major/minor/patch bump based on PR title)
         id: bump
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           version="${{ steps.get_tag.outputs.latest_tag }}"
           version=${version#v}
           IFS='.' read -r major minor patch <<< "$version"
-          patch=$((patch + 1))
+
+          # Convention: include "major release" or "minor release" (case-insensitive, anywhere
+          # in the title) in the develop->main PR title to bump that version component instead
+          # of the default patch bump, e.g. "Major release: v2 config schema".
+          shopt -s nocasematch
+          if [[ "$PR_TITLE" == *"major release"* ]]; then
+            major=$((major + 1)); minor=0; patch=0
+            echo "Bump type: major"
+          elif [[ "$PR_TITLE" == *"minor release"* ]]; then
+            minor=$((minor + 1)); patch=0
+            echo "Bump type: minor"
+          else
+            patch=$((patch + 1))
+            echo "Bump type: patch"
+          fi
+          shopt -u nocasematch
+
           newTag="v$major.$minor.$patch"
           echo "New tag: $newTag"
           echo "new_tag=$newTag" >> $GITHUB_OUTPUT
