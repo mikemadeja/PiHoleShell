@@ -165,6 +165,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Add-PiHoleConfigArrayItem` | Add config array item |
 | `Get-PiHoleConfig` | Get current configuration of Pi-hole |
 | `Get-PiHoleConfigProperty` | Get special properties of your Pi-hole configuration |
+| `Get-PiHoleDhcpLease` | Get currently active DHCP leases |
 | `Get-PiHoleHistory` | Get activity graph data |
 | `Get-PiHoleHistoryClient` | Get per-client activity graph data |
 | `Get-PiHoleHistoryDatabase` | Get activity graph data (long-term data) |
@@ -190,6 +191,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Get-PiHolePadd` | Get summarized data for PADD |
 | `Get-PiHoleTeleporterDownload` | Export Pi-hole settings |
 | `Remove-PiHoleConfigArrayItem` | Delete config array item |
+| `Remove-PiHoleDhcpLease` | Remove a DHCP lease |
 | `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
 | `Remove-PiHoleNetworkDevice` | Delete a device from the network table |
 | `Set-PiHoleConfig` | Change configuration of your Pi-hole |

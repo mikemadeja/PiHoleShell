@@ -44,5 +44,7 @@ Export-ModuleMember -Function @(
         #ClientManagement
         'Get-PiHoleClient', 'New-PiHoleClient', 'Update-PiHoleClient', 'Remove-PiHoleClient', 'Get-PiHoleClientSuggestion', `
         #NetworkInformation
-        'Get-PiHoleNetworkGateway', 'Get-PiHoleNetworkRoute', 'Get-PiHoleNetworkInterface', 'Get-PiHoleNetworkDevice', 'Remove-PiHoleNetworkDevice'
+        'Get-PiHoleNetworkGateway', 'Get-PiHoleNetworkRoute', 'Get-PiHoleNetworkInterface', 'Get-PiHoleNetworkDevice', 'Remove-PiHoleNetworkDevice', `
+        #DHCP
+        'Get-PiHoleDhcpLease', 'Remove-PiHoleDhcpLease'
 )
