@@ -48,3 +48,5 @@ Export-ModuleMember -Function @(
         #DHCP
         'Get-PiHoleDhcpLease', 'Remove-PiHoleDhcpLease'
 )
+
+Test-PiHoleShellUpdate -CurrentVersion $ExecutionContext.SessionState.Module.Version

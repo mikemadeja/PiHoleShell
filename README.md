@@ -45,6 +45,8 @@ Install-Module -Name PiHoleShell -Scope CurrentUser
 Import-Module -Name PiHoleShell
 ```
 
+Importing the module checks (at most once every 24 hours, cached) whether a newer release is available and prints a warning if so. This check is skipped entirely when running from a source checkout, and can be disabled by setting `$env:PIHOLESHELL_SKIP_UPDATE_CHECK` to any value.
+
 ## Getting an API Password
 
 1. Log into your Pi-hole web interface, then go to **Web Interface / API** settings and select **Configure app password**.
