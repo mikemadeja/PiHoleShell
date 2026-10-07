@@ -38,7 +38,7 @@ Export-ModuleMember -Function @(
         #History
         'Get-PiHoleHistory', 'Get-PiHoleHistoryDatabase', 'Get-PiHoleHistoryClient', 'Get-PiHoleHistoryDatabaseClient', `
         #Teleporter
-        'Get-PiHoleTeleporterDownload', `
+        'Get-PiHoleTeleporterDownload', 'Import-PiHoleTeleporter', `
         #DomainManagement
         'Get-PiHoleDomain', 'New-PiHoleDomain', 'Update-PiHoleDomain', 'Remove-PiHoleDomain', `
         #ClientManagement
