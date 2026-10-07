@@ -192,6 +192,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Get-PiHoleNetworkRoute` | Get info about the routes of your Pi-hole |
 | `Get-PiHolePadd` | Get summarized data for PADD |
 | `Get-PiHoleTeleporterDownload` | Export Pi-hole settings |
+| `Import-PiHoleTeleporter` | Import Pi-hole settings |
 | `Remove-PiHoleConfigArrayItem` | Delete config array item |
 | `Remove-PiHoleDhcpLease` | Remove a DHCP lease |
 | `Remove-PiHoleInfoMessage` | Delete a Pi-hole diagnosis message |
