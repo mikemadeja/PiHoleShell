@@ -261,6 +261,18 @@ Add-Example -Category Config -FunctionName 'Get-PiHoleTeleporterDownload' `
     -Invocation 'Get-PiHoleTeleporterDownload -PiHoleServer $PiHoleServer -Password $Password -FolderPath "C:\Backups" -FileName "pihole-backup"' `
     -Note 'FolderPath/FileName are yours to choose; the captured output below used a scratch temp folder for this run instead of C:\Backups.' `
     -Result (Get-PiHoleTeleporterDownload -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -FolderPath $teleporterFolder -FileName 'pihole-backup')
+
+# Restoring the archive just downloaded above is a no-op (it's a backup of the server's own
+# current state), so this is safe to run for real rather than needing a throwaway target.
+Add-Example -Category Config -FunctionName 'Import-PiHoleTeleporter' `
+    -Invocation 'Import-PiHoleTeleporter -PiHoleServer $PiHoleServer -Password $Password -FilePath "C:\Backups\pihole-backup.zip" -Group' `
+    -Note 'Prompts for confirmation by default since it can overwrite your whole configuration - pass -Confirm:$false to skip the prompt, or -WhatIf for a dry run. Omitting every item switch (as here, Group is just one example) imports everything in the archive instead of only the selected items.' `
+    -Result (Import-PiHoleTeleporter -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -FilePath (Join-Path $teleporterFolder 'pihole-backup.zip') -Group -Confirm:$false)
+
+# Pi-hole reloads internally right after any import, briefly refusing connections - confirmed by
+# hand against a real server. Without this, the very next example's own request can fail.
+Start-Sleep -Seconds 5
+
 Remove-Item $teleporterFolder -Recurse -Force
 #endregion
 
