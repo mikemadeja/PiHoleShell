@@ -13,6 +13,13 @@ pr:
 pool:
   name: mmadeja-dt
 
+# The full suite (run whenever a shared/core file changes, or on a direct push to develop/main)
+# takes ~50-60 minutes on this agent's real Pi Zero W test server - right at, and apparently now
+# sometimes past, Azure DevOps' default 60 minute job timeout. Raised with headroom rather than
+# tuned precisely, since runtime varies with the test server's own state (accumulated groups/
+# lists/history from previous runs) and isn't worth chasing exactly.
+timeoutInMinutes: 120
+
 variables:
   - group: dns3
   - name: testResultsFile
