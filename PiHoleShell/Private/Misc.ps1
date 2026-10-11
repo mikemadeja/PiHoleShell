@@ -137,6 +137,28 @@ function ConvertTo-PiHoleFriendlyErrorMessage {
 }
 
 function Remove-PiHoleCurrentAuthSession {
+    <#
+.SYNOPSIS
+Delete session
+
+.DESCRIPTION
+Deletes the session identified by the given Sid. This is the internal best-effort logout every
+other function in this module calls automatically from its own finally block when it finishes -
+it never produces output, even on failure (a warning only). Shown here for completeness since it
+is still a publicly exported function, not because you need to call it yourself.
+
+.PARAMETER PiHoleServer
+The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
+
+.PARAMETER Sid
+The session ID to delete, as returned when logging in
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
+.EXAMPLE
+Remove-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Sid $Sid
+    #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseShouldProcessForStateChangingFunctions", "", Justification = "It removes sessions from PiHole only")]
     [CmdletBinding()]
     param (

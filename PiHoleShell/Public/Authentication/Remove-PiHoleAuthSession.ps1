@@ -1,7 +1,11 @@
 function Remove-PiHoleAuthSession {
     <#
 .SYNOPSIS
-Using this endpoint, a session can be deleted by its ID.
+Delete session by ID
+
+.DESCRIPTION
+Deletes a session by its ID, as shown by Get-PiHoleCurrentAuthSession, rather than the caller's
+own current session.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -12,8 +16,11 @@ The API Password you generated from your PiHole server
 .PARAMETER IgnoreSsl
 Ignore SSL when interacting with the PiHole API
 
+.PARAMETER Id
+The ID of the session to delete, as shown by Get-PiHoleCurrentAuthSession
+
 .EXAMPLE
-Get-PiHoleCurrentAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
+Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Id 3
     #>
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]

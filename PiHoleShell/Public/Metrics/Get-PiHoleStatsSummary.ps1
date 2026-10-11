@@ -2,6 +2,8 @@ function Get-PiHoleStatsSummary {
     <#
 .SYNOPSIS
 Get overview of Pi-hole activity
+
+.DESCRIPTION
 Request various query, system, and FTL properties
 
 .PARAMETER PiHoleServer

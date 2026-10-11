@@ -1,7 +1,10 @@
 function Search-PiHoleListDomain {
     <#
 .SYNOPSIS
-https://ftl.pi-hole.net/master/docs/#get-/search/-domain-
+Search domains in Pi-hole's lists
+
+.DESCRIPTION
+Searches Pi-hole's allow/deny lists for a domain, returning which list(s) it was found in.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
