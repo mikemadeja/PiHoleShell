@@ -2,6 +2,8 @@ function Get-PiHoleStatsTopClient {
     <#
 .SYNOPSIS
 Get top clients
+
+.DESCRIPTION
 Request the top clients (by query count)
 
 .PARAMETER PiHoleServer
@@ -15,6 +17,9 @@ How many results should be returned
 
 .PARAMETER Blocked
 If true, returns top clients by blocked queries instead of total queries
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object

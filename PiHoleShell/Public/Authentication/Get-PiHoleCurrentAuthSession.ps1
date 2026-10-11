@@ -1,7 +1,11 @@
 function Get-PiHoleCurrentAuthSession {
     <#
 .SYNOPSIS
-List of all current sessions including their validity and further information about the client such as the IP address and user agent.
+List of all current sessions
+
+.DESCRIPTION
+List of all current sessions including their validity and further information about the client
+such as the IP address and user agent.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"

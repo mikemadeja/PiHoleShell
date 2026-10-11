@@ -2,6 +2,8 @@ function Get-PiHoleStatsTopDomain {
     <#
 .SYNOPSIS
 Get top domains
+
+.DESCRIPTION
 Request the top domains (by query count)
 
 .PARAMETER PiHoleServer
@@ -15,6 +17,9 @@ How many results should be returned
 
 .PARAMETER Blocked
 If true, returns top domains by blocked queries instead of total queries
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
