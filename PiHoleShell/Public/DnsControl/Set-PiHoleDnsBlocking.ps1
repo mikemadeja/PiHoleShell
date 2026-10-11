@@ -21,6 +21,9 @@ True or False, if you set it to False when Blocking was set to true, it will dis
 .PARAMETER TimeInSeconds
 How long the opposite setting should last, in seconds
 
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
+
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object
 

@@ -2,6 +2,8 @@ function Get-PiHoleStatsQueryType {
     <#
 .SYNOPSIS
 Get query types
+
+.DESCRIPTION
 Request a breakdown of query types (A, AAAA, ...)
 
 .PARAMETER PiHoleServer

@@ -1,6 +1,9 @@
 function Get-PiHoleStatsRecentBlocked {
     <#
 .SYNOPSIS
+Get most recently blocked domain
+
+.DESCRIPTION
 Request most recently blocked domain
 
 .PARAMETER PiHoleServer
@@ -11,6 +14,9 @@ The API Password you generated from your PiHole server
 
 .PARAMETER MaxResult
 How many results should be returned
+
+.PARAMETER IgnoreSsl
+Set to $true to skip SSL certificate validation
 
 .PARAMETER RawOutput
 This will dump the response instead of the formatted object

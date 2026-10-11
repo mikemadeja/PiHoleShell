@@ -120,7 +120,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Add-PiHoleList` | Add a new list |
 | `Get-PiHoleList` | Get lists |
 | `Remove-PiHoleList` | Remove a list |
-| `Search-PiHoleListDomain` | _No description yet_ |
+| `Search-PiHoleListDomain` | Search domains in Pi-hole's lists |
 | `Update-PiHoleList` | Update a list |
 
 ### Domain Management
@@ -153,11 +153,11 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | `Get-PiHoleStatsDatabaseTopDomain` | Get top domains (long-term database) |
 | `Get-PiHoleStatsDatabaseUpstream` | Get metrics about Pi-hole's upstream destinations (long-term database) |
 | `Get-PiHoleStatsQuerySuggestions` | Get query filter suggestions |
-| `Get-PiHoleStatsQueryType` | Get query types Request a breakdown of query types (A, AAAA, ...) |
-| `Get-PiHoleStatsRecentBlocked` | Request most recently blocked domain |
-| `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity Request various query, system, and FTL properties |
-| `Get-PiHoleStatsTopClient` | Get top clients Request the top clients (by query count) |
-| `Get-PiHoleStatsTopDomain` | Get top domains Request the top domains (by query count) |
+| `Get-PiHoleStatsQueryType` | Get query types |
+| `Get-PiHoleStatsRecentBlocked` | Get most recently blocked domain |
+| `Get-PiHoleStatsSummary` | Get overview of Pi-hole activity |
+| `Get-PiHoleStatsTopClient` | Get top clients |
+| `Get-PiHoleStatsTopDomain` | Get top domains |
 | `Get-PiHoleStatsUpstream` | Get metrics about Pi-hole's upstream destinations |
 
 ### Configuration & Diagnostics
@@ -207,8 +207,8 @@ Session handling is automatic for every command above, but these are available f
 |---|---|
 | `Get-PiHoleAuthStatus` | Check if authentication is required |
 | `Get-PiHoleAuthTotp` | Suggest new TOTP credentials |
-| `Get-PiHoleCurrentAuthSession` | List of all current sessions including their validity and further information about the client such as the IP address and user agent. |
-| `Remove-PiHoleAuthSession` | Using this endpoint, a session can be deleted by its ID. |
+| `Get-PiHoleCurrentAuthSession` | List of all current sessions |
+| `Remove-PiHoleAuthSession` | Delete session by ID |
 <!-- COMMAND-REFERENCE:END -->
 
 ## Testing
