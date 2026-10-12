@@ -201,6 +201,11 @@ if ($appSudoEnabled) {
         -Invocation "Add-PiHoleDnsRecord -PiHoleServer `$PiHoleServer -Password `$Password -Type A -Hostname `"$docsDnsHostname`" -IPv4Address `"192.0.2.2`"" `
         -Result (Add-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Type A -Hostname $docsDnsHostname -IPv4Address '192.0.2.2' -Restart $false)
 
+    Add-Example -Category DnsControl -FunctionName 'Get-PiHoleDnsRecord' `
+        -Invocation 'Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password' `
+        -Note 'Can be filtered with -Type and/or -Hostname, and piped directly into Remove-PiHoleDnsRecord.' `
+        -Result (Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Hostname $docsDnsHostname)
+
     Add-Example -Category DnsControl -FunctionName 'Remove-PiHoleDnsRecord' `
         -Invocation "Remove-PiHoleDnsRecord -PiHoleServer `$PiHoleServer -Password `$Password -Type A -Hostname `"$docsDnsHostname`" -IPv4Address `"192.0.2.2`"" `
         -Result (Remove-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Type A -Hostname $docsDnsHostname -IPv4Address '192.0.2.2' -Restart $false -Confirm:$false)
@@ -218,6 +223,9 @@ else {
         -Note $appSudoNote -Skipped
     Add-Example -Category DnsControl -FunctionName 'Add-PiHoleDnsRecord' `
         -Invocation 'Add-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password -Type A -Hostname "example.com" -IPv4Address "192.0.2.1"' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category DnsControl -FunctionName 'Get-PiHoleDnsRecord' `
+        -Invocation 'Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password' `
         -Note $appSudoNote -Skipped
     Add-Example -Category DnsControl -FunctionName 'Remove-PiHoleDnsRecord' `
         -Invocation 'Remove-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password -Type A -Hostname "example.com" -IPv4Address "192.0.2.1"' `

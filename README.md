@@ -103,6 +103,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 |---|---|
 | `Add-PiHoleDnsRecord` | Add a local DNS record |
 | `Get-PiHoleDnsBlockingStatus` | Get Pi-hole's current DNS blocking status |
+| `Get-PiHoleDnsRecord` | Get local DNS records |
 | `Remove-PiHoleDnsRecord` | Remove a local DNS record |
 | `Set-PiHoleDnsBlocking` | Enable or disable Pi-hole's DNS blocking |
 

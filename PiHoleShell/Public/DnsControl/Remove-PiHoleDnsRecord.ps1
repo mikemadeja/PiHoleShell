@@ -9,9 +9,11 @@ record. This is a DNS-specific convenience wrapper around Remove-PiHoleConfigArr
 it calls internally - using that directly is equivalent, just less discoverable for this
 specific case.
 
-The values given must match the record exactly as it was created (see Get-PiHoleConfig,
-under .Dns.Hosts or .Dns.CnameRecords, to check the exact value if removal fails) - for a CNAME
-record created with a TTL, -Ttl must be passed here too, with the same value.
+The values given must match the record exactly as it was created (see Get-PiHoleDnsRecord, or
+Get-PiHoleConfig under .Dns.Hosts/.Dns.CnameRecords, to check the exact value if removal fails) -
+for a CNAME record created with a TTL, -Ttl must be passed here too, with the same value.
+
+Accepts pipeline input by property name, so it can be chained directly from Get-PiHoleDnsRecord.
 
 .PARAMETER PiHoleServer
 The URL to the PiHole Server, for example "http://pihole.domain.com:8080", or "http://192.168.1.100"
@@ -55,6 +57,9 @@ Remove-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "
 
 .EXAMPLE
 Remove-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Type CNAME -Hostname "alias.local" -Target "test.local" -Ttl 300
+
+.EXAMPLE
+Get-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Hostname "test.local" | Remove-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
     [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/config/-element-/-value-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -63,82 +68,88 @@ Remove-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "
         [System.URI]$PiHoleServer,
         [Parameter(Mandatory = $true)]
         [string]$Password,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [ValidateSet('A', 'AAAA', 'CNAME')]
         [string]$Type,
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [string]$Hostname,
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [string]$IPv4Address,
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [string]$IPv6Address,
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [string]$Target,
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [Nullable[int]]$Ttl,
         [Nullable[bool]]$Restart,
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-    try {
-        switch ($Type) {
-            'A' {
-                if (-not $IPv4Address) {
-                    throw "-IPv4Address is required when -Type is 'A'"
+    process {
+        try {
+            switch ($Type) {
+                'A' {
+                    if (-not $IPv4Address) {
+                        throw "-IPv4Address is required when -Type is 'A'"
+                    }
+                    $Element = 'dns/hosts'
+                    $Value = "$IPv4Address $Hostname"
                 }
-                $Element = 'dns/hosts'
-                $Value = "$IPv4Address $Hostname"
+                'AAAA' {
+                    if (-not $IPv6Address) {
+                        throw "-IPv6Address is required when -Type is 'AAAA'"
+                    }
+                    $Element = 'dns/hosts'
+                    $Value = "$IPv6Address $Hostname"
+                }
+                'CNAME' {
+                    if (-not $Target) {
+                        throw "-Target is required when -Type is 'CNAME'"
+                    }
+                    $Element = 'dns/cnameRecords'
+                    $Value = "$Hostname,$Target"
+                    if ($PSBoundParameters.ContainsKey('Ttl')) {
+                        $Value += ",$Ttl"
+                    }
+                }
             }
-            'AAAA' {
-                if (-not $IPv6Address) {
-                    throw "-IPv6Address is required when -Type is 'AAAA'"
+
+            if ($PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Remove DNS record")) {
+                $InnerParams = @{
+                    PiHoleServer = $PiHoleServer
+                    Password     = $Password
+                    Element      = $Element
+                    Value        = $Value
+                    IgnoreSsl    = $IgnoreSsl
+                    RawOutput    = $RawOutput
+                    Confirm      = $false
                 }
-                $Element = 'dns/hosts'
-                $Value = "$IPv6Address $Hostname"
-            }
-            'CNAME' {
-                if (-not $Target) {
-                    throw "-Target is required when -Type is 'CNAME'"
+                if ($PSBoundParameters.ContainsKey('Restart')) {
+                    $InnerParams.Restart = $Restart
                 }
-                $Element = 'dns/cnameRecords'
-                $Value = "$Hostname,$Target"
-                if ($PSBoundParameters.ContainsKey('Ttl')) {
-                    $Value += ",$Ttl"
+
+                $Response = Remove-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
+
+                if ($RawOutput) {
+                    Write-Output $Response
+                }
+                else {
+                    $Object = [PSCustomObject]@{
+                        Type        = $Type
+                        Hostname    = $Hostname
+                        IPv4Address = $IPv4Address
+                        IPv6Address = $IPv6Address
+                        Target      = $Target
+                        Ttl         = $Ttl
+                        Status      = $Response.Status
+                    }
+                    Write-Output $Object
                 }
             }
         }
 
-        if ($PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Remove DNS record")) {
-            $InnerParams = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Element      = $Element
-                Value        = $Value
-                IgnoreSsl    = $IgnoreSsl
-                RawOutput    = $RawOutput
-                Confirm      = $false
-            }
-            if ($PSBoundParameters.ContainsKey('Restart')) {
-                $InnerParams.Restart = $Restart
-            }
-
-            $Response = Remove-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
-
-            if ($RawOutput) {
-                Write-Output $Response
-            }
-            else {
-                $Object = [PSCustomObject]@{
-                    Type        = $Type
-                    Hostname    = $Hostname
-                    IPv4Address = $IPv4Address
-                    IPv6Address = $IPv6Address
-                    Target      = $Target
-                    Ttl         = $Ttl
-                    Status      = $Response.Status
-                }
-                Write-Output $Object
-            }
+        catch {
+            Write-Error -Message $_.Exception.Message
         }
-    }
-
-    catch {
-        Write-Error -Message $_.Exception.Message
     }
 }

@@ -77,6 +77,23 @@ Describe 'Remove-PiHoleDnsRecord (Integration)' -Tag 'Integration' {
         Remove-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/hosts' -Value "$script:AIPv4 $script:AHostname" -Restart $false -Confirm:$false | Out-Null
     }
 
+    It 'accepts multiple records piped from Get-PiHoleDnsRecord in a single call' -Skip:(-not $script:ConfigAvailable) {
+        Add-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/hosts' -Value "$script:AIPv4 $script:AHostname" -Restart $false | Out-Null
+        Add-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/cnameRecords' -Value "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl" -Restart $false | Out-Null
+
+        $results = Get-PiHoleDnsRecord -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl |
+            Where-Object { $_.Hostname -in @($script:AHostname, $script:CnameHostname) } |
+            Remove-PiHoleDnsRecord -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Restart $false -Confirm:$false
+        $results | Format-Table | Out-String | Write-Host
+
+        @($results).Count | Should -Be 2
+        $results.Status | Should -Be @('Removed', 'Removed')
+
+        $config = Get-PiHoleConfig -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl
+        $config.Dns.Hosts | Should -Not -Contain "$script:AIPv4 $script:AHostname"
+        $config.Dns.CnameRecords | Should -Not -Contain "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl"
+    }
+
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
         $result = Remove-PiHoleDnsRecord -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Type A -Hostname $script:AHostname -IPv4Address $script:AIPv4 -Restart $false -Confirm:$false -ErrorVariable errOut -ErrorAction SilentlyContinue
 
