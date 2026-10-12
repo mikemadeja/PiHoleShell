@@ -101,7 +101,9 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 
 | Function | Description |
 |---|---|
+| `Add-PiHoleDnsRecord` | Add a local DNS record |
 | `Get-PiHoleDnsBlockingStatus` | Get Pi-hole's current DNS blocking status |
+| `Remove-PiHoleDnsRecord` | Remove a local DNS record |
 | `Set-PiHoleDnsBlocking` | Enable or disable Pi-hole's DNS blocking |
 
 ### Group Management
