@@ -22,7 +22,7 @@ Export-ModuleMember -Function @(
         #GroupManagement
         'Get-PiHoleGroup', 'New-PiHoleGroup', 'Update-PiHoleGroup', 'Remove-PiHoleGroup', `
         #DnsControl
-        'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', `
+        'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', 'Add-PiHoleDnsRecord', 'Remove-PiHoleDnsRecord', 'Get-PiHoleDnsRecord', `
         #Config
         'Get-PiHoleConfig', 'Set-PiHoleConfig', 'Add-PiHoleConfigArrayItem', 'Remove-PiHoleConfigArrayItem', 'Get-PiHoleConfigProperty', `
         #Padd
