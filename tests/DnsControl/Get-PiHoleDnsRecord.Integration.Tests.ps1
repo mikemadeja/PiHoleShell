@@ -13,6 +13,7 @@ $script:ConfigAvailable = Test-Path (Join-Path (Split-Path $PSScriptRoot -Parent
 Describe 'Get-PiHoleDnsRecord (Integration)' -Tag 'Integration' {
     BeforeAll {
         Import-Module .\PiHoleShell\PiHoleShell.psm1 -Force
+        . (Join-Path $PSScriptRoot 'DnsRecordTestHelpers.ps1')
 
         $script:AHostname = 'piholeshell-test-get-a.example.com'
         $script:AIPv4 = '192.0.2.203'
@@ -20,27 +21,15 @@ Describe 'Get-PiHoleDnsRecord (Integration)' -Tag 'Integration' {
         $script:CnameTarget = 'piholeshell-test-get-a.example.com'
         $script:CnameTtl = 300
 
-        $configPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'IntegrationConfig.local.ps1'
-        if (Test-Path $configPath) {
-            . $configPath
-            $script:PiHoleServer = $PiHoleServer
-            $script:PiHoleToken = $PiHoleToken
-            $script:PiHoleIgnoreSsl = $PiHoleIgnoreSsl
-
-            # Defensive cleanup in case a previous failed run left these behind
-            Remove-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/hosts' -Value "$script:AIPv4 $script:AHostname" -Restart $false -Confirm:$false -ErrorAction SilentlyContinue -WarningAction SilentlyContinue | Out-Null
-            Remove-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/cnameRecords' -Value "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl" -Restart $false -Confirm:$false -ErrorAction SilentlyContinue -WarningAction SilentlyContinue | Out-Null
-
+        Initialize-DnsRecordTest -Hosts "$script:AIPv4 $script:AHostname" -CnameRecords "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl"
+        if ($script:PiHoleServer) {
             Add-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/hosts' -Value "$script:AIPv4 $script:AHostname" -Restart $false | Out-Null
             Add-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/cnameRecords' -Value "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl" -Restart $false | Out-Null
         }
     }
 
     AfterAll {
-        if ($script:PiHoleServer) {
-            Remove-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/hosts' -Value "$script:AIPv4 $script:AHostname" -Restart $false -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-            Remove-PiHoleConfigArrayItem -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Element 'dns/cnameRecords' -Value "$script:CnameHostname,$script:CnameTarget,$script:CnameTtl" -Restart $false -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-        }
+        Clear-DnsRecordTestData
     }
 
     It 'returns both the A and CNAME test records, correctly typed' -Skip:(-not $script:ConfigAvailable) {
