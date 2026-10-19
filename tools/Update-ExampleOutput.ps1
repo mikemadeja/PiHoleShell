@@ -117,6 +117,11 @@ Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthTotp' `
     -Invocation 'Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthApp' `
+    -Invocation 'Get-PiHoleAuthApp -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'This only generates a password. It was never activated on the test server, so it is safe to show here.' `
+    -Result (Get-PiHoleAuthApp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 Add-Example -Category Authentication -FunctionName 'Get-PiHoleCurrentAuthSession' `
     -Invocation 'Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
