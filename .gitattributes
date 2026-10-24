@@ -1,0 +1,8 @@
+# Normalize line endings for all text files based on content, rather than relying on each
+# contributor's local core.autocrlf setting (which is what's been producing the "LF will be
+# replaced by CRLF" warnings on every git operation in this repo).
+* text=auto
+
+# PiHoleShell.psd1 is UTF-16LE with a BOM (New-ModuleManifest's default output) - leave it as
+# binary from git's line-ending-normalization perspective so it's never rewritten.
+PiHoleShell/PiHoleShell.psd1 -text

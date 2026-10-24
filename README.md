@@ -101,7 +101,10 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 
 | Function | Description |
 |---|---|
+| `Add-PiHoleDnsRecord` | Add a local DNS record |
 | `Get-PiHoleDnsBlockingStatus` | Get Pi-hole's current DNS blocking status |
+| `Get-PiHoleDnsRecord` | Get local DNS records |
+| `Remove-PiHoleDnsRecord` | Remove a local DNS record |
 | `Set-PiHoleDnsBlocking` | Enable or disable Pi-hole's DNS blocking |
 
 ### Group Management
@@ -205,6 +208,7 @@ Session handling is automatic for every command above, but these are available f
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleAuthApp` | Generate a new application password |
 | `Get-PiHoleAuthStatus` | Check if authentication is required |
 | `Get-PiHoleAuthTotp` | Suggest new TOTP credentials |
 | `Get-PiHoleCurrentAuthSession` | List of all current sessions |

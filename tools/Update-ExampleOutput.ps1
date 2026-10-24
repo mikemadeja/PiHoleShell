@@ -117,6 +117,11 @@ Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthTotp' `
     -Invocation 'Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleAuthTotp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
+Add-Example -Category Authentication -FunctionName 'Get-PiHoleAuthApp' `
+    -Invocation 'Get-PiHoleAuthApp -PiHoleServer $PiHoleServer -Password $Password' `
+    -Note 'This only generates a password. It was never activated on the test server, so it is safe to show here.' `
+    -Result (Get-PiHoleAuthApp -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
+
 Add-Example -Category Authentication -FunctionName 'Get-PiHoleCurrentAuthSession' `
     -Invocation 'Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
@@ -193,6 +198,22 @@ if ($appSudoEnabled) {
     Add-Example -Category Config -FunctionName 'Remove-PiHoleConfigArrayItem' `
         -Invocation "Remove-PiHoleConfigArrayItem -PiHoleServer `$PiHoleServer -Password `$Password -Element `"dns/hosts`" -Value `"$docsHostEntry`"" `
         -Result (Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Element 'dns/hosts' -Value $docsHostEntry -Restart $false -Confirm:$false)
+
+    $docsDnsHostname = 'piholeshell-docs-dns-example.com'
+    Invoke-Quietly { Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Element 'dns/hosts' -Value "192.0.2.2 $docsDnsHostname" -Restart $false -Confirm:$false }
+
+    Add-Example -Category DnsControl -FunctionName 'Add-PiHoleDnsRecord' `
+        -Invocation "Add-PiHoleDnsRecord -PiHoleServer `$PiHoleServer -Password `$Password -Type A -Hostname `"$docsDnsHostname`" -IPv4Address `"192.0.2.2`"" `
+        -Result (Add-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Type A -Hostname $docsDnsHostname -IPv4Address '192.0.2.2' -Restart $false)
+
+    Add-Example -Category DnsControl -FunctionName 'Get-PiHoleDnsRecord' `
+        -Invocation 'Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password' `
+        -Note 'Can be filtered with -Type and/or -Hostname, and piped directly into Remove-PiHoleDnsRecord.' `
+        -Result (Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Hostname $docsDnsHostname)
+
+    Add-Example -Category DnsControl -FunctionName 'Remove-PiHoleDnsRecord' `
+        -Invocation "Remove-PiHoleDnsRecord -PiHoleServer `$PiHoleServer -Password `$Password -Type A -Hostname `"$docsDnsHostname`" -IPv4Address `"192.0.2.2`"" `
+        -Result (Remove-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl -Type A -Hostname $docsDnsHostname -IPv4Address '192.0.2.2' -Restart $false -Confirm:$false)
 }
 else {
     $appSudoNote = 'Requires "app_sudo" enabled for this app password (Settings > All Settings in your Pi-hole admin UI) - not captured this run since it is disabled here.'
@@ -204,6 +225,15 @@ else {
         -Note $appSudoNote -Skipped
     Add-Example -Category Config -FunctionName 'Remove-PiHoleConfigArrayItem' `
         -Invocation 'Remove-PiHoleConfigArrayItem -PiHoleServer $PiHoleServer -Password $Password -Element "dns/hosts" -Value "192.0.2.1 example.com"' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category DnsControl -FunctionName 'Add-PiHoleDnsRecord' `
+        -Invocation 'Add-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password -Type A -Hostname "example.com" -IPv4Address "192.0.2.1"' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category DnsControl -FunctionName 'Get-PiHoleDnsRecord' `
+        -Invocation 'Get-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password' `
+        -Note $appSudoNote -Skipped
+    Add-Example -Category DnsControl -FunctionName 'Remove-PiHoleDnsRecord' `
+        -Invocation 'Remove-PiHoleDnsRecord -PiHoleServer $PiHoleServer -Password $Password -Type A -Hostname "example.com" -IPv4Address "192.0.2.1"' `
         -Note $appSudoNote -Skipped
 }
 

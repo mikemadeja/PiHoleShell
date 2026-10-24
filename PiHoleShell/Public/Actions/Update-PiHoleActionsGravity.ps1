@@ -61,7 +61,9 @@ Update-PiHoleActionsGravity -PiHoleServer "http://pihole.domain.com:8080" -Passw
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        # Surfaces Pi-hole's own message, e.g. "Gravity is already running" for the 409 FTL v6.8+
+        # returns while another run is in progress, instead of a bare "409 (Conflict)"
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 
     finally {

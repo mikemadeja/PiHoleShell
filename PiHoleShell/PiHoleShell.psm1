@@ -18,11 +18,11 @@ Export-ModuleMember -Function @(
     #Actions
     'Update-PiHoleActionsGravity', 'Invoke-PiHoleFlushNetwork', 'Invoke-PiHoleFlushLogs', 'Restart-PiHoleDnsService' `
         #Authentication
-        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', 'Get-PiHoleAuthStatus', 'Get-PiHoleAuthTotp', `
+        'Remove-PiHoleCurrentAuthSession' , 'Get-PiHoleCurrentAuthSession', 'Remove-PiHoleAuthSession', 'Get-PiHoleAuthStatus', 'Get-PiHoleAuthTotp', 'Get-PiHoleAuthApp', `
         #GroupManagement
         'Get-PiHoleGroup', 'New-PiHoleGroup', 'Update-PiHoleGroup', 'Remove-PiHoleGroup', `
         #DnsControl
-        'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', `
+        'Get-PiHoleDnsBlockingStatus', 'Set-PiHoleDnsBlocking', 'Add-PiHoleDnsRecord', 'Remove-PiHoleDnsRecord', 'Get-PiHoleDnsRecord', `
         #Config
         'Get-PiHoleConfig', 'Set-PiHoleConfig', 'Add-PiHoleConfigArrayItem', 'Remove-PiHoleConfigArrayItem', 'Get-PiHoleConfigProperty', `
         #Padd
