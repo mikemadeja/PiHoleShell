@@ -168,6 +168,7 @@ See [docs/EXAMPLES.md](docs/EXAMPLES.md) for real, captured output from every fu
 | Function | Description |
 |---|---|
 | `Add-PiHoleConfigArrayItem` | Add config array item |
+| `Get-PiHoleApiEndpoint` | Get list of available API endpoints |
 | `Get-PiHoleConfig` | Get current configuration of Pi-hole |
 | `Get-PiHoleConfigProperty` | Get special properties of your Pi-hole configuration |
 | `Get-PiHoleDhcpLease` | Get currently active DHCP leases |
