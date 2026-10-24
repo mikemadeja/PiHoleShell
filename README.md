@@ -208,6 +208,7 @@ Session handling is automatic for every command above, but these are available f
 
 | Function | Description |
 |---|---|
+| `Get-PiHoleAuthApp` | Generate a new application password |
 | `Get-PiHoleAuthStatus` | Check if authentication is required |
 | `Get-PiHoleAuthTotp` | Suggest new TOTP credentials |
 | `Get-PiHoleCurrentAuthSession` | List of all current sessions |

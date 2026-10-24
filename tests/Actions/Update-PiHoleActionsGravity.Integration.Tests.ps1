@@ -41,6 +41,30 @@ Describe 'Update-PiHoleActionsGravity (Integration)' -Tag 'Integration' {
         $result | Should -Not -BeNullOrEmpty
     }
 
+    It 'reports a clear error when a gravity update is already running' -Skip:(-not $script:ConfigAvailable) {
+        # FTL v6.8+ refuses a second concurrent run with 409. Start one in the background, give it
+        # a moment to get going, then try another.
+        $moduleRoot = (Resolve-Path .\PiHoleShell\PiHoleShell.psm1).Path
+        $job = Start-ThreadJob -ArgumentList $moduleRoot, $script:PiHoleServer, $script:PiHoleToken, $script:PiHoleIgnoreSsl -ScriptBlock {
+            param($ModulePath, $Server, $Token, $IgnoreSsl)
+            Import-Module $ModulePath -Force
+            Update-PiHoleActionsGravity -PiHoleServer $Server -Password $Token -IgnoreSsl $IgnoreSsl -Confirm:$false
+        }
+        try {
+            Start-Sleep -Seconds 2
+            $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password $script:PiHoleToken -IgnoreSsl $script:PiHoleIgnoreSsl -Confirm:$false -ErrorVariable errOut -ErrorAction SilentlyContinue
+            Write-Host "Error: [$($errOut[-1])]"
+
+            $result | Should -BeNullOrEmpty
+            "$($errOut[-1])" | Should -Be 'Gravity is already running'
+        }
+        finally {
+            # Let the background run finish so it doesn't collide with later tests
+            $job | Wait-Job -Timeout 600 | Receive-Job -ErrorAction SilentlyContinue | Out-Null
+            $job | Remove-Job -Force
+        }
+    }
+
     It 'errors when given a bad password' -Skip:(-not $script:ConfigAvailable) {
         $result = Update-PiHoleActionsGravity -PiHoleServer $script:PiHoleServer -Password 'definitely-not-the-real-token' -IgnoreSsl $script:PiHoleIgnoreSsl -Confirm:$false -ErrorVariable errOut -ErrorAction SilentlyContinue
         Write-Host "Error ($($errOut.Count) entries, showing last): [$($errOut[-1])]"
