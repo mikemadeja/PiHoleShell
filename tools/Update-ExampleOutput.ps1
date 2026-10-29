@@ -284,6 +284,10 @@ Add-Example -Category Config -FunctionName 'Get-PiHoleLogFtl' `
     -Invocation 'Get-PiHoleLogFtl -PiHoleServer $PiHoleServer -Password $Password' `
     -Result (Get-PiHoleLogFtl -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl)
 
+Add-Example -Category Config -FunctionName 'Get-PiHoleApiEndpoint' `
+    -Invocation 'Get-PiHoleApiEndpoint -PiHoleServer $PiHoleServer -Password $Password | Select-Object -First 5' `
+    -Result (Get-PiHoleApiEndpoint -PiHoleServer $PiHoleServer -Password $PiHoleToken -IgnoreSsl $PiHoleIgnoreSsl | Select-Object -First 5)
+
 $teleporterFolder = Join-Path ([System.IO.Path]::GetTempPath()) 'PiHoleShellDocsExample'
 if (Test-Path $teleporterFolder) { Remove-Item $teleporterFolder -Recurse -Force }
 New-Item -ItemType Directory -Path $teleporterFolder | Out-Null
