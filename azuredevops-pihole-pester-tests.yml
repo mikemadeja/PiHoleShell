@@ -173,10 +173,19 @@ jobs:
                               $category = $Matches[1]
                               $function = $Matches[2]
                               $testDir = "tests/$category"
+                              $functionTests = @()
                               if (Test-Path $testDir) {
-                                  Get-ChildItem -Path $testDir -Filter "$function.*Tests.ps1" | ForEach-Object {
-                                      $testPaths.Add($_.FullName)
-                                  }
+                                  $functionTests = @(Get-ChildItem -Path $testDir -Filter "$function.*Tests.ps1")
+                              }
+
+                              if ($functionTests.Count -gt 0) {
+                                  $functionTests | ForEach-Object { $testPaths.Add($_.FullName) }
+                              }
+                              else {
+                                  # Changed code with no test of its own must not end up skipping
+                                  # Pester entirely - run everything instead.
+                                  Write-Host "No test file for $category/$function - running the full suite"
+                                  $runFullSuite = $true
                               }
                           }
                           elseif ($file -match '^tests/.*\.Tests\.ps1$' -and (Test-Path $file)) {
