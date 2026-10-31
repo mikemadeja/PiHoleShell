@@ -1,0 +1,24 @@
+name: Feature request
+description: Suggest a new command or an improvement to an existing one
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: What do you want to do?
+      description: Describe the task you're trying to get done, not just the solution.
+      placeholder: I want to export all my local DNS records to a CSV so I can copy them to a second Pi-hole.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested command or change
+      description: Optional. What should it look like? Include an example call if you can.
+      render: powershell
+  - type: input
+    id: endpoint
+    attributes:
+      label: Pi-hole API endpoint
+      description: Optional. The endpoint involved, if you know it (see `https://<your-pihole>/api/docs`).
+      placeholder: GET /api/config/dns/hosts

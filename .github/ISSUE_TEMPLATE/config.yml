@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/mikemadeja/PiHoleShell/security/advisories/new
+    about: Please report security problems privately, not as a public issue.
+  - name: Problem with Pi-hole itself
+    url: https://discourse.pi-hole.net/
+    about: For problems with Pi-hole rather than this PowerShell module, ask the Pi-hole community.
