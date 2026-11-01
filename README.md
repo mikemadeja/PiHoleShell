@@ -236,7 +236,7 @@ The module ships with two kinds of [Pester](https://pester.dev/) tests under `te
 
 ## Contributing
 
-This project is still early and growing. Issues, suggestions, and pull requests are welcome — see the 🚧 items in the [Command Reference](#command-reference) above for functions that could use testing or polish.
+Issues, suggestions, and pull requests are welcome. See the [contributing guide](.github/CONTRIBUTING.md) for how to add a function, run the tests and open a pull request. Please report security problems privately, as described in the [security policy](.github/SECURITY.md).
 
 ## License
 

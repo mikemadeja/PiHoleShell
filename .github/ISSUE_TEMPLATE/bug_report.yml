@@ -1,0 +1,63 @@
+name: Bug report
+description: A PiHoleShell command doesn't work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Remove your server address, password and session IDs** from anything you paste below.
+        Found a security problem? Please report it privately instead. See the security policy.
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      description: Which PiHoleShell command has the problem?
+      placeholder: Get-PiHoleStatsSummary
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: What you ran
+      description: The exact command and parameters, with your server and password replaced.
+      render: powershell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: The output or the full error message. Running the command with `-Verbose` often helps.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: module-version
+    attributes:
+      label: PiHoleShell version
+      description: Output of `(Get-Module PiHoleShell -ListAvailable).Version`
+      placeholder: 1.2.0
+    validations:
+      required: true
+  - type: input
+    id: ps-version
+    attributes:
+      label: PowerShell version and OS
+      description: Output of `$PSVersionTable.PSVersion`, plus your operating system
+      placeholder: 7.5.2 on Windows 11
+    validations:
+      required: true
+  - type: input
+    id: pihole-version
+    attributes:
+      label: Pi-hole version
+      description: Output of `Get-PiHoleInfoVersion`, or the versions shown at the bottom of the Pi-hole web page
+      placeholder: Core v6.5, FTL v6.8, Web v6.6.1
+    validations:
+      required: true
