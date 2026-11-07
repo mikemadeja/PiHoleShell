@@ -47,48 +47,50 @@ New-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your-ap
 
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole group $GroupName", "Create group")) {
-            $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole group $GroupName", "Create group")) {
+            return
+        }
 
-            if ($GetGroupName) {
-                Write-Warning -Message "Group $GroupName already exists"
+        $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
+
+        if ($GetGroupName) {
+            Write-Warning -Message "Group $GroupName already exists"
+        }
+
+        else {
+            $Body = @{
+                comment = $Comment
+                enabled = $Enabled
+                name    = $GroupName
+            }
+
+            $Params = @{
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = 'groups'
+                Method       = "Post"
+                IgnoreSsl    = $IgnoreSsl
+                Body         = $Body | ConvertTo-Json -Depth 10
+            }
+
+            $Response = Invoke-PiHoleApiRequest @Params
+
+            if ($RawOutput) {
+                Write-Output $Response
             }
 
             else {
-                $Body = @{
-                    comment = $Comment
-                    enabled = $Enabled
-                    name    = $GroupName
-                }
-
-                $Params = @{
-                    PiHoleServer = $PiHoleServer
-                    Password     = $Password
-                    Endpoint     = 'groups'
-                    Method       = "Post"
-                    IgnoreSsl    = $IgnoreSsl
-                    Body         = $Body | ConvertTo-Json -Depth 10
-                }
-
-                $Response = Invoke-PiHoleApiRequest @Params
-
-                if ($RawOutput) {
-                    Write-Output $Response
-                }
-
-                else {
-                    $ObjectFinal = foreach ($Item in $Response.groups) {
-                        [PSCustomObject]@{
-                            Name         = $Item.name
-                            Comment      = $Item.comment
-                            Enabled      = $Item.enabled
-                            Id           = $Item.id
-                            DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                            DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                        }
+                $ObjectFinal = foreach ($Item in $Response.groups) {
+                    [PSCustomObject]@{
+                        Name         = $Item.name
+                        Comment      = $Item.comment
+                        Enabled      = $Item.enabled
+                        Id           = $Item.id
+                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
                     }
-                    Write-Output $ObjectFinal
                 }
+                Write-Output $ObjectFinal
             }
         }
     }

@@ -50,69 +50,71 @@ Update-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "you
     )
 
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole client $Client", "Update client")) {
-            if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group')) {
-                throw "To update $Client, you must specify the Comment and/or Group parameter"
-            }
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole client $Client", "Update client")) {
+            return
+        }
 
-            $ExistingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
+        if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group')) {
+            throw "To update $Client, you must specify the Comment and/or Group parameter"
+        }
 
-            if (-not $ExistingClient) {
-                throw "Cannot find $Client on $PiHoleServer! Please use New-PiHoleClient to create it"
-            }
+        $ExistingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
 
-            $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if (-not $ExistingClient) {
+            throw "Cannot find $Client on $PiHoleServer! Please use New-PiHoleClient to create it"
+        }
 
-            $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingClient.Groups }
+        $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-            $AllGroupsNames = @()
-            $AllGroupsIds = @()
-            foreach ($GroupItem in $GroupNamesToResolve) {
-                $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-                if ($FoundGroup) {
-                    $AllGroupsNames += $FoundGroup.Name
-                    $AllGroupsIds += $FoundGroup.Id
-                }
-                else {
-                    throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-                }
-            }
+        $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingClient.Groups }
 
-            # The API replaces the whole client entry on update, so any property not explicitly
-            # passed here is resent using the client's current value to avoid silently clearing it.
-            $Body = @{
-                comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingClient.Comment }
-                groups  = [Object[]]($AllGroupsIds)
-            }
-
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = "clients/$([System.Uri]::EscapeDataString($Client))"
-                Method       = "Put"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
-
-            $Response = Invoke-PiHoleApiRequest @Params
-
-            if ($RawOutput) {
-                Write-Output $Response
+        $AllGroupsNames = @()
+        $AllGroupsIds = @()
+        foreach ($GroupItem in $GroupNamesToResolve) {
+            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
+            if ($FoundGroup) {
+                $AllGroupsNames += $FoundGroup.Name
+                $AllGroupsIds += $FoundGroup.Id
             }
             else {
-                $ObjectFinal = foreach ($Item in $Response.clients) {
-                    [PSCustomObject]@{
-                        Client       = $Item.client
-                        Name         = $Item.name
-                        Comment      = $Item.comment
-                        Groups       = $AllGroupsNames
-                        Id           = $Item.id
-                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    }
-                }
-                Write-Output $ObjectFinal
+                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
             }
+        }
+
+        # The API replaces the whole client entry on update, so any property not explicitly
+        # passed here is resent using the client's current value to avoid silently clearing it.
+        $Body = @{
+            comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingClient.Comment }
+            groups  = [Object[]]($AllGroupsIds)
+        }
+
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "clients/$([System.Uri]::EscapeDataString($Client))"
+            Method       = "Put"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
+
+        $Response = Invoke-PiHoleApiRequest @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $ObjectFinal = foreach ($Item in $Response.clients) {
+                [PSCustomObject]@{
+                    Client       = $Item.client
+                    Name         = $Item.name
+                    Comment      = $Item.comment
+                    Groups       = $AllGroupsNames
+                    Id           = $Item.id
+                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                }
+            }
+            Write-Output $ObjectFinal
         }
     }
 

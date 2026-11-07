@@ -34,17 +34,19 @@ Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password
     )
 
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole session $Id", "Remove session")) {
-            Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "auth/session/$Id" -Method Delete
-
-            $ObjectFinal = @()
-            $Object = [PSCustomObject]@{
-                Id     = $Id
-                Status = "Removed"
-            }
-            $ObjectFinal = $Object
-            Write-Output $ObjectFinal
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole session $Id", "Remove session")) {
+            return
         }
+
+        Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "auth/session/$Id" -Method Delete
+
+        $ObjectFinal = @()
+        $Object = [PSCustomObject]@{
+            Id     = $Id
+            Status = "Removed"
+        }
+        $ObjectFinal = $Object
+        Write-Output $ObjectFinal
     }
 
     catch {

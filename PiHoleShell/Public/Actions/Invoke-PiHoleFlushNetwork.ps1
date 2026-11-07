@@ -33,18 +33,20 @@ Invoke-PiHoleFlushNetwork -PiHoleServer "http://pihole.domain.com:8080" -Passwor
     )
 
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Flush network table")) {
-            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'action/flush/network' -Method Post
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Flush network table")) {
+            return
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'action/flush/network' -Method Post
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $Object = [PSCustomObject]@{
+                Status = "Flushed"
             }
-            else {
-                $Object = [PSCustomObject]@{
-                    Status = "Flushed"
-                }
-                Write-Output $Object
-            }
+            Write-Output $Object
         }
     }
 

@@ -63,66 +63,68 @@ New-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole domain $Domain ($Type/$Kind)", "Create domain")) {
-            $FindMatchingDomain = Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Type $Type -Kind $Kind -Domain $Domain
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole domain $Domain ($Type/$Kind)", "Create domain")) {
+            return
+        }
 
-            if ($FindMatchingDomain) {
-                throw "Domain $Domain ($Type/$Kind) already exists on $PiHoleServer! Please use Update-PiHoleDomain to update it"
+        $FindMatchingDomain = Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Type $Type -Kind $Kind -Domain $Domain
+
+        if ($FindMatchingDomain) {
+            throw "Domain $Domain ($Type/$Kind) already exists on $PiHoleServer! Please use Update-PiHoleDomain to update it"
+        }
+
+        $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        $AllGroupsNames = @()
+        $AllGroupsIds = @()
+        foreach ($GroupItem in $Group) {
+            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
+            if ($FoundGroup) {
+                $AllGroupsNames += $FoundGroup.Name
+                $AllGroupsIds += $FoundGroup.Id
             }
-
-            $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-            $AllGroupsNames = @()
-            $AllGroupsIds = @()
-            foreach ($GroupItem in $Group) {
-                $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-                if ($FoundGroup) {
-                    $AllGroupsNames += $FoundGroup.Name
-                    $AllGroupsIds += $FoundGroup.Id
-                }
-                else {
-                    throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-                }
-            }
-
-            $Body = @{
-                domain  = $Domain
-                comment = $Comment
-                groups  = [Object[]]($AllGroupsIds)
-                enabled = $Enabled
-            }
-
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = "domains/$($Type.ToLower())/$($Kind.ToLower())"
-                Method       = "Post"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
-
-            $Response = Invoke-PiHoleApiRequest @Params
-
-            if ($RawOutput) {
-                Write-Output $Response
-            }
-
             else {
-                $ObjectFinal = foreach ($Item in $Response.domains) {
-                    [PSCustomObject]@{
-                        Domain       = $Item.domain
-                        Unicode      = $Item.unicode
-                        Type         = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
-                        Kind         = $Item.kind.SubString(0, 1).ToUpper() + $Item.kind.SubString(1).ToLower()
-                        Comment      = $Item.comment
-                        Groups       = $AllGroupsNames
-                        Enabled      = $Item.enabled
-                        Id           = $Item.id
-                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    }
-                }
-                Write-Output $ObjectFinal
+                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
             }
+        }
+
+        $Body = @{
+            domain  = $Domain
+            comment = $Comment
+            groups  = [Object[]]($AllGroupsIds)
+            enabled = $Enabled
+        }
+
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "domains/$($Type.ToLower())/$($Kind.ToLower())"
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
+
+        $Response = Invoke-PiHoleApiRequest @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+
+        else {
+            $ObjectFinal = foreach ($Item in $Response.domains) {
+                [PSCustomObject]@{
+                    Domain       = $Item.domain
+                    Unicode      = $Item.unicode
+                    Type         = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
+                    Kind         = $Item.kind.SubString(0, 1).ToUpper() + $Item.kind.SubString(1).ToLower()
+                    Comment      = $Item.comment
+                    Groups       = $AllGroupsNames
+                    Enabled      = $Item.enabled
+                    Id           = $Item.id
+                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                }
+            }
+            Write-Output $ObjectFinal
         }
     }
 

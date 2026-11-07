@@ -33,18 +33,20 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
     )
 
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Restart DNS service")) {
-            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'action/restartdns' -Method Post
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Restart DNS service")) {
+            return
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'action/restartdns' -Method Post
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $Object = [PSCustomObject]@{
+                Status = "Restarted"
             }
-            else {
-                $Object = [PSCustomObject]@{
-                    Status = "Restarted"
-                }
-                Write-Output $Object
-            }
+            Write-Output $Object
         }
     }
 

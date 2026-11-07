@@ -109,37 +109,39 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
             }
         }
 
-        if ($PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Add DNS record")) {
-            $InnerParams = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Element      = $Element
-                Value        = $Value
-                IgnoreSsl    = $IgnoreSsl
-                RawOutput    = $RawOutput
-                Confirm      = $false
-            }
-            if ($PSBoundParameters.ContainsKey('Restart')) {
-                $InnerParams.Restart = $Restart
-            }
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Add DNS record")) {
+            return
+        }
 
-            $Response = Add-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
+        $InnerParams = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Element      = $Element
+            Value        = $Value
+            IgnoreSsl    = $IgnoreSsl
+            RawOutput    = $RawOutput
+            Confirm      = $false
+        }
+        if ($PSBoundParameters.ContainsKey('Restart')) {
+            $InnerParams.Restart = $Restart
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
+        $Response = Add-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $Object = [PSCustomObject]@{
+                Type        = $Type
+                Hostname    = $Hostname
+                IPv4Address = $IPv4Address
+                IPv6Address = $IPv6Address
+                Target      = $Target
+                Ttl         = $Ttl
+                Status      = $Response.Status
             }
-            else {
-                $Object = [PSCustomObject]@{
-                    Type        = $Type
-                    Hostname    = $Hostname
-                    IPv4Address = $IPv4Address
-                    IPv6Address = $IPv6Address
-                    Target      = $Target
-                    Ttl         = $Ttl
-                    Status      = $Response.Status
-                }
-                Write-Output $Object
-            }
+            Write-Output $Object
         }
     }
 

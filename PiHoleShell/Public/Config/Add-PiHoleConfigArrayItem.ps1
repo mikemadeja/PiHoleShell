@@ -56,27 +56,29 @@ Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Passwor
         [bool]$RawOutput = $false
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole config $Element", "Add item '$Value'")) {
-            $Endpoint = "config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
-            if ($PSBoundParameters.ContainsKey('Restart')) {
-                $Endpoint += "?restart=$($Restart.ToString().ToLower())"
-            }
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole config $Element", "Add item '$Value'")) {
+            return
+        }
 
-            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint -Method Put
+        $Endpoint = "config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
+        if ($PSBoundParameters.ContainsKey('Restart')) {
+            $Endpoint += "?restart=$($Restart.ToString().ToLower())"
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint -Method Put
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            # A successful add returns 201 Created with no body, so there's no response to
+            # build a rich object from.
+            $Object = [PSCustomObject]@{
+                Element = $Element
+                Value   = $Value
+                Status  = "Added"
             }
-            else {
-                # A successful add returns 201 Created with no body, so there's no response to
-                # build a rich object from.
-                $Object = [PSCustomObject]@{
-                    Element = $Element
-                    Value   = $Value
-                    Status  = "Added"
-                }
-                Write-Output $Object
-            }
+            Write-Output $Object
         }
     }
 

@@ -53,34 +53,36 @@ Set-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Change configuration")) {
-            $Endpoint = 'config'
-            if ($PSBoundParameters.ContainsKey('Restart')) {
-                $Endpoint += "?restart=$($Restart.ToString().ToLower())"
-            }
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Change configuration")) {
+            return
+        }
 
-            $Body = @{
-                config = $Settings
-            }
+        $Endpoint = 'config'
+        if ($PSBoundParameters.ContainsKey('Restart')) {
+            $Endpoint += "?restart=$($Restart.ToString().ToLower())"
+        }
 
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = $Endpoint
-                Method       = "Patch"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
+        $Body = @{
+            config = $Settings
+        }
 
-            $Response = Invoke-PiHoleApiRequest @Params
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = $Endpoint
+            Method       = "Patch"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
-            }
-            else {
-                $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
-                Write-Output $Object
-            }
+        $Response = Invoke-PiHoleApiRequest @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
+            Write-Output $Object
         }
     }
 

@@ -49,52 +49,54 @@ Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
 
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole group $GroupName", "Update group")) {
-            $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole group $GroupName", "Update group")) {
+            return
+        }
 
-            if (-not $GetGroupName) {
-                throw "Cannot find $GroupName on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
+        $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
 
-            if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Enabled')) {
-                throw "To update $GroupName, you must specify the Comment and/or Enabled parameter"
-            }
+        if (-not $GetGroupName) {
+            throw "Cannot find $GroupName on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
+        }
 
-            # The API replaces the whole group on update, so any property not explicitly passed
-            # here is resent using the group's current value to avoid silently clearing it.
-            $Body = @{
-                name    = $GroupName
-                comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $GetGroupName.Comment }
-                enabled = if ($PSBoundParameters.ContainsKey('Enabled')) { $Enabled } else { $GetGroupName.Enabled }
-            }
+        if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Enabled')) {
+            throw "To update $GroupName, you must specify the Comment and/or Enabled parameter"
+        }
 
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = "groups/$GroupName"
-                Method       = "Put"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
+        # The API replaces the whole group on update, so any property not explicitly passed
+        # here is resent using the group's current value to avoid silently clearing it.
+        $Body = @{
+            name    = $GroupName
+            comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $GetGroupName.Comment }
+            enabled = if ($PSBoundParameters.ContainsKey('Enabled')) { $Enabled } else { $GetGroupName.Enabled }
+        }
 
-            $Response = Invoke-PiHoleApiRequest @Params
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "groups/$GroupName"
+            Method       = "Put"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
-            }
-            else {
-                $ObjectFinal = foreach ($Item in $Response.groups) {
-                    [PSCustomObject]@{
-                        Name         = $Item.name
-                        Comment      = $Item.comment
-                        Enabled      = $Item.enabled
-                        Id           = $Item.id
-                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    }
+        $Response = Invoke-PiHoleApiRequest @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+        else {
+            $ObjectFinal = foreach ($Item in $Response.groups) {
+                [PSCustomObject]@{
+                    Name         = $Item.name
+                    Comment      = $Item.comment
+                    Enabled      = $Item.enabled
+                    Id           = $Item.id
+                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
                 }
-                Write-Output $ObjectFinal
             }
+            Write-Output $ObjectFinal
         }
     }
 

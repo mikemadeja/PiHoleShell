@@ -49,62 +49,64 @@ New-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole client $Client", "Create client")) {
-            $FindMatchingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole client $Client", "Create client")) {
+            return
+        }
 
-            if ($FindMatchingClient) {
-                throw "Client $Client already exists on $PiHoleServer! Please use Update-PiHoleClient to update it"
+        $FindMatchingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
+
+        if ($FindMatchingClient) {
+            throw "Client $Client already exists on $PiHoleServer! Please use Update-PiHoleClient to update it"
+        }
+
+        $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        $AllGroupsNames = @()
+        $AllGroupsIds = @()
+        foreach ($GroupItem in $Group) {
+            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
+            if ($FoundGroup) {
+                $AllGroupsNames += $FoundGroup.Name
+                $AllGroupsIds += $FoundGroup.Id
             }
-
-            $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-            $AllGroupsNames = @()
-            $AllGroupsIds = @()
-            foreach ($GroupItem in $Group) {
-                $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-                if ($FoundGroup) {
-                    $AllGroupsNames += $FoundGroup.Name
-                    $AllGroupsIds += $FoundGroup.Id
-                }
-                else {
-                    throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-                }
-            }
-
-            $Body = @{
-                client  = $Client
-                comment = $Comment
-                groups  = [Object[]]($AllGroupsIds)
-            }
-
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = 'clients'
-                Method       = "Post"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
-
-            $Response = Invoke-PiHoleApiRequest @Params
-
-            if ($RawOutput) {
-                Write-Output $Response
-            }
-
             else {
-                $ObjectFinal = foreach ($Item in $Response.clients) {
-                    [PSCustomObject]@{
-                        Client       = $Item.client
-                        Name         = $Item.name
-                        Comment      = $Item.comment
-                        Groups       = $AllGroupsNames
-                        Id           = $Item.id
-                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                    }
-                }
-                Write-Output $ObjectFinal
+                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
             }
+        }
+
+        $Body = @{
+            client  = $Client
+            comment = $Comment
+            groups  = [Object[]]($AllGroupsIds)
+        }
+
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = 'clients'
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
+
+        $Response = Invoke-PiHoleApiRequest @Params
+
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+
+        else {
+            $ObjectFinal = foreach ($Item in $Response.clients) {
+                [PSCustomObject]@{
+                    Client       = $Item.client
+                    Name         = $Item.name
+                    Comment      = $Item.comment
+                    Groups       = $AllGroupsNames
+                    Id           = $Item.id
+                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                }
+            }
+            Write-Output $ObjectFinal
         }
     }
 

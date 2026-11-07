@@ -46,38 +46,40 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "y
     )
 
     try {
-        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Set DNS blocking to $Blocking")) {
-            $Body = @{
-                blocking = $Blocking
-                timer    = $TimeInSeconds
-            }
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Set DNS blocking to $Blocking")) {
+            return
+        }
 
-            $Params = @{
-                PiHoleServer = $PiHoleServer
-                Password     = $Password
-                Endpoint     = 'dns/blocking'
-                Method       = "Post"
-                IgnoreSsl    = $IgnoreSsl
-                Body         = $Body | ConvertTo-Json -Depth 10
-            }
+        $Body = @{
+            blocking = $Blocking
+            timer    = $TimeInSeconds
+        }
 
-            $Response = Invoke-PiHoleApiRequest @Params
+        $Params = @{
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = 'dns/blocking'
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
+        }
 
-            if ($RawOutput) {
-                Write-Output $Response
-            }
+        $Response = Invoke-PiHoleApiRequest @Params
 
-            else {
-                if ($Response) {
-                    $ObjectFinal = @()
-                    $Object = [PSCustomObject]@{
-                        Blocking      = $Response.blocking
-                        TimeInSeconds = (Format-PiHoleSecond -TimeInSeconds $Response.timer).TimeInSeconds
-                    }
-                    $ObjectFinal = $Object
+        if ($RawOutput) {
+            Write-Output $Response
+        }
+
+        else {
+            if ($Response) {
+                $ObjectFinal = @()
+                $Object = [PSCustomObject]@{
+                    Blocking      = $Response.blocking
+                    TimeInSeconds = (Format-PiHoleSecond -TimeInSeconds $Response.timer).TimeInSeconds
                 }
-                Write-Output $ObjectFinal
+                $ObjectFinal = $Object
             }
+            Write-Output $ObjectFinal
         }
     }
 
