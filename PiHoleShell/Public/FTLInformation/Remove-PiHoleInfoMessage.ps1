@@ -45,17 +45,7 @@ Remove-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password
         $MessageIdPath = $MessageId -join ','
 
         if ($PSCmdlet.ShouldProcess("Pi-Hole diagnosis message(s) $MessageIdPath on $PiHoleServer", "Delete")) {
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-            $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = "$($PiHoleServer.OriginalString)/api/info/messages/$MessageIdPath"
-                Method               = "Delete"
-                SkipCertificateCheck = $IgnoreSsl
-                ContentType          = "application/json"
-            }
-
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "info/messages/$MessageIdPath" -Method Delete
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -72,12 +62,6 @@ Remove-PiHoleInfoMessage -PiHoleServer "http://pihole.domain.com:8080" -Password
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

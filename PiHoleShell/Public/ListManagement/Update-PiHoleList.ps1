@@ -39,8 +39,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Address "https://hosts-file.net/ad_servers.txt" -Type Block -Enabled $false
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/lists/-list-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/lists/-list-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -60,6 +59,10 @@ Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
     )
 
     try {
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole list $Address", "Update list")) {
+            return
+        }
+
         if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group') -and -not $PSBoundParameters.ContainsKey('Enabled')) {
             throw "To update $Address, you must specify the Comment, Group, and/or Enabled parameter"
         }
@@ -74,20 +77,9 @@ Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
 
         $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingList.Groups }
 
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $GroupNamesToResolve) {
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
-            }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
-        }
-
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        $ResolvedGroups = Resolve-PiHoleGroupName -PiHoleServer $PiHoleServer -AllGroups $AllGroups -Name $GroupNamesToResolve
+        $AllGroupsNames = $ResolvedGroups.Names
+        $AllGroupsIds = $ResolvedGroups.Ids
 
         # The API replaces the whole list on update, so any property not explicitly passed here
         # is resent using the list's current value to avoid silently clearing it.
@@ -98,15 +90,15 @@ Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/lists/$Address`?type=$($Type.ToLower())"
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "lists/$Address`?type=$($Type.ToLower())"
+            Method       = "Put"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
@@ -141,12 +133,6 @@ Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

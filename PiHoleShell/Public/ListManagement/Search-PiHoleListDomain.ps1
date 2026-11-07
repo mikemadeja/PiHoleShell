@@ -45,23 +45,20 @@ Search-PiHoleListDomain -PiHoleServer "http://pihole.domain.com:8080" -Password 
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Body = @{
             n       = $MaxResults
             partial = $PartialMatch
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/search/$Domain"
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body
-            ContentType          = "application/json"
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "search/$Domain"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
@@ -112,13 +109,7 @@ Search-PiHoleListDomain -PiHoleServer "http://pihole.domain.com:8080" -Password 
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
         break
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

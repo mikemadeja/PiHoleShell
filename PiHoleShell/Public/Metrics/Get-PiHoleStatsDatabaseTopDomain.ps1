@@ -53,8 +53,6 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         switch ($Blocked) {
             $false { $BlockedParam = "false" }
             $true { $BlockedParam = "true" }
@@ -66,15 +64,7 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -
         $FromUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $From).UnixTime
         $UntilUnixTime = (Convert-LocalTimeToPiHoleUnixTime -Date $Until).UnixTime
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/database/top_domains?from=$FromUnixTime&until=$UntilUnixTime&blocked=$BlockedParam&count=$MaxResult"
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "stats/database/top_domains?from=$FromUnixTime&until=$UntilUnixTime&blocked=$BlockedParam&count=$MaxResult"
 
         if ($RawOutput) {
             Write-Output $Response
@@ -94,12 +84,6 @@ Get-PiHoleStatsDatabaseTopDomain -PiHoleServer "http://pihole.domain.com:8080" -
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

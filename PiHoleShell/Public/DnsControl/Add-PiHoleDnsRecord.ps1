@@ -53,8 +53,7 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
 .EXAMPLE
 Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Type CNAME -Hostname "alias.local" -Target "test.local" -Ttl 300
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Thin wrapper - Add-PiHoleConfigArrayItem (called internally) already carries this same suppression")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -110,6 +109,10 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
             }
         }
 
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Add DNS record")) {
+            return
+        }
+
         $InnerParams = @{
             PiHoleServer = $PiHoleServer
             Password     = $Password
@@ -117,6 +120,7 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
             Value        = $Value
             IgnoreSsl    = $IgnoreSsl
             RawOutput    = $RawOutput
+            Confirm      = $false
         }
         if ($PSBoundParameters.ContainsKey('Restart')) {
             $InnerParams.Restart = $Restart
@@ -142,6 +146,6 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

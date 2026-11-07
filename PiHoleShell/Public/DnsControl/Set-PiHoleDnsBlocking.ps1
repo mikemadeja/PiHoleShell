@@ -30,8 +30,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Blocking $false -TimeInSeconds 60
     #>
-    [CmdletBinding()]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -47,7 +46,9 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "y
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Set DNS blocking to $Blocking")) {
+            return
+        }
 
         $Body = @{
             blocking = $Blocking
@@ -55,15 +56,15 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "y
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
-            Method               = "Post"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-            Body                 = $Body | ConvertTo-Json -Depth 10
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = 'dns/blocking'
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
@@ -83,12 +84,6 @@ Set-PiHoleDnsBlocking -PiHoleServer "http://pihole.domain.com:8080" -Password "y
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

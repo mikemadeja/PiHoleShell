@@ -38,54 +38,5 @@ Get-PiHoleLogFtl -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-    try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Uri = "$($PiHoleServer.OriginalString)/api/logs/ftl"
-        if ($PSBoundParameters.ContainsKey('NextID')) {
-            $Uri += "?nextID=$NextID"
-        }
-
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-
-        else {
-            $Log = foreach ($Item in $Response.log) {
-                [PSCustomObject]@{
-                    Timestamp = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.timestamp).LocalTime
-                    Message   = $Item.message
-                    Priority  = $Item.prio
-                }
-            }
-
-            $Object = [PSCustomObject]@{
-                Log    = $Log
-                NextID = $Response.nextID
-                Pid    = $Response.pid
-                File   = $Response.file
-            }
-            Write-Output $Object
-        }
-    }
-
-    catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
-    }
+    Get-PiHoleLogContent -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -RawOutput $RawOutput -Endpoint 'logs/ftl' -NextID $NextID
 }

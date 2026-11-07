@@ -41,8 +41,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 New-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Domain "example.com" -Type Allow -Kind Exact
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/domains/-type-/-kind-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/domains/-type-/-kind-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -64,6 +63,10 @@ New-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole domain $Domain ($Type/$Kind)", "Create domain")) {
+            return
+        }
+
         $FindMatchingDomain = Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Type $Type -Kind $Kind -Domain $Domain
 
         if ($FindMatchingDomain) {
@@ -71,20 +74,9 @@ New-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         }
 
         $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $Group) {
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
-            }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
-        }
-
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        $ResolvedGroups = Resolve-PiHoleGroupName -PiHoleServer $PiHoleServer -AllGroups $AllGroups -Name $Group
+        $AllGroupsNames = $ResolvedGroups.Names
+        $AllGroupsIds = $ResolvedGroups.Ids
 
         $Body = @{
             domain  = $Domain
@@ -94,46 +86,27 @@ New-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/domains/$($Type.ToLower())/$($Kind.ToLower())"
-            Method               = "Post"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "domains/$($Type.ToLower())/$($Kind.ToLower())"
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
         }
 
         else {
-            $ObjectFinal = foreach ($Item in $Response.domains) {
-                [PSCustomObject]@{
-                    Domain       = $Item.domain
-                    Unicode      = $Item.unicode
-                    Type         = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
-                    Kind         = $Item.kind.SubString(0, 1).ToUpper() + $Item.kind.SubString(1).ToLower()
-                    Comment      = $Item.comment
-                    Groups       = $AllGroupsNames
-                    Enabled      = $Item.enabled
-                    Id           = $Item.id
-                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                }
-            }
+            $ObjectFinal = ConvertTo-PiHoleDomainObject -Domain $Response.domains -Groups $AllGroupsNames
             Write-Output $ObjectFinal
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

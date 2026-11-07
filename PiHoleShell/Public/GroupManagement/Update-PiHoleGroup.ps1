@@ -34,8 +34,7 @@ This will dump the response instead of the formatted object
 Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -GroupName "Kids" -Enabled $false
     #>
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/groups/-name-')]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/groups/-name-')]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
@@ -50,7 +49,9 @@ Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
 
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole group $GroupName", "Update group")) {
+            return
+        }
 
         $GetGroupName = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -GroupName $GroupName
 
@@ -71,41 +72,26 @@ Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/groups/$GroupName"
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-            Body                 = $Body | ConvertTo-Json -Depth 10
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "groups/$GroupName"
+            Method       = "Put"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
         }
         else {
-            $ObjectFinal = foreach ($Item in $Response.groups) {
-                [PSCustomObject]@{
-                    Name         = $Item.name
-                    Comment      = $Item.comment
-                    Enabled      = $Item.enabled
-                    Id           = $Item.id
-                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                }
-            }
+            $ObjectFinal = ConvertTo-PiHoleGroupObject -Group $Response.groups
             Write-Output $ObjectFinal
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

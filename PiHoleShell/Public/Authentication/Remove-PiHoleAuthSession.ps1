@@ -22,9 +22,8 @@ The ID of the session to delete, as shown by Get-PiHoleCurrentAuthSession
 .EXAMPLE
 Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Id 3
     #>
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Does not change state')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/auth/session/-id-')]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#delete-/auth/session/-id-')]
     param (
         [Parameter(Mandatory = $true)]
         [System.URI]$PiHoleServer,
@@ -35,16 +34,11 @@ Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/auth/session/$Id"
-            Method               = "Delete"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole session $Id", "Remove session")) {
+            return
         }
 
-        Invoke-RestMethod @Params
+        Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "auth/session/$Id" -Method Delete
 
         $ObjectFinal = @()
         $Object = [PSCustomObject]@{
@@ -56,12 +50,6 @@ Remove-PiHoleAuthSession -PiHoleServer "http://pihole.domain.com:8080" -Password
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

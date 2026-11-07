@@ -53,8 +53,6 @@ Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
                 }
             }
 
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
             # @() forces this to stay an array even for a single name - without it, PowerShell
             # unwraps a one-item foreach result to a bare hashtable, which ConvertTo-Json then
             # serializes as a JSON object instead of an array, and the API rejects it with 400.
@@ -63,17 +61,17 @@ Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
                 })
 
             $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = "$($PiHoleServer.OriginalString)/api/groups:batchDelete"
-                Method               = "Post"
-                SkipCertificateCheck = $IgnoreSsl
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = 'groups:batchDelete'
+                Method       = "Post"
+                IgnoreSsl    = $IgnoreSsl
                 # -InputObject (not piped) so ConvertTo-Json serializes the array as-is instead of
                 # unwrapping it into individual pipeline objects first.
-                Body                 = ConvertTo-Json -InputObject $Body -Depth 10 -Compress
-                ContentType          = "application/json"
+                Body         = ConvertTo-Json -InputObject $Body -Depth 10 -Compress
             }
 
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest @Params
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -94,12 +92,6 @@ Remove-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

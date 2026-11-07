@@ -58,30 +58,20 @@ Get-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
             throw "-Type and -Kind must both be specified when -Domain is specified"
         }
 
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Groups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/domains"
+        $Endpoint = 'domains'
         if ($Type) {
-            $Uri += "/$($Type.ToLower())"
+            $Endpoint += "/$($Type.ToLower())"
         }
         if ($Kind) {
-            $Uri += "/$($Kind.ToLower())"
+            $Endpoint += "/$($Kind.ToLower())"
         }
         if ($Domain) {
-            $Uri += "/$([System.Uri]::EscapeDataString($Domain))"
+            $Endpoint += "/$([System.Uri]::EscapeDataString($Domain))"
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
 
         if ($RawOutput) {
             Write-Output $Response
@@ -112,12 +102,6 @@ Get-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

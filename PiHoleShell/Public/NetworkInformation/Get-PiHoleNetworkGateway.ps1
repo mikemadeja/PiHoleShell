@@ -38,40 +38,5 @@ Get-PiHoleNetworkGateway -PiHoleServer "http://pihole.domain.com:8080" -Password
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-    try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Uri = "$($PiHoleServer.OriginalString)/api/network/gateway"
-        if ($PSBoundParameters.ContainsKey('Detailed')) {
-            $Uri += "?detailed=$($Detailed.ToString().ToLower())"
-        }
-
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.gateway
-            Write-Output $Object
-        }
-    }
-
-    catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
-    }
+    Get-PiHoleNetworkInfo -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -RawOutput $RawOutput -Endpoint 'network/gateway' -Property 'gateway' -Detailed $Detailed
 }

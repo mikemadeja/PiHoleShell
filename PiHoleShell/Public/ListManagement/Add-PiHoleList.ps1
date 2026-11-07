@@ -37,7 +37,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Address "https://hosts-file.net/ad_servers.txt" -Type Block
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists')]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/lists')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -56,6 +56,10 @@ Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
         [bool]$RawOutput = $false
     )
     try {
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole list $Address", "Add list")) {
+            return
+        }
+
         $FindMatchingList = Get-PiHoleList -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl | Where-Object { $_.Address -eq $Address }
 
         if ($FindMatchingList) {
@@ -63,22 +67,9 @@ Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
         }
 
         $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $Group) {
-
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
-                Write-Verbose -Message "Found Group $($FoundGroup.Name) with $($FoundGroup.Id)"
-            }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
-        }
-
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        $ResolvedGroups = Resolve-PiHoleGroupName -PiHoleServer $PiHoleServer -AllGroups $AllGroups -Name $Group
+        $AllGroupsNames = $ResolvedGroups.Names
+        $AllGroupsIds = $ResolvedGroups.Ids
 
         $Body = @{
             address = $Address
@@ -88,15 +79,15 @@ Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
         }
 
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/lists?type=$($Type.ToLower())"
-            Method               = "Post"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = "lists?type=$($Type.ToLower())"
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
+            Body         = $Body | ConvertTo-Json -Depth 10
         }
 
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest @Params
 
         if ($RawOutput) {
             Write-Output $Response
@@ -137,12 +128,6 @@ Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

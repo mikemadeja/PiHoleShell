@@ -35,18 +35,16 @@ Update-PiHoleActionsGravity -PiHoleServer "http://pihole.domain.com:8080" -Passw
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/action/gravity"
-            Method               = "Post"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = 'action/gravity'
+            Method       = "Post"
+            IgnoreSsl    = $IgnoreSsl
         }
 
         if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Update gravity")) {
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest @Params
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -64,11 +62,5 @@ Update-PiHoleActionsGravity -PiHoleServer "http://pihole.domain.com:8080" -Passw
         # Surfaces Pi-hole's own message, e.g. "Gravity is already running" for the 409 FTL v6.8+
         # returns while another run is in progress, instead of a bare "409 (Conflict)"
         Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

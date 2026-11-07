@@ -40,8 +40,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Element "dns/cnameRecords" -Value "alias.lan,target.lan"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -57,22 +56,16 @@ Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Passwor
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if (-not $PSCmdlet.ShouldProcess("Pi-Hole config $Element", "Add item '$Value'")) {
+            return
+        }
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
+        $Endpoint = "config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
         if ($PSBoundParameters.ContainsKey('Restart')) {
-            $Uri += "?restart=$($Restart.ToString().ToLower())"
+            $Endpoint += "?restart=$($Restart.ToString().ToLower())"
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint -Method Put
 
         if ($RawOutput) {
             Write-Output $Response
@@ -91,11 +84,5 @@ Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Passwor
 
     catch {
         Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

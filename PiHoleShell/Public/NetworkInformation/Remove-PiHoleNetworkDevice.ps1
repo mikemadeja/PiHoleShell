@@ -40,17 +40,7 @@ Remove-PiHoleNetworkDevice -PiHoleServer "http://pihole.domain.com:8080" -Passwo
     try {
         $Target = "Pi-Hole network device $DeviceId"
         if ($PSCmdlet.ShouldProcess($Target, "Remove device")) {
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-            $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = "$($PiHoleServer.OriginalString)/api/network/devices/$DeviceId"
-                Method               = "Delete"
-                SkipCertificateCheck = $IgnoreSsl
-                ContentType          = "application/json"
-            }
-
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "network/devices/$DeviceId" -Method Delete
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -69,12 +59,6 @@ Remove-PiHoleNetworkDevice -PiHoleServer "http://pihole.domain.com:8080" -Passwo
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }
