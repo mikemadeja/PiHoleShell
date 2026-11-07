@@ -67,20 +67,9 @@ Add-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app
         }
 
         $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $Group) {
-
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
-                Write-Verbose -Message "Found Group $($FoundGroup.Name) with $($FoundGroup.Id)"
-            }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
-        }
+        $ResolvedGroups = Resolve-PiHoleGroupName -PiHoleServer $PiHoleServer -AllGroups $AllGroups -Name $Group
+        $AllGroupsNames = $ResolvedGroups.Names
+        $AllGroupsIds = $ResolvedGroups.Ids
 
         $Body = @{
             address = $Address

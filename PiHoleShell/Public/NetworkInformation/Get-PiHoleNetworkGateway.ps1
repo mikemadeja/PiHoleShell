@@ -38,24 +38,5 @@ Get-PiHoleNetworkGateway -PiHoleServer "http://pihole.domain.com:8080" -Password
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-    try {
-        $Endpoint = 'network/gateway'
-        if ($PSBoundParameters.ContainsKey('Detailed')) {
-            $Endpoint += "?detailed=$($Detailed.ToString().ToLower())"
-        }
-
-        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.gateway
-            Write-Output $Object
-        }
-    }
-
-    catch {
-        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
+    Get-PiHoleNetworkInfo -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -RawOutput $RawOutput -Endpoint 'network/gateway' -Property 'gateway' -Detailed $Detailed
 }

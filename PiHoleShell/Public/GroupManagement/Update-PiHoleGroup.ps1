@@ -86,16 +86,7 @@ Update-PiHoleGroup -PiHoleServer "http://pihole.domain.com:8080" -Password "your
             Write-Output $Response
         }
         else {
-            $ObjectFinal = foreach ($Item in $Response.groups) {
-                [PSCustomObject]@{
-                    Name         = $Item.name
-                    Comment      = $Item.comment
-                    Enabled      = $Item.enabled
-                    Id           = $Item.id
-                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
-                }
-            }
+            $ObjectFinal = ConvertTo-PiHoleGroupObject -Group $Response.groups
             Write-Output $ObjectFinal
         }
     }

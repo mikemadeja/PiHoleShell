@@ -38,38 +38,5 @@ Get-PiHoleLogFtl -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$IgnoreSsl = $false,
         [bool]$RawOutput = $false
     )
-    try {
-        $Endpoint = 'logs/ftl'
-        if ($PSBoundParameters.ContainsKey('NextID')) {
-            $Endpoint += "?nextID=$NextID"
-        }
-
-        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-
-        else {
-            $Log = foreach ($Item in $Response.log) {
-                [PSCustomObject]@{
-                    Timestamp = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.timestamp).LocalTime
-                    Message   = $Item.message
-                    Priority  = $Item.prio
-                }
-            }
-
-            $Object = [PSCustomObject]@{
-                Log    = $Log
-                NextID = $Response.nextID
-                Pid    = $Response.pid
-                File   = $Response.file
-            }
-            Write-Output $Object
-        }
-    }
-
-    catch {
-        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
+    Get-PiHoleLogContent -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -RawOutput $RawOutput -Endpoint 'logs/ftl' -NextID $NextID
 }

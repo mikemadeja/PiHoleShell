@@ -77,18 +77,9 @@ Update-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
 
         $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingList.Groups }
 
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $GroupNamesToResolve) {
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
-            }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
-            }
-        }
+        $ResolvedGroups = Resolve-PiHoleGroupName -PiHoleServer $PiHoleServer -AllGroups $AllGroups -Name $GroupNamesToResolve
+        $AllGroupsNames = $ResolvedGroups.Names
+        $AllGroupsIds = $ResolvedGroups.Ids
 
         # The API replaces the whole list on update, so any property not explicitly passed here
         # is resent using the list's current value to avoid silently clearing it.
