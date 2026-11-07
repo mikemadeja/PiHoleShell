@@ -29,11 +29,12 @@ Found a security problem? Don't open a public issue. Follow the [security policy
    }
    ```
 
-6. **Write comment-based help** with `.SYNOPSIS`, `.DESCRIPTION`, every `.PARAMETER`, at least one `.EXAMPLE`, and a `HelpUri` pointing at the endpoint in Pi-hole's API docs.
-7. **Export the function** in both places:
+6. **Support `-WhatIf` and `-Confirm` on anything that changes the server.** Add `SupportsShouldProcess = $true` to `[CmdletBinding()]` and wrap the work in `if ($PSCmdlet.ShouldProcess(<target>, <action>)) { ... }`, with the API call inside it, so `-WhatIf` doesn't even log in. A wrapper around another state-changing function passes `-Confirm:$false` to it, so the user is asked only once (see `Add-PiHoleDnsRecord`).
+7. **Write comment-based help** with `.SYNOPSIS`, `.DESCRIPTION`, every `.PARAMETER`, at least one `.EXAMPLE`, and a `HelpUri` pointing at the endpoint in Pi-hole's API docs.
+8. **Export the function** in both places:
    - the `Export-ModuleMember` list in `PiHoleShell/PiHoleShell.psm1`
    - `FunctionsToExport` in `PiHoleShell/PiHoleShell.psd1`. This file is saved as UTF-16; keep that encoding when you edit it.
-8. **Update the docs:**
+9. **Update the docs:**
    - Run `tools/Update-ReadmeCommandReference.ps1` to regenerate the README's command reference. A CI check fails if it's out of date.
    - Add an entry to `tools/Update-ExampleOutput.ps1`, then run it to regenerate `docs/EXAMPLES.md`. This step needs a test server.
 
@@ -63,7 +64,7 @@ New functions should come with an integration test covering normal output, `-Raw
 
 - **PSScriptAnalyzer** must report no issues. Run it locally with `Invoke-ScriptAnalyzer -Path .\PiHoleShell -Recurse`.
 - **SonarCloud** must pass its quality gate. In practice that usually means not duplicating code.
-- **README sync** must pass (see step 8 above).
+- **README sync** must pass (see step 9 above).
 - **Pester** integration tests run against the maintainer's own Pi-hole and can take up to an hour. If your PR comes from a fork, the maintainer may run them for you.
 
 ## Code of conduct

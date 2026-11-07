@@ -48,8 +48,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Update-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Domain "example.com" -Type Allow -Kind Exact -Enabled $false
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/domains/-type-/-kind-/-domain-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/domains/-type-/-kind-/-domain-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -72,87 +71,81 @@ Update-PiHoleDomain -PiHoleServer "http://pihole.domain.com:8080" -Password "you
     )
 
     try {
-        if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group') -and -not $PSBoundParameters.ContainsKey('Enabled')) {
-            throw "To update $Domain, you must specify the Comment, Group, and/or Enabled parameter"
-        }
-
-        $ExistingDomain = Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Type $Type -Kind $Kind -Domain $Domain
-
-        if (-not $ExistingDomain) {
-            throw "Cannot find $Domain of type $Type/$Kind on $PiHoleServer! Please use New-PiHoleDomain to create it"
-        }
-
-        $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingDomain.Groups }
-
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $GroupNamesToResolve) {
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
+        if ($PSCmdlet.ShouldProcess("Pi-Hole domain $Domain ($Type/$Kind)", "Update domain")) {
+            if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group') -and -not $PSBoundParameters.ContainsKey('Enabled')) {
+                throw "To update $Domain, you must specify the Comment, Group, and/or Enabled parameter"
             }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
+
+            $ExistingDomain = Get-PiHoleDomain -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Type $Type -Kind $Kind -Domain $Domain
+
+            if (-not $ExistingDomain) {
+                throw "Cannot find $Domain of type $Type/$Kind on $PiHoleServer! Please use New-PiHoleDomain to create it"
             }
-        }
 
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+            $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        # The API replaces the whole domain entry on update, so any property not explicitly
-        # passed here is resent using the domain's current value to avoid silently clearing it.
-        # Type/Kind are always resent as-is - see the .DESCRIPTION note on why this never moves
-        # a domain to a different Type/Kind.
-        $Body = @{
-            type    = $Type.ToLower()
-            kind    = $Kind.ToLower()
-            comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingDomain.Comment }
-            groups  = [Object[]]($AllGroupsIds)
-            enabled = if ($PSBoundParameters.ContainsKey('Enabled')) { $Enabled } else { $ExistingDomain.Enabled }
-        }
+            $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingDomain.Groups }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/domains/$($Type.ToLower())/$($Kind.ToLower())/$([System.Uri]::EscapeDataString($Domain))"
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $ObjectFinal = foreach ($Item in $Response.domains) {
-                [PSCustomObject]@{
-                    Domain       = $Item.domain
-                    Unicode      = $Item.unicode
-                    Type         = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
-                    Kind         = $Item.kind.SubString(0, 1).ToUpper() + $Item.kind.SubString(1).ToLower()
-                    Comment      = $Item.comment
-                    Groups       = $AllGroupsNames
-                    Enabled      = $Item.enabled
-                    Id           = $Item.id
-                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+            $AllGroupsNames = @()
+            $AllGroupsIds = @()
+            foreach ($GroupItem in $GroupNamesToResolve) {
+                $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
+                if ($FoundGroup) {
+                    $AllGroupsNames += $FoundGroup.Name
+                    $AllGroupsIds += $FoundGroup.Id
+                }
+                else {
+                    throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
                 }
             }
-            Write-Output $ObjectFinal
+
+            # The API replaces the whole domain entry on update, so any property not explicitly
+            # passed here is resent using the domain's current value to avoid silently clearing it.
+            # Type/Kind are always resent as-is - see the .DESCRIPTION note on why this never moves
+            # a domain to a different Type/Kind.
+            $Body = @{
+                type    = $Type.ToLower()
+                kind    = $Kind.ToLower()
+                comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingDomain.Comment }
+                groups  = [Object[]]($AllGroupsIds)
+                enabled = if ($PSBoundParameters.ContainsKey('Enabled')) { $Enabled } else { $ExistingDomain.Enabled }
+            }
+
+            $Params = @{
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = "domains/$($Type.ToLower())/$($Kind.ToLower())/$([System.Uri]::EscapeDataString($Domain))"
+                Method       = "Put"
+                IgnoreSsl    = $IgnoreSsl
+                Body         = $Body | ConvertTo-Json -Depth 10
+            }
+
+            $Response = Invoke-PiHoleApiRequest @Params
+
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+            else {
+                $ObjectFinal = foreach ($Item in $Response.domains) {
+                    [PSCustomObject]@{
+                        Domain       = $Item.domain
+                        Unicode      = $Item.unicode
+                        Type         = $Item.type.SubString(0, 1).ToUpper() + $Item.type.SubString(1).ToLower()
+                        Kind         = $Item.kind.SubString(0, 1).ToUpper() + $Item.kind.SubString(1).ToLower()
+                        Comment      = $Item.comment
+                        Groups       = $AllGroupsNames
+                        Enabled      = $Item.enabled
+                        Id           = $Item.id
+                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    }
+                }
+                Write-Output $ObjectFinal
+            }
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

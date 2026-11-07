@@ -33,17 +33,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/dns/blocking"
-            Method               = "Get"
-            ContentType          = "application/json"
-            SkipCertificateCheck = $IgnoreSsl
-        }
-
-        $Data = Invoke-RestMethod @Params
+        $Data = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'dns/blocking'
 
         if ($RawOutput) {
             Write-Output $Data
@@ -61,13 +51,7 @@ Get-PiHoleDnsBlockingStatus -PiHoleServer "http://pihole.domain.com:8080" -Passw
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
         break
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

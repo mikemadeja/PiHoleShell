@@ -35,17 +35,7 @@ Get-PiHoleInfoMetrics -PiHoleServer "http://pihole.domain.com:8080" -Password "y
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/info/metrics"
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'info/metrics'
 
         if ($RawOutput) {
             Write-Output $Response
@@ -106,12 +96,6 @@ Get-PiHoleInfoMetrics -PiHoleServer "http://pihole.domain.com:8080" -Password "y
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

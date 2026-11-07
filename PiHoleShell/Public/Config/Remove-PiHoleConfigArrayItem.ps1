@@ -57,22 +57,12 @@ Remove-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Pass
     try {
         $Target = "Pi-Hole config item $Value in $Element"
         if ($PSCmdlet.ShouldProcess($Target, "Remove config array item")) {
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-            $Uri = "$($PiHoleServer.OriginalString)/api/config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
+            $Endpoint = "config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
             if ($PSBoundParameters.ContainsKey('Restart')) {
-                $Uri += "?restart=$($Restart.ToString().ToLower())"
+                $Endpoint += "?restart=$($Restart.ToString().ToLower())"
             }
 
-            $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = $Uri
-                Method               = "Delete"
-                SkipCertificateCheck = $IgnoreSsl
-                ContentType          = "application/json"
-            }
-
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint -Method Delete
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -93,11 +83,5 @@ Remove-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Pass
 
     catch {
         Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

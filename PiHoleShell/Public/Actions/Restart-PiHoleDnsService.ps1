@@ -21,8 +21,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/restartdns')]
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseShouldProcessForStateChangingFunctions', '', Justification = 'Restarts PiHole DNS')]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#post-/action/restartdns')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -34,36 +33,22 @@ Invoke-PiHoleRestartDns -PiHoleServer "http://pihole.domain.com:8080" -Password 
     )
 
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Restart DNS service")) {
+            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint 'action/restartdns' -Method Post
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/action/restartdns"
-            Method               = "Post"
-            ContentType          = "application/json"
-            SkipCertificateCheck = $IgnoreSsl
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $Object = [PSCustomObject]@{
-                Status = "Restarted"
+            if ($RawOutput) {
+                Write-Output $Response
             }
-            Write-Output $Object
+            else {
+                $Object = [PSCustomObject]@{
+                    Status = "Restarted"
+                }
+                Write-Output $Object
+            }
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

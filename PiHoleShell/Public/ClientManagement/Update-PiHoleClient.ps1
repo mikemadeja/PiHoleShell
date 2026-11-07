@@ -34,8 +34,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Update-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Client "192.168.1.50" -Comment "Kid's tablet"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/clients/-client-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/clients/-client-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -51,79 +50,73 @@ Update-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "you
     )
 
     try {
-        if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group')) {
-            throw "To update $Client, you must specify the Comment and/or Group parameter"
-        }
-
-        $ExistingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
-
-        if (-not $ExistingClient) {
-            throw "Cannot find $Client on $PiHoleServer! Please use New-PiHoleClient to create it"
-        }
-
-        $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingClient.Groups }
-
-        $AllGroupsNames = @()
-        $AllGroupsIds = @()
-        foreach ($GroupItem in $GroupNamesToResolve) {
-            $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
-            if ($FoundGroup) {
-                $AllGroupsNames += $FoundGroup.Name
-                $AllGroupsIds += $FoundGroup.Id
+        if ($PSCmdlet.ShouldProcess("Pi-Hole client $Client", "Update client")) {
+            if (-not $PSBoundParameters.ContainsKey('Comment') -and -not $PSBoundParameters.ContainsKey('Group')) {
+                throw "To update $Client, you must specify the Comment and/or Group parameter"
             }
-            else {
-                throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
+
+            $ExistingClient = Get-PiHoleClient -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Client $Client
+
+            if (-not $ExistingClient) {
+                throw "Cannot find $Client on $PiHoleServer! Please use New-PiHoleClient to create it"
             }
-        }
 
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+            $AllGroups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        # The API replaces the whole client entry on update, so any property not explicitly
-        # passed here is resent using the client's current value to avoid silently clearing it.
-        $Body = @{
-            comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingClient.Comment }
-            groups  = [Object[]]($AllGroupsIds)
-        }
+            $GroupNamesToResolve = if ($PSBoundParameters.ContainsKey('Group')) { $Group } else { $ExistingClient.Groups }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/clients/$([System.Uri]::EscapeDataString($Client))"
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $ObjectFinal = foreach ($Item in $Response.clients) {
-                [PSCustomObject]@{
-                    Client       = $Item.client
-                    Name         = $Item.name
-                    Comment      = $Item.comment
-                    Groups       = $AllGroupsNames
-                    Id           = $Item.id
-                    DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
-                    DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+            $AllGroupsNames = @()
+            $AllGroupsIds = @()
+            foreach ($GroupItem in $GroupNamesToResolve) {
+                $FoundGroup = $AllGroups | Where-Object { $_.Name -eq $GroupItem }
+                if ($FoundGroup) {
+                    $AllGroupsNames += $FoundGroup.Name
+                    $AllGroupsIds += $FoundGroup.Id
+                }
+                else {
+                    throw "Cannot find $GroupItem on $PiHoleServer! Please use Get-PiHoleGroup to list all groups"
                 }
             }
-            Write-Output $ObjectFinal
+
+            # The API replaces the whole client entry on update, so any property not explicitly
+            # passed here is resent using the client's current value to avoid silently clearing it.
+            $Body = @{
+                comment = if ($PSBoundParameters.ContainsKey('Comment')) { $Comment } else { $ExistingClient.Comment }
+                groups  = [Object[]]($AllGroupsIds)
+            }
+
+            $Params = @{
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = "clients/$([System.Uri]::EscapeDataString($Client))"
+                Method       = "Put"
+                IgnoreSsl    = $IgnoreSsl
+                Body         = $Body | ConvertTo-Json -Depth 10
+            }
+
+            $Response = Invoke-PiHoleApiRequest @Params
+
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+            else {
+                $ObjectFinal = foreach ($Item in $Response.clients) {
+                    [PSCustomObject]@{
+                        Client       = $Item.client
+                        Name         = $Item.name
+                        Comment      = $Item.comment
+                        Groups       = $AllGroupsNames
+                        Id           = $Item.id
+                        DateAdded    = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_added).LocalTime
+                        DateModified = (Convert-PiHoleUnixTimeToLocalTime -UnixTime $Item.date_modified).LocalTime
+                    }
+                }
+                Write-Output $ObjectFinal
+            }
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

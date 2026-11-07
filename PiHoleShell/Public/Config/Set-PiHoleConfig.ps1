@@ -39,8 +39,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Set-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Settings @{ dns = @{ CNAMEdeepInspect = $true } }
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#patch-/config')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#patch-/config')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -54,44 +53,38 @@ Set-PiHoleConfig -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
+        if ($PSCmdlet.ShouldProcess("Pi-Hole server at $PiHoleServer", "Change configuration")) {
+            $Endpoint = 'config'
+            if ($PSBoundParameters.ContainsKey('Restart')) {
+                $Endpoint += "?restart=$($Restart.ToString().ToLower())"
+            }
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/config"
-        if ($PSBoundParameters.ContainsKey('Restart')) {
-            $Uri += "?restart=$($Restart.ToString().ToLower())"
-        }
+            $Body = @{
+                config = $Settings
+            }
 
-        $Body = @{
-            config = $Settings
-        }
+            $Params = @{
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = $Endpoint
+                Method       = "Patch"
+                IgnoreSsl    = $IgnoreSsl
+                Body         = $Body | ConvertTo-Json -Depth 10
+            }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Patch"
-            SkipCertificateCheck = $IgnoreSsl
-            Body                 = $Body | ConvertTo-Json -Depth 10
-            ContentType          = "application/json"
-        }
+            $Response = Invoke-PiHoleApiRequest @Params
 
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
-            Write-Output $Object
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+            else {
+                $Object = ConvertTo-PiHolePascalCaseObject -InputObject $Response.config
+                Write-Output $Object
+            }
         }
     }
 
     catch {
         Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

@@ -49,17 +49,15 @@ Get-PiHoleTeleporterDownload -PiHoleServer "http://pihole.domain.com:8080" -Pass
             throw "$OutFile already exists!"
         }
 
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/teleporter"
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            OutFile              = $OutFile
+            PiHoleServer = $PiHoleServer
+            Password     = $Password
+            Endpoint     = 'teleporter'
+            IgnoreSsl    = $IgnoreSsl
+            OutFile      = $OutFile
         }
 
-        Invoke-RestMethod @Params
+        Invoke-PiHoleApiRequest @Params
 
         $Object = [PSCustomObject]@{
             FileName   = $FileName
@@ -71,12 +69,6 @@ Get-PiHoleTeleporterDownload -PiHoleServer "http://pihole.domain.com:8080" -Pass
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

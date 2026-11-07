@@ -24,6 +24,6 @@ function Request-PiHoleAuth {
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

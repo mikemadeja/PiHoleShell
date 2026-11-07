@@ -46,8 +46,6 @@ Remove-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
     try {
         $Target = "Pi-Hole list $Address of type $Type"
         if ($PSCmdlet.ShouldProcess($Target, "Remove list")) {
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
             $Body = @(
                 @{
                     item = $Address
@@ -58,15 +56,15 @@ Remove-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
             #For some reason this needs to be here to make it an array
             $Body = , $Body
             $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = "$($PiHoleServer.OriginalString)/api/lists:batchDelete"
-                Method               = "Post"
-                SkipCertificateCheck = $IgnoreSsl
-                Body                 = $Body | ConvertTo-Json -Depth 10 -Compress
-                ContentType          = "application/json"
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = 'lists:batchDelete'
+                Method       = "Post"
+                IgnoreSsl    = $IgnoreSsl
+                Body         = $Body | ConvertTo-Json -Depth 10 -Compress
             }
 
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest @Params
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -86,12 +84,6 @@ Remove-PiHoleList -PiHoleServer "http://pihole.domain.com:8080" -Password "your-
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

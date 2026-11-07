@@ -71,7 +71,7 @@ Get-PiHoleAuthStatus -PiHoleServer "http://pihole.domain.com:8080" -Password "yo
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 
     finally {

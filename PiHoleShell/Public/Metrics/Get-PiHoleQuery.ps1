@@ -97,8 +97,6 @@ Get-PiHoleQuery -PiHoleServer "http://pihole.domain.com:8080" -Password "your-ap
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $QueryParams = [System.Collections.ArrayList]@()
         if ($PSBoundParameters.ContainsKey('From')) { $QueryParams.Add("from=$From") | Out-Null }
         if ($PSBoundParameters.ContainsKey('Until')) { $QueryParams.Add("until=$Until") | Out-Null }
@@ -115,20 +113,12 @@ Get-PiHoleQuery -PiHoleServer "http://pihole.domain.com:8080" -Password "your-ap
         if ($Dnssec) { $QueryParams.Add("dnssec=$([System.Uri]::EscapeDataString($Dnssec))") | Out-Null }
         if ($PSBoundParameters.ContainsKey('Disk')) { $QueryParams.Add("disk=$($Disk.ToString().ToLower())") | Out-Null }
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/queries"
+        $Endpoint = 'queries'
         if ($QueryParams.Count -gt 0) {
-            $Uri += "?" + ($QueryParams -join '&')
+            $Endpoint += "?" + ($QueryParams -join '&')
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
 
         if ($RawOutput) {
             Write-Output $Response
@@ -164,12 +154,6 @@ Get-PiHoleQuery -PiHoleServer "http://pihole.domain.com:8080" -Password "your-ap
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

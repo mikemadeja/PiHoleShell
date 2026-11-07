@@ -40,8 +40,6 @@ Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         switch ($Blocked) {
             $false { $BlockedParam = "false" }
             $true { $BlockedParam = "true" }
@@ -50,15 +48,7 @@ Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password
         Write-Verbose "Blocked: $BlockedParam"
         Write-Verbose "MaxResult: $MaxResult"
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = "$($PiHoleServer.OriginalString)/api/stats/top_clients?blocked=$BlockedParam&count=$MaxResult"
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint "stats/top_clients?blocked=$BlockedParam&count=$MaxResult"
 
         if ($RawOutput) {
             Write-Output $Response
@@ -80,13 +70,7 @@ Get-PiHoleStatsTopClient -PiHoleServer "http://pihole.domain.com:8080" -Password
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
         break
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }

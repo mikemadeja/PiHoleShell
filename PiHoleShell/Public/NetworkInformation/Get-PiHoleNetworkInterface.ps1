@@ -39,22 +39,12 @@ Get-PiHoleNetworkInterface -PiHoleServer "http://pihole.domain.com:8080" -Passwo
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Uri = "$($PiHoleServer.OriginalString)/api/network/interfaces"
+        $Endpoint = 'network/interfaces'
         if ($PSBoundParameters.ContainsKey('Detailed')) {
-            $Uri += "?detailed=$($Detailed.ToString().ToLower())"
+            $Endpoint += "?detailed=$($Detailed.ToString().ToLower())"
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
 
         if ($RawOutput) {
             Write-Output $Response
@@ -66,12 +56,6 @@ Get-PiHoleNetworkInterface -PiHoleServer "http://pihole.domain.com:8080" -Passwo
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

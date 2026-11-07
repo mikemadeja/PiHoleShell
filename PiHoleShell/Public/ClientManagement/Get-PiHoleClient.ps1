@@ -41,24 +41,14 @@ Get-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $Groups = Get-PiHoleGroup -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/clients"
+        $Endpoint = 'clients'
         if ($Client) {
-            $Uri += "/$([System.Uri]::EscapeDataString($Client))"
+            $Endpoint += "/$([System.Uri]::EscapeDataString($Client))"
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
 
         if ($RawOutput) {
             Write-Output $Response
@@ -86,12 +76,6 @@ Get-PiHoleClient -PiHoleServer "http://pihole.domain.com:8080" -Password "your-a
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

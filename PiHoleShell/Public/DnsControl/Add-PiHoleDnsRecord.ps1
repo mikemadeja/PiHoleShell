@@ -53,8 +53,7 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
 .EXAMPLE
 Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Type CNAME -Hostname "alias.local" -Target "test.local" -Ttl 300
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Thin wrapper - Add-PiHoleConfigArrayItem (called internally) already carries this same suppression")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -110,38 +109,41 @@ Add-PiHoleDnsRecord -PiHoleServer "http://pihole.domain.com:8080" -Password "you
             }
         }
 
-        $InnerParams = @{
-            PiHoleServer = $PiHoleServer
-            Password     = $Password
-            Element      = $Element
-            Value        = $Value
-            IgnoreSsl    = $IgnoreSsl
-            RawOutput    = $RawOutput
-        }
-        if ($PSBoundParameters.ContainsKey('Restart')) {
-            $InnerParams.Restart = $Restart
-        }
-
-        $Response = Add-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            $Object = [PSCustomObject]@{
-                Type        = $Type
-                Hostname    = $Hostname
-                IPv4Address = $IPv4Address
-                IPv6Address = $IPv6Address
-                Target      = $Target
-                Ttl         = $Ttl
-                Status      = $Response.Status
+        if ($PSCmdlet.ShouldProcess("Pi-Hole DNS record '$Value' ($Type)", "Add DNS record")) {
+            $InnerParams = @{
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Element      = $Element
+                Value        = $Value
+                IgnoreSsl    = $IgnoreSsl
+                RawOutput    = $RawOutput
+                Confirm      = $false
             }
-            Write-Output $Object
+            if ($PSBoundParameters.ContainsKey('Restart')) {
+                $InnerParams.Restart = $Restart
+            }
+
+            $Response = Add-PiHoleConfigArrayItem @InnerParams -ErrorAction Stop
+
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+            else {
+                $Object = [PSCustomObject]@{
+                    Type        = $Type
+                    Hostname    = $Hostname
+                    IPv4Address = $IPv4Address
+                    IPv6Address = $IPv6Address
+                    Target      = $Target
+                    Ttl         = $Ttl
+                    Status      = $Response.Status
+                }
+                Write-Output $Object
+            }
         }
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

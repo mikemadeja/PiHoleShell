@@ -106,8 +106,6 @@ Import-PiHoleTeleporter -PiHoleServer "http://pihole.domain.com:8080" -Password 
         $Target = "Pi-Hole at $PiHoleServer"
         $Action = "Import Teleporter archive '$FilePath' (this will overwrite your current configuration)"
         if ($PSCmdlet.ShouldProcess($Target, $Action)) {
-            $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
             $FormData = @{
                 file = Get-Item -Path $FilePath
             }
@@ -130,14 +128,15 @@ Import-PiHoleTeleporter -PiHoleServer "http://pihole.domain.com:8080" -Password 
             }
 
             $Params = @{
-                Headers              = @{sid = $($Sid) }
-                Uri                  = "$($PiHoleServer.OriginalString)/api/teleporter"
-                Method               = "Post"
-                SkipCertificateCheck = $IgnoreSsl
-                Form                 = $FormData
+                PiHoleServer = $PiHoleServer
+                Password     = $Password
+                Endpoint     = 'teleporter'
+                Method       = "Post"
+                IgnoreSsl    = $IgnoreSsl
+                Form         = $FormData
             }
 
-            $Response = Invoke-RestMethod @Params
+            $Response = Invoke-PiHoleApiRequest @Params
 
             if ($RawOutput) {
                 Write-Output $Response
@@ -154,12 +153,6 @@ Import-PiHoleTeleporter -PiHoleServer "http://pihole.domain.com:8080" -Password 
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

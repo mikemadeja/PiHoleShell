@@ -44,8 +44,6 @@ Get-PiHoleNetworkDevice -PiHoleServer "http://pihole.domain.com:8080" -Password 
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
         $QueryParams = [System.Collections.ArrayList]@()
         if ($PSBoundParameters.ContainsKey('MaxDevices')) {
             $QueryParams.Add("max_devices=$MaxDevices") | Out-Null
@@ -54,20 +52,12 @@ Get-PiHoleNetworkDevice -PiHoleServer "http://pihole.domain.com:8080" -Password 
             $QueryParams.Add("max_addresses=$MaxAddresses") | Out-Null
         }
 
-        $Uri = "$($PiHoleServer.OriginalString)/api/network/devices"
+        $Endpoint = 'network/devices'
         if ($QueryParams.Count -gt 0) {
-            $Uri += "?" + ($QueryParams -join '&')
+            $Endpoint += "?" + ($QueryParams -join '&')
         }
 
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Get"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
+        $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint
 
         if ($RawOutput) {
             Write-Output $Response
@@ -99,12 +89,6 @@ Get-PiHoleNetworkDevice -PiHoleServer "http://pihole.domain.com:8080" -Password 
     }
 
     catch {
-        Write-Error -Message $_.Exception.Message
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
+        Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
     }
 }

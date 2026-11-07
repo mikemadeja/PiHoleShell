@@ -40,8 +40,7 @@ This will dump the response instead of the formatted object
 .EXAMPLE
 Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Password "your-app-password" -Element "dns/cnameRecords" -Value "alias.lan,target.lan"
     #>
-    [CmdletBinding(HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
-    [Diagnostics.CodeAnalysis.SuppressMessage("PSUseShouldProcessForStateChangingFunctions", "", Justification = "Ignoring for now")]
+    [CmdletBinding(SupportsShouldProcess = $true, HelpUri = 'https://ftl.pi-hole.net/master/docs/#put-/config/-element-/-value-')]
     [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
     param (
         [Parameter(Mandatory = $true)]
@@ -57,45 +56,31 @@ Add-PiHoleConfigArrayItem -PiHoleServer "http://pihole.domain.com:8080" -Passwor
         [bool]$RawOutput = $false
     )
     try {
-        $Sid = Request-PiHoleAuth -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl
-
-        $Uri = "$($PiHoleServer.OriginalString)/api/config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
-        if ($PSBoundParameters.ContainsKey('Restart')) {
-            $Uri += "?restart=$($Restart.ToString().ToLower())"
-        }
-
-        $Params = @{
-            Headers              = @{sid = $($Sid) }
-            Uri                  = $Uri
-            Method               = "Put"
-            SkipCertificateCheck = $IgnoreSsl
-            ContentType          = "application/json"
-        }
-
-        $Response = Invoke-RestMethod @Params
-
-        if ($RawOutput) {
-            Write-Output $Response
-        }
-        else {
-            # A successful add returns 201 Created with no body, so there's no response to
-            # build a rich object from.
-            $Object = [PSCustomObject]@{
-                Element = $Element
-                Value   = $Value
-                Status  = "Added"
+        if ($PSCmdlet.ShouldProcess("Pi-Hole config $Element", "Add item '$Value'")) {
+            $Endpoint = "config/$($Element.Trim('/'))/$([System.Uri]::EscapeDataString($Value))"
+            if ($PSBoundParameters.ContainsKey('Restart')) {
+                $Endpoint += "?restart=$($Restart.ToString().ToLower())"
             }
-            Write-Output $Object
+
+            $Response = Invoke-PiHoleApiRequest -PiHoleServer $PiHoleServer -Password $Password -IgnoreSsl $IgnoreSsl -Endpoint $Endpoint -Method Put
+
+            if ($RawOutput) {
+                Write-Output $Response
+            }
+            else {
+                # A successful add returns 201 Created with no body, so there's no response to
+                # build a rich object from.
+                $Object = [PSCustomObject]@{
+                    Element = $Element
+                    Value   = $Value
+                    Status  = "Added"
+                }
+                Write-Output $Object
+            }
         }
     }
 
     catch {
         Write-Error -Message (ConvertTo-PiHoleFriendlyErrorMessage -ErrorRecord $_)
-    }
-
-    finally {
-        if ($Sid) {
-            Remove-PiHoleCurrentAuthSession -PiHoleServer $PiHoleServer -Sid $Sid -IgnoreSsl $IgnoreSsl
-        }
     }
 }
